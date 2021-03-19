@@ -109,12 +109,10 @@ Here you'll find the lecture slides as well as the practical for Monday.
 - [Lecture 1](monday/Lectures/Lecture 1.slides.html)
 - [Impractical 1](monday/Practicals/Impractical 1.html)
 - [Practical 1](monday/Practicals/Practical 1.html) 
-- [Practical 1 in Colab](https://colab.research.google.com/)
 
 - [Lecture 2]()
 - [Impractical 2]()
 - [Practical 2]() 
-- [Practical 2 in Colab]()
 
 ## Column 2
 
@@ -132,12 +130,10 @@ Here you'll find the lecture slides as well as the practical for Tuesday.
 - [Lecture 3]()
 - [Impractical 3]()
 - [Practical 3]() 
-- [Practical 3 in Colab]()
 
 - [Lecture 4]()
 - [Impractical 4]()
 - [Practical 4]() 
-- [Practical 4 in Colab]()
 
 
 ## Column 2
@@ -156,12 +152,10 @@ Here you'll find the lecture slides as well as the practical for Wednesday.
 - [Lecture 5]()
 - [Impractical 5]()
 - [Practical 5]() 
-- [Practical 5 in Colab]()
 
 - [Lecture 6]()
 - [Impractical 6]()
 - [Practical 6]() 
-- [Practical 6 in Colab]()
 
 
 ## Column 2
@@ -169,28 +163,3 @@ Here you'll find the lecture slides as well as the practical for Wednesday.
 ### References
 
 Add additional info/references
-
-# Thursday
-## Column 1
-
-### Materials
-
-Here you'll find the lecture slides as well as the practical for Thursday.
-
-- [Lecture 7]()
-- [Impractical 7]()
-- [Practical 7]() 
-- [Practical 7 in Colab]()
-
-- [Lecture 8]()
-- [Impractical 8]()
-- [Practical 8]() 
-- [Practical 8 in Colab]()
-
-
-## Column 2
-
-### References
-
-Add additional info/references
-
