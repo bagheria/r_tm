@@ -1,0 +1,335 @@
+---
+title: "Processing Textual Data in R"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_1.html
+---
+
+# Introduction
+
+Welcome to the first practical of the course "Introduction to Text Mining with R". 
+
+In the practicals we will get hands-on experience with the materials in the lectures by programming in R and completing assignments. In this practical, we will work with different formats of text data, regular expressions and some visualisations.
+
+The practicals always start with the packages we are going to use. Be sure to run these lines in your session to load their functions before you continue. If there are packages that you have not yet installed, first install them with `install.packages()`.
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(dplyr)     # for data manipulation
+library(plyr)      # for data manipulation
+library(magrittr)  # for pipes
+library(tidyverse)  # for pipes
+library(ggplot2)   # for visualization
+library(xlsx)      # for working with excel files
+library(qdap)      # provides parsing tools for preparing transcript data
+library(wordcloud) # to create pretty word clouds
+
+```
+
+Before starting the exercises, you need to set your working directory to your Practicals folder. To this end, you can either create a project in RStudio and move the Rmd and data files to the project forlder, or you can use the following line instead of creating a new project:
+
+```{r, message = FALSE, warning = FALSE}
+# setwd("drivename:/folder1/folder2/r_tm/monday/Practicals/")
+
+```
+
+---
+
+# Reading text data: Excel files
+
+--- 
+
+1. **Use the `read.xlsx` function from the `xlsx` package to read the `blog-gender-dataset.xlsx` file:**
+
+---
+
+The dataset is already located in the practical folder. You can also find it online from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#datasets)
+
+```{r 1, include = TRUE}
+blog_gender_data <- read.xlsx("blog-gender-dataset.xlsx", 1)
+
+```
+
+---
+
+2. **Randomly sample 1000 of the blogs into a new variable and name it `blog_gender_1000`. Hint: use the `sample_n` function.**
+
+---
+
+It is good to know that, to learn more about the contents of a function, data or variable, use one of the two following help commands:
+```{r help, message = FALSE, warning = FALSE}
+help(your_function_name)
+?your_function_name
+
+```
+
+```{r 2, include = TRUE}
+blog_gender_1000 <- sample_n(blog_gender_data, 1000)
+
+```
+
+---
+
+3. **Use the `head`, `tail`, and `View` functions to check the dataset. What are the differences between these functions?**
+
+---
+
+```{r 3, include = TRUE}
+head(blog_gender_1000)
+tail(blog_gender_1000)
+# View(blog_gender_1000)
+
+```
+
+
+---
+
+4. **`wordcloud` is a function from the `wordcloud` package which plots cool word clouds based on word frequencies in the given dataset. Use this function to plot the top 50 frequent words with minimum frequency of 10. Also use the exposition pipe operator `%$%`.**
+
+---
+
+The `%$%` pipe *exposes* the listed dimensions of a dataset, such that we can refer to them directly.
+
+```{r 4, include = TRUE, warning = FALSE}
+
+blog_gender_1000 %$% wordcloud(blog, min.freq = 20, max.words = 50, random.order = FALSE,
+                               colors = brewer.pal(8, "Dark2"))
+
+```
+
+
+---
+
+# Reading text data: CSV files
+
+---
+
+5. **Use the `read.csv` function to read the `IMDB Dataset.csv` file:**
+
+---
+
+IMDB dataset contains 50K movie reviews for natural language processing or Text analytics. You can also access the dataset from the [Kaggle website](https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews).
+
+```{r 5, include = TRUE, warning = FALSE}
+
+imdb_data <- read.csv("IMDB Dataset.csv")
+
+```
+
+---
+
+6. **Use the `head` and `tail` functions to take a look at the dataset.**
+
+---
+
+```{r 6, include = TRUE}
+head(blog_gender_1000)
+tail(blog_gender_1000)
+
+```
+
+---
+
+7. **Randomly sample 500 of the reviews into a new variable and name it `imdb_500`. In your sample take care of having equal number of observations from positive and negative reviews. (250 each)**
+
+---
+
+
+```{r 7, include = TRUE, warning = FALSE}
+imdb_500 <- ddply(imdb_data, "sentiment", .fun = function(x) {sample_n(x, size = 250)})
+
+```
+
+---
+
+8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
+
+---
+
+```{r 8, include = TRUE, warning = FALSE}
+imdb_500 %>% 
+  filter(sentiment == "positive") %$% 
+  wordcloud(review, min.freq = 20, 
+                       max.words = 50, random.order = FALSE, 
+                       colors = brewer.pal(8, "Dark2"))
+
+imdb_500 %>% 
+  filter(sentiment == "negative") %$% 
+  wordcloud(review, min.freq = 20, 
+                       max.words = 50, random.order = FALSE, 
+                       colors = brewer.pal(8, "Dark2"))
+
+```
+
+
+---
+
+9. **Use the `freq_terms` function from the `qdap` package and find the 30 top terms in each set of positive and negative reviews in `imdb_500`.**
+
+---
+
+```{r 9, include = TRUE, warning = FALSE}
+frequent_terms_pos <- imdb_500 %>% 
+  filter(sentiment == "positive") %$% 
+  freq_terms(review, top = 30)
+
+frequent_terms_neg <- imdb_500 %>% 
+  filter(sentiment == "negative") %$% 
+  freq_terms(review, top = 30)
+
+```
+
+
+---
+
+10. **Using `ggplot`, plot a barchart for each of the freqent terms dataframes.**
+
+---
+
+```{r 10, include = TRUE, warning = FALSE}
+
+ggplot(frequent_terms_pos, aes(x = reorder(WORD, FREQ), y = FREQ)) + 
+geom_bar(stat = "identity") + 
+coord_flip()                + 
+xlab("Word in Corpus")      + 
+ylab("Count")               + 
+theme_minimal()
+
+ggplot(frequent_terms_neg, aes(x = reorder(WORD, FREQ), y = FREQ)) + 
+geom_bar(stat = "identity") + 
+coord_flip()                + 
+xlab("Word in Corpus")      + 
+ylab("Count")               + 
+theme_minimal()
+
+```
+
+Package `ggplot2` offers far greater flexibility in data visualization than the standard plotting devices in `R`. However, it has its own language, which allows you to easily expand graphs with additional commands. To make these expansions or layers clearly visible, it is advisable to use the plotting language conventions. All ggplot2 documentation can be found at [http://docs.ggplot2.org/current/](http://docs.ggplot2.org/current/)
+
+---
+
+# Reading text data: TXT files
+
+---
+
+11. **Use the `readLines` function to read data from the 'computer.txt' file.**
+
+---
+
+`Computer.txt` is an annotated dataset for the purpose of aspect-based sentiment analysis. You can find it from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html).
+
+```{r 11, include = TRUE, warning = FALSE}
+computer_data <- readLines("computer.txt")
+
+```
+
+---
+
+12. **Convert the data to a dataframe.**
+
+---
+
+```{r 12, include = TRUE, warning = FALSE}
+computer_531 <- data.frame(computer_data)
+
+```
+
+
+As you may have noticed, here, we worked only with dataframes. In addition to dataframes we will also use `VCorpus` data type. 
+
+---
+
+13. **Use the `head` and `tail` functions to take a look at the dataset.**
+
+---
+
+```{r 13, include = TRUE}
+head(computer_531)
+tail(computer_531)
+
+```
+
+---
+
+# Regular expressions
+
+---
+
+16. **Except `computer_531`, `imdb_500`, and `blog_gender_1000` remove the other files from the RStudio environment**
+
+---
+
+```{r 16, include = TRUE}
+# using regular expressions
+rm(list = ls()[grep("data", ls())])
+rm(list = ls()[grep("^fre", ls())])
+
+# or
+# rm(blog_gender_data, computer_data, frequent_terms_pos, frequent_terms_neg, imdb_data)
+
+# or use except files
+# rm(list=setdiff(ls(), c("computer_531", "imdb_500", "blog_gender_1000")))
+
+```
+
+---
+
+12. use the mutate function to add a column for aspects
+
+---
+
+The `mutate()` function is more flexible than `transform()` as it allows for more complex data manipulation other than mere transformation. 
+
+---
+
+13. Use the subset function to keep the observations that contain an aspect
+
+---
+
+
+
+
+---
+
+14. find bigrams with more than two apprearances
+
+---
+
+
+---
+
+15. separate the review from the aspect-sentiment
+
+---
+
+
+
+
+
+
+---
+
+17. create positive, negative and neutral for the sentiment
+
+---
+
+
+---
+
+18. find the numbers in text, which one associated to price?
+
+---
+
+
+---
+
+End of Practical
+
+---
