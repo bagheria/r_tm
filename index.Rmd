@@ -37,8 +37,6 @@ Instructors:
 
 ---
 
-
-
 # Quick Overview
 
 ## Column 1
@@ -104,7 +102,7 @@ Add info
 
 ### Materials
 
-Here you'll find the lecture slides as well as the practical for Monday.
+Here you will find the lecture slides as well as the practical for Monday.
 
 - [Lecture 1](monday/Lectures/Lecture 1.slides.html)
 - [Impractical 1](monday/Practicals/Impractical 1.html)
@@ -125,7 +123,7 @@ Add additional info/references
 
 ### Materials
 
-Here you'll find the lecture slides as well as the practical for Tuesday.
+Here you will find the lecture slides as well as the practical for Tuesday.
 
 - [Lecture 3]()
 - [Impractical 3]()
@@ -147,7 +145,7 @@ Add additional info/references
 
 ### Materials
 
-Here you'll find the lecture slides as well as the practical for Wednesday.
+Here you will find the lecture slides as well as the practical for Wednesday.
 
 - [Lecture 5]()
 - [Impractical 5]()
