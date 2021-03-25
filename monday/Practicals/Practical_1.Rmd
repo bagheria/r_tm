@@ -25,7 +25,7 @@ The practicals always start with the packages we are going to use. Be sure to ru
 library(dplyr)     # for data manipulation
 library(plyr)      # for data manipulation
 library(magrittr)  # for pipes
-library(tidyverse)  # for pipes
+library(tidyverse) # for tidy data and pipes
 library(ggplot2)   # for visualization
 library(xlsx)      # for working with excel files
 library(qdap)      # provides parsing tools for preparing transcript data
@@ -281,52 +281,152 @@ rm(list = ls()[grep("^fre", ls())])
 
 ---
 
-12. use the mutate function to add a column for aspects
+17. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your seach.**
+
+------
+
+
+```{r 17, include = TRUE}
+reviews_act <- grep("[Aa]ction", imdb_500$review)
+reviews_com <- grep("[Cc]omedy", imdb_500$review)
+reviews_dra <- grep("[Dd]rama", imdb_500$review)
+
+genres    <- c("Action", "Comedy", "Drama")
+nr_genres <- c(length(reviews_act), length(reviews_com), length(reviews_dra))
+
+tibble(genres, nr_genres)
+
+```
 
 ---
 
-The `mutate()` function is more flexible than `transform()` as it allows for more complex data manipulation other than mere transformation. 
+18. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
 
 ---
 
-13. Use the subset function to keep the observations that contain an aspect
+```{r 18, include = TRUE}
+grep("Comedy", imdb_500$review, value = TRUE)
+
+# you can also use the returned index instead of setting value 
+
+```
+
+
+`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
 
 ---
 
-
-
-
----
-
-14. find bigrams with more than two apprearances
+19. **Use the `regexpr` function to check if there is a fully campitalized word in each of the first 20 blogs in the `blog_gender_1000` data.**
 
 ---
 
+```{r 19, include = TRUE}
+r <- regexpr('\\b[A-Z]+\\b', blog_gender_1000[1:20,]$blog)
+r
+regmatches(blog_gender_1000[1:20,]$blog, r)
+
+```
+
+The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string. 
+
+The `str_extract` function from `stringr` is also a useful function for this purpose:
+
+```{r str_extract, include = TRUE}
+str_extract(blog_gender_1000[1:20,]$blog, '\\b[A-Z]+\\b')
+
+```
 
 ---
 
-15. separate the review from the aspect-sentiment
+20. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
 
 ---
 
+```{r 20, include = TRUE}
+r <- gregexpr('\\b[A-Z]+\\b', blog_gender_1000[1:10,]$blog)
+regmatches(blog_gender_1000[1:10,]$blog, r)
 
+str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
 
-
-
-
----
-
-17. create positive, negative and neutral for the sentiment
-
----
-
+```
 
 ---
 
-18. find the numbers in text, which one associated to price?
+21. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
 
 ---
 
+```{r 21, include = TRUE}
+
+str_extract(computer_531[1:20,], "[^##]*")
+
+# gsub("[^##]*", "\\1", computer_531[1:20,])
+gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
+
+```
+
+---
+
+22. **Add a new column to `computer_531` and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. **
+
+---
+
+```{r 22, include = TRUE}
+computer_531$aspect_sentiment <- gsub("(.?)(##.*)", "\\1", computer_531[,])
+head(computer_531)
+
+```
+
+---
+
+23. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
+
+---
+
+```{r 23, include = TRUE}
+
+computer_531$aspects  <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment)
+head(computer_531)
+
+# computer_531 <- computer_531 %>% 
+#  mutate(aspects = gsub("\\[.+?\\]", "", computer_531$aspect_sentiment))
+
+
+# only for +1 and -1
+# gsub("\\[(.+?)1\\]", "", "a yes[+1][a]")
+# gsub("\\[(\\+|-)1\\]", "", "a yes[+1][a]")
+
+```
+
+
+Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspects.
+
+---
+
+24. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
+
+---
+
+```{r 24, include = TRUE}
+
+
+```
+
+---
+
+# Summary
+
+---
+
+The primary R functions for dealing with regular expressions are
+
+- `grep()`, `grepl()`: Search for matches of a regular expression/pattern in a character vector
+
+- `regexpr()`, `gregexpr()`: Search a character vector for regular expression matches and return the indices where the match begins; useful in conjunction with `regmatches()`
+
+- `sub()`, `gsub()`: Search a character vector for regular expression matches and replace that match with another string
+
+- The `stringr` package provides a series of functions implementing much of the regular expression functionality in R but with a more consistent and rationalized interface.
 
 ---
 
