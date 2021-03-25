@@ -1,5 +1,5 @@
 ---
-title: "Data Science: Introduction to Text Mining with R"
+title: "[Data Science: Introduction to Text Mining with R](https://ayoubbagheri.nl/r_tm/)"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
