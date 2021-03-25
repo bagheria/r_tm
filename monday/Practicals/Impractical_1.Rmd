@@ -10,7 +10,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Practical_1.html
+    pandoc_args: --output=Impractical_1.html
 ---
 
 # Introduction
@@ -52,11 +52,6 @@ Before starting the exercises, you need to set your working directory to your Pr
 
 The dataset is already located in the practical folder. You can also find it online from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#datasets)
 
-```{r 1, include = TRUE}
-blog_gender_data <- read.xlsx("blog-gender-dataset.xlsx", 1)
-
-```
-
 ---
 
 2. **Randomly sample 1000 of the blogs into a new variable and name it `blog_gender_1000`. Hint: use the `sample_n` function.**
@@ -70,24 +65,9 @@ help(your_function_name)
 
 ```
 
-```{r 2, include = TRUE}
-blog_gender_1000 <- sample_n(blog_gender_data, 1000)
-
-```
-
 ---
 
 3. **Use the `head`, `tail`, and `View` functions to check the dataset. What are the differences between these functions?**
-
----
-
-```{r 3, include = TRUE}
-head(blog_gender_1000)
-tail(blog_gender_1000)
-# View(blog_gender_1000)
-
-```
-
 
 ---
 
@@ -96,14 +76,6 @@ tail(blog_gender_1000)
 ---
 
 The `%$%` pipe *exposes* the listed dimensions of a dataset, such that we can refer to them directly.
-
-```{r 4, include = TRUE, warning = FALSE}
-
-blog_gender_1000 %$% wordcloud(blog, min.freq = 20, max.words = 50, random.order = FALSE,
-                               colors = brewer.pal(8, "Dark2"))
-
-```
-
 
 ---
 
@@ -117,23 +89,9 @@ blog_gender_1000 %$% wordcloud(blog, min.freq = 20, max.words = 50, random.order
 
 IMDB dataset contains 50K movie reviews for natural language processing or Text analytics. You can also access the dataset from the [Kaggle website](https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews).
 
-```{r 5, include = TRUE, warning = FALSE}
-
-imdb_data <- read.csv("IMDB Dataset.csv")
-
-```
-
 ---
 
 6. **Use the `head` and `tail` functions to take a look at the dataset.**
-
----
-
-```{r 6, include = TRUE}
-head(blog_gender_1000)
-tail(blog_gender_1000)
-
-```
 
 ---
 
@@ -141,33 +99,11 @@ tail(blog_gender_1000)
 
 ---
 
-
-```{r 7, include = TRUE, warning = FALSE}
-imdb_500 <- ddply(imdb_data, "sentiment", .fun = function(x) {sample_n(x, size = 250)})
-
-```
-
 ---
 
 8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
 
 ---
-
-```{r 8, include = TRUE, warning = FALSE}
-imdb_500 %>% 
-  filter(sentiment == "positive") %$% 
-  wordcloud(review, min.freq = 20, 
-                       max.words = 50, random.order = FALSE, 
-                       colors = brewer.pal(8, "Dark2"))
-
-imdb_500 %>% 
-  filter(sentiment == "negative") %$% 
-  wordcloud(review, min.freq = 20, 
-                       max.words = 50, random.order = FALSE, 
-                       colors = brewer.pal(8, "Dark2"))
-
-```
-
 
 ---
 
@@ -175,41 +111,11 @@ imdb_500 %>%
 
 ---
 
-```{r 9, include = TRUE, warning = FALSE}
-frequent_terms_pos <- imdb_500 %>% 
-  filter(sentiment == "positive") %$% 
-  freq_terms(review, top = 30)
-
-frequent_terms_neg <- imdb_500 %>% 
-  filter(sentiment == "negative") %$% 
-  freq_terms(review, top = 30)
-
-```
-
-
 ---
 
 10. **Using `ggplot`, plot a barchart for each of the freqent terms dataframes.**
 
 ---
-
-```{r 10, include = TRUE, warning = FALSE}
-
-ggplot(frequent_terms_pos, aes(x = reorder(WORD, FREQ), y = FREQ)) + 
-geom_bar(stat = "identity") + 
-coord_flip()                + 
-xlab("Word in Corpus")      + 
-ylab("Count")               + 
-theme_minimal()
-
-ggplot(frequent_terms_neg, aes(x = reorder(WORD, FREQ), y = FREQ)) + 
-geom_bar(stat = "identity") + 
-coord_flip()                + 
-xlab("Word in Corpus")      + 
-ylab("Count")               + 
-theme_minimal()
-
-```
 
 Package `ggplot2` offers far greater flexibility in data visualization than the standard plotting devices in `R`. However, it has its own language, which allows you to easily expand graphs with additional commands. To make these expansions or layers clearly visible, it is advisable to use the plotting language conventions. All ggplot2 documentation can be found at [http://docs.ggplot2.org/current/](http://docs.ggplot2.org/current/)
 
@@ -225,22 +131,12 @@ Package `ggplot2` offers far greater flexibility in data visualization than the 
 
 `Computer.txt` is an annotated dataset for the purpose of aspect-based sentiment analysis. You can find it from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html).
 
-```{r 11, include = TRUE, warning = FALSE}
-computer_data <- readLines("computer.txt")
-
-```
 
 ---
 
 12. **Convert the data to a dataframe.**
 
 ---
-
-```{r 12, include = TRUE, warning = FALSE}
-computer_531 <- data.frame(computer_data)
-
-```
-
 
 As you may have noticed, here, we worked only with dataframes. In addition to dataframes we will also use `VCorpus` data type. 
 
@@ -249,12 +145,6 @@ As you may have noticed, here, we worked only with dataframes. In addition to da
 13. **Use the `head` and `tail` functions to take a look at the dataset.**
 
 ---
-
-```{r 13, include = TRUE}
-head(computer_531)
-tail(computer_531)
-
-```
 
 ---
 
@@ -266,51 +156,17 @@ tail(computer_531)
 
 ---
 
-```{r 14, include = TRUE}
-# using regular expressions
-rm(list = ls()[grep("data", ls())])
-rm(list = ls()[grep("^fre", ls())])
-
-# or
-# rm(blog_gender_data, computer_data, frequent_terms_pos, frequent_terms_neg, imdb_data)
-
-# or use except files
-# rm(list=setdiff(ls(), c("computer_531", "imdb_500", "blog_gender_1000")))
-
-```
-
 ---
 
 15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your seach.**
 
 ---
 
-
-```{r 15, include = TRUE}
-reviews_act <- grep("[Aa]ction", imdb_500$review)
-reviews_com <- grep("[Cc]omedy", imdb_500$review)
-reviews_dra <- grep("[Dd]rama", imdb_500$review)
-
-genres    <- c("Action", "Comedy", "Drama")
-nr_genres <- c(length(reviews_act), length(reviews_com), length(reviews_dra))
-
-tibble(genres, nr_genres)
-
-```
-
 ---
 
 16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
 
 ---
-
-```{r 16, include = TRUE}
-grep("Comedy", imdb_500$review, value = TRUE)
-
-# you can also use the returned index instead of setting value 
-
-```
-
 
 `grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
 
@@ -320,21 +176,10 @@ grep("Comedy", imdb_500$review, value = TRUE)
 
 ---
 
-```{r 17, include = TRUE}
-r <- regexpr('\\b[A-Z]+\\b', blog_gender_1000[1:20,]$blog)
-r
-regmatches(blog_gender_1000[1:20,]$blog, r)
-
-```
-
 The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string. 
 
 The `str_extract` function from `stringr` is also a useful function for this purpose:
 
-```{r str_extract, include = TRUE}
-str_extract(blog_gender_1000[1:20,]$blog, '\\b[A-Z]+\\b')
-
-```
 
 ---
 
@@ -342,28 +187,9 @@ str_extract(blog_gender_1000[1:20,]$blog, '\\b[A-Z]+\\b')
 
 ---
 
-```{r 18, include = TRUE}
-r <- gregexpr('\\b[A-Z]+\\b', blog_gender_1000[1:10,]$blog)
-regmatches(blog_gender_1000[1:10,]$blog, r)
-
-str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
-
-```
-
 ---
 
 19. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
-
----
-
-```{r 19, include = TRUE}
-
-str_extract(computer_531[1:20,], "[^##]*")
-
-# gsub("[^##]*", "\\1", computer_531[1:20,])
-gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
-
-```
 
 ---
 
@@ -371,33 +197,11 @@ gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
 
 ---
 
-```{r 20, include = TRUE}
-computer_531$aspect_sentiment <- gsub("(.?)(##.*)", "\\1", computer_531[,])
-head(computer_531)
-
-```
-
 ---
 
 21. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
 
 ---
-
-```{r 21, include = TRUE}
-
-computer_531$aspects  <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment)
-head(computer_531)
-
-# computer_531 <- computer_531 %>% 
-#  mutate(aspects = gsub("\\[.+?\\]", "", computer_531$aspect_sentiment))
-
-
-# only for +1 and -1
-# gsub("\\[(.+?)1\\]", "", "a yes[+1][a]")
-# gsub("\\[(\\+|-)1\\]", "", "a yes[+1][a]")
-
-```
-
 
 Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspects.
 
@@ -406,11 +210,6 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
 
 ---
-
-```{r 22, include = TRUE}
-
-
-```
 
 ---
 

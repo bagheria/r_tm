@@ -104,9 +104,10 @@ Add info
 
 Here you will find the lecture slides as well as the practical for Monday.
 
-- [Lecture 1](monday/Lectures/Lecture 1.slides.html)
-- [Impractical 1](monday/Practicals/Impractical 1.html)
-- [Practical 1](monday/Practicals/Practical 1.html) 
+- [Lecture 1]()
+- [Impractical 1](monday/Practicals/Impractical_1.html)
+- [Practical 1](monday/Practicals/Practical_1.html) 
+- [Practical 1 (Rmd)](monday/Practicals/Practical_1.Rmd) 
 
 - [Lecture 2]()
 - [Impractical 2]()
