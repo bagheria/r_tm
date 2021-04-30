@@ -5,6 +5,7 @@ fontsize: 12pt
 urlcolor: blue
 output: 
   html_document:
+    code_folding: hide
     toc: true
     toc_depth: 1
     toc_float: true
@@ -14,6 +15,10 @@ output:
 ---
 
 # Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
 
 Welcome to the first practical of the course "Introduction to Text Mining with R". 
 

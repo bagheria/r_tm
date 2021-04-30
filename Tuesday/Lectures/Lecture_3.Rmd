@@ -1,0 +1,995 @@
+---
+title: "Feature Engineering and Text Classification"
+author: "Ayoub Bagheri, a.bagheri@uu.nl"
+output:
+  ioslides_presentation:
+    logo: logo.png
+    smaller: yes
+    widescreen: no
+---
+```{r, include=FALSE}
+library(knitr)
+library(DiagrammeR)
+```
+
+
+
+## Lecture’s Plan
+
+1. How to represent a document?
+
+2. What are vector space and bag-of-words models?
+
+3. Features in text? And how to do text feature selection?
+
+4. How to classify text data?
+
+5. How to evaluate a classifier?
+
+## How to represent a document
+
+- Represent by a string?
+  
+  - No semantic meaning
+
+- Represent by a list of sentences?
+
+  - Sentence is just like a short document (recursive definition)
+
+- Represent by a vector?
+  
+  - A vector is an ordered finite list of numbers.
+
+## Vector space model
+
+- A vector space is a collection of vectors
+
+- Represent documents by <u>concept</u> vectors
+  
+  - Each concept defines one dimension
+
+  - k concepts define a high-dimensional space
+  
+  - Element of vector corresponds to concept weight	
+
+
+## Vector space model
+
+- Distance between the vectors in this concept space
+
+  - Relationship among documents
+
+- The process of converting text into numbers is called <b>Vectorization</b>
+
+## Vector space model
+
+- Terms are generic features that can be extracted from text
+
+- Typically, terms are single words, keywords, n-grams, or phrases
+
+- Documents are represented as vectors of terms
+
+- Each dimension (concept) corresponds to a separate term
+
+$$d = (w_1, ..., w_n)$$
+
+\newpage
+
+## Vector space model
+
+- The Corpus represents a collection of documents (the dataset)
+
+- The Vocabulary is the set of all unique terms in the corpus
+
+## An illustration of VS model 
+
+- All documents are projected into this concept space
+
+```{r,echo=FALSE, out.width="70%"}
+include_graphics("img/page 8.png")
+```
+
+## What the VS model doesn’t say
+
+- How to define/select the “basic concept”
+
+  - Concepts are assumed to be <u>orthogonal</u>
+
+- How to assign weights
+  
+  - Weights indicate how well the concept characterizes the document
+
+## Vector space model
+
+- Bag of Words
+
+- Topics
+
+- Word Embeddings
+
+## Bag of Words (BOW)
+
+- With Bag of Words (BOW), we refer to a Vector Space Model where:
+  
+  - Terms: words (more generally we may use n-grams, etc.)
+  
+  - Weights: number of occurrences of the terms in the document
+
+## Bag-of-Words representation
+
+- Term as the basis for vector space
+
+  - Doc1: Text mining is to identify useful information.
+  
+  - Doc2: Useful information is mined from text.
+  
+  - Doc3: Apple is delicious.
+
+```{r, echo= FALSE, out.width="100%"}
+include_graphics("img/page 12.png")
+```
+
+## Zipf’s law | A statistical property of language
+
+- Zipf’s law
+
+  - Frequency of any word is inversely proportional to its rank in the frequency table
+  - Formally
+    - $f(k;s,N)=\frac{1/k^S}{\sum^N_{n=1}{1/n^S}}$ <br>
+    where $k$ is rank of the word; $N$ is the vocabulary size; $s$ is language-specific parameter
+  - Simply: $f(l;s,N)\propto1/k^S$
+
+## Zipf’s law
+
+```{r, echo=FALSE, out.width="60%"}
+include_graphics("img/page 14.png")
+```
+
+<br>
+<p style="float: right;font-size:12px">Source:https://en.wikipedia.org/wiki/Zipf's_law</p>
+  
+## Zipf’s law
+
+- The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on.
+
+- In a clinical Dutch text dataset, if we know the most popular word’s frequency is 69,548, what is your best estimate of its second and third most popular word’s frequencies respectively? 
+
+## BOW weights
+
+- <b><span style="font-size:20px">Binary</span></b>
+
+  - with 1 indicating that a term occurred in the document, and 0 indicating that it did not
+
+- <b><span style="font-size:20px">TF</span></b>
+
+  - indicating how many times a term occurred in a document
+
+- <b><span style="font-size:20px">TF-IDF</span></b>
+
+## Term frequency
+
+- Idea: a term is more important if it occurs more frequently in a document
+
+- TF Formulas
+  
+  - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$
+
+  - Raw TF: $tf(t,d) = c(t,d)$
+
+## Document frequency
+
+- Idea: a term is more discriminative if it occurs only in fewer documents
+
+```{r, echo=FALSE, out.width="60%", fig.align='center'}
+include_graphics("img/page 18.png")
+```
+
+## Inverse document frequency
+
+- Solution
+  
+  - Assign higher weights to rare terms	
+
+  - Formula
+    - $IDF(t) = 1 + log(\frac{N}{df(t)})$ <br>
+    where <span style="color:red">$log()$ is a non-linear scaling; $N$ is the total number of docs in collection; $df(t)$ is the number of docs containing term $t$</span>
+
+  - A corpus-specific property
+    
+    - Independent of a single document
+
+## TFiDF
+
+Let $n_{d,t}$ denote the number of times the $t$-th term appears in the $d$-th document.
+
+$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
+Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing the $t$-th term.
+
+$$IDF_t = log(\frac{N}{N_t})$$
+TF-IDF weight: 
+
+$$w_{d,t} = TF_{d,t} \cdot IDF_t$$
+
+## Mentimeter
+
+- If we remove one document from the corpus, how would it affect the IDF of words in the vocabulary?
+
+- If we add one document from the corpus, how would it affect the IDF of words in the vocabulary?
+
+## Similarity metric
+
+- Euclidean distance
+  
+  - $dist(d_i, d_j) = \sqrt{\sum_{t\in V}{[tf(t,d_i)idf(t) - tf(t, d_j)idf(t)]^2}}$
+
+  - Longer documents will be penalized by the extra words
+
+  - We care more about how these two vectors are overlapped
+
+# Text Classification
+
+## Text classification
+
+- Supervised learning: Learning a function that maps an input to an output based on example input-output pairs.
+  
+  - infer a function from labeled training data
+  
+  - use the inferred function to label new instances
+
+- Human experts annotate a set of text data
+  
+  - Training set
+
+```{r, echo=FALSE, out.width="40%"}
+include_graphics("img/page 24.png")
+```
+
+## Applications of text classification
+
+- Automatically classify political news from sports news
+
+- Recognizing spam emails
+
+## Applications of text classification
+
+<div style="float:left; width:60%">
+\ \ \ \ \ \ \ \ \ \ \ \ \ <b>MEDLINE</b>
+   
+```{r, echo=FALSE, out.width="90%"}
+include_graphics("img/page 26.png")
+```
+</div>
+
+<div style="float:right; width: 40%">
+<b><center>MeSH Subject Category Hierarchy</center></b>
+    
+- Antogonists and Inhibitors
+    
+- Blood Supply
+    
+- Chemistry
+    
+- Drug Therapy
+    
+- Embryology
+    
+- Epidemiology
+
+- …
+</div>
+
+## Text Classification
+
+- Assigning subject categories, topics, or genres
+
+- Spam detection
+
+- Authorship identification
+
+- Age/gender identification
+
+- Language Identification
+
+- Sentiment analysis
+
+- …
+
+## Text classification?
+
+- Which problem is not a text classification task? (less likely to be)
+
+  - Author's gender detection from text
+  
+  - Finding about the smoking conditions of patients from clinical letters
+
+  - Grouping news articles into political vs non-political news
+
+  - Classifying reviews into positive and negative sentiment
+
+<br>
+<br>
+Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5
+
+## Pipeline
+```{r, echo=FALSE}
+grViz("digraph {
+
+graph [layout = dot, rankdir = LR]
+
+node [shape = rectangle, style = filled, fillcolor = Linen]
+
+text [label = 'Text Collection', shape = folder, fillcolor = Beige]
+
+repre [label =  'Text \n Representation']
+class [label = 'Classification \n (Model Training)']
+pred [label= 'Prediction \n (Test Data)']
+
+# edge definitions with the node IDs
+text  -> repre -> class -> pred
+}")
+```
+
+## Splitting data
+
+- Training set
+
+- Test set
+
+- Validation set (dev set)
+
+  - A validation dataset is a dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
+
+## Splitting data
+
+```{r, echo=FALSE, out.width="75%"}
+include_graphics("img/page 31.png")
+```
+
+<br>
+<p style="font-size:12px">https://scikit-learn.org/stable/modules/cross_validation.html</p>
+
+# Feature Selection
+
+## Feature selection for text classification
+
+- Feature selection is the process of selecting a specific subset of the terms of the training set and using only them in the classification algorithm.
+
+- high dimensionality of text features
+
+- Select the most informative features for model training
+  
+  - Reduce noise in feature representation
+  
+  - Improve final classification performance
+  
+  - Improve training/testing efficiency
+  
+    - Less time complexity
+    
+    - Fewer training data
+
+## Feature selection methods
+
+- Wrapper method
+  
+  - Find the best subset of features for a particular classification method
+
+```{r,echo=FALSE, out.width="70%", fig.align='center'}
+include_graphics("img/page 34.png")
+```
+
+## Feature selection methods
+- Wrapper method
+  
+  - Search in the whole space of feature groups
+    
+    - Sequential forward selection or genetic search to speed up the search
+
+```{r,echo=FALSE, out.width="70%", fig.align='center'}
+include_graphics("img/page 35.png")
+```
+
+
+## Feature selection methods
+- Wrapper method
+
+  - Consider all possible dependencies among the features
+  
+  - Impractical for text categorization
+    - Cannot deal with large feature set
+    
+    - A NP-complete problem
+      
+      - No direct relation between feature subset selection and evaluation
+
+## Feature selection methods
+
+- Filter method
+ 
+  - Evaluate the features <u>independently</u> from the classifier and other features
+ 
+    - No indication of a classifier’s performance on the selected features
+ 
+    - No dependency among the features
+ 
+  - Feasible for very large feature set
+    
+    - Usually used as a preprocessing step
+
+```{r,echo=FALSE, out.width="90%", fig.align='center'}
+include_graphics("img/page 37.png")
+```
+
+## Document frequency
+
+- Rare words: non-influential for global prediction, reduce vocabulary size
+
+```{r,echo=FALSE, out.width="90%", fig.align='center'}
+include_graphics("img/page 38.png")
+```
+
+## Information gain
+
+- Decrease in entropy of categorical prediction when the feature is present or absent
+
+```{r,echo=FALSE, out.width="90%", fig.align='center'}
+include_graphics("img/page 39.png")
+```
+
+## Gini Index
+
+Let $p(c | t)$ be the conditional probability that a document belongs to class $c$, given the fact that it contains the term $t$. Therefore, we have:
+
+$$\sum^k_{c=1}{p(c | t)=1}$$
+
+Then, the gini-index for the term $t$, denoted by $G(t)$ is defined as:
+
+$$G(t) = \sum^k_{c=1}{p(c | t)^2}$$
+
+## Gini Index
+
+- The value of the gini-index lies in the range $(1/k, 1)$. 
+
+- Higher values of the gini-index indicate a greater discriminative power of the term t. 
+
+- If the global class distribution is skewed, the gini-index may not accurately reflect the discriminative power of the underlying attributes.
+
+- &#10132; normalized gini-index
+
+## Normalized Gini Index 
+- Let $p(c)$ represent the unconditional probability of class $c$. Then, we determine the normalized probability value $p'(c | t)$ as: 
+
+$$p'(c|t) \equiv \frac{p(c|t)/p(c)}{\sum_{i=1}^k{p(i|t)/p(i)}} $$
+
+- Then, the gini-index is computed in terms of these normalized probability values. 
+
+$$G(t) \equiv \sum^k_{c=1}{p'(c|t)^2}$$
+
+## Mutual Information
+
+- The pointwise mutual information $M_c(t)$ between the term $t$ and the class $c$ is defined on the basis of the level of co-occurrence between the class $c$ and term $t$. Let $p(c)$ be the unconditional probability of class $c$, and $p(c | t)$ be the probability of class $c$, given that the document contains the term $t$. 
+
+- Let $p(t)$ be the fraction of the documents containing the term $t$, i.e. the unconditional probability of term $t$. 
+
+- The expected co-occurrence of class $c$ and term $t$ on the basis of mutual independence is given by $p(c) \cdot p(t)$. The true co-occurrence is of course given by $p(c | t) \cdot p(t)$.
+
+## Mutual Information 
+
+In practice, the value of $p(c | t) \cdot p(t)$ may be much larger or smaller than $p(c) \cdot p(t)$, depending upon the level of correlation between the class $c$ and term $t$. The mutual information is defined in terms of the ratio between these two values.
+
+$$M_c(t) = log(\frac{p(c|t) \cdot p(t)}{p(c) \cdot p(t)}) = log(\frac{p(c|t)}{p(c)})$$
+Clearly, the term $t$ is positively correlated to the class $c$, when $M_c (t) > 0$, and the term $t$ is negatively correlated to class $c$, when $M_c (t) < 0$.
+
+## Mutual Information 
+
+Note that $M_c(t)$ is specific to a particular class $c$. We need to compute the overall mutual information as a function of the mutual information of the term $t$ with the different classes.
+
+$$M_{avg}(t) = \sum^k_{c=1}{p(c) \cdot M_c(t)}$$
+$$M_{max}(t) = \max_c{\{M_c(t)\}}$$
+The second measure is particularly useful, when it is more important to determine high levels of positive correlation of the term $t$ with any of the classes.
+
+## ${\chi}^2$-Statistic 
+
+The ${\chi^2}$-statistic is a different way to compute the lack of independence between the term $t$ and a particular class $c$. Let $n$ be the total number of documents, then:
+
+$${\chi}_c^2(t) = \frac{n \cdot p(t)^2 \cdot (p(c|t) - p(c))^2}{p(t) \cdot (1- p(t)) \cdot p(c) \cdot (1 - p(c))}$$
+
+As in the case of the mutual information, we can compute a global ${\chi^2}$ statistic from the class-specific values. One major advantage of the ${\chi^2}$-statistic is that it is a normalized value and we can test statistical significance using the ${\chi^2}$ distribution with one degree of freedom.
+
+## ${\chi}^2$-Statistic 
+
+- Test whether distributions of two categorical variables are independent of one another
+  - $H_0$: they are independent
+  - $H_1$: they are dependent 
+
+```{r, echo=FALSE, out.width="50%"}
+include_graphics("img/page 47_1.png")
+
+include_graphics("img/page 47_2.png")
+```
+
+## ${\chi}^2$-Statistic
+
+- Test whether distributions of two categorical variables are independent of one another
+  
+  - Degree of freedom = $(\#col-1) \times (\#row-1)$
+  
+  - Significance level: $\alpha$, i.e., $p\mbox{-}value<\alpha$ 
+  <br>
+<p><span style="color:red">&#8627;</span> Look into ${\chi}^2$ distribution table to find the threshold
+</p>
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 48.png")
+```
+
+## Feature scoring metrics
+
+- ${\chi}^2$ statistics
+
+  - Test whether distributions of two categorical variables are independent of one another
+    
+    - Degree of freedom = $(\#col-1) \times (\#row-1)$
+  
+    - Significance level: $\alpha$, i.e., $p\mbox{-}value<\alpha$ 
+
+    - For the features passing the threshold, rank them by descending order of ${\chi}^2$ values and choose the top $k$ features
+
+## Feature scoring metrics
+
+- ${\chi}^2$ statistics with multiple categories
+
+  - ${\chi}^2=\sum_c{p(c) {\chi}^2(c,t)}$
+    
+    - Expectation of ${\chi}^2$ over all the categories
+  <br>
+  <br>
+  - ${\chi}^2(t) = \underset{c}{max}\ {\chi}^2(c,t)$
+
+    - Strongest dependency between a category
+    
+## Other metrics
+
+- Many other metrics (Same trick as in $\chi^2$ statistics for multi-class cases)
+
+- Mutual information
+  
+  - Relatedness between term $t$ and class $c$
+  
+  $$PMI(t;c) = p(t,c)log(\frac{p(t,c)}{p(t)p(c)})$$
+
+  - Odds ratio
+
+    - Odds of term $t$ occurring with class $c$ normalized by that without $c$
+
+$$Odds(t;c) = \frac{p(t,c)}{1 - p(t,c)} \times \frac{1 - p(t,\bar{c})}{p(t,\bar{c})}$$
+
+# Classification Algorithms
+
+## How to classify this document? 
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 53.png")
+```
+
+## Text Classification: definition
+
+- Input:
+ 
+  - a document <span style="color:red">$d$</span>
+  
+  - a fixed set of classes  <span style="color:red">$C = \{c_1, c_2,…, c_J\}$</span>
+
+- Output: a predicted class <span style="color:red">$c \in C$</span>
+
+## Classification Methods: Hand-coded rules
+
+- Rules based on combinations of words or other features
+
+- Accuracy can be high: If rules carefully refined by expert
+
+- But building and maintaining these rules is expensive
+
+- Data/Domain specifics
+
+## Classification Methods: Supervised Machine Learning
+
+- Input:
+ 
+  - a document <span style="color:red">$d$</span>
+  
+  - a fixed set of classes  <span style="color:red">$C = \{c_1, c_2,…, c_J\}$</span>
+  
+  - A training set of <span style="color:red">$m$</span> hand-labeled documents <span style="color:red">$(d_1,c_1),\cdots,(d_m,c_m)$</span>
+
+- Output:
+
+  - a learned classifier <span style="color:red">$y:d \rightarrow c$</span>
+
+## Classification Methods Supervised Machine Learning
+- Any kind of classifier
+
+  - Naïve Bayes
+
+  - Logistic regression
+
+  - Support-vector machines
+  
+  - k-Nearest Neighbors
+  
+  - Neural Networks
+
+## Rocchio Classifier (Nearest Centroid)
+
+Each class is represented by its centroid, with test samples classified to the class with the nearest centroid. Using a training set of documents, the Rocchio algorithm builds a prototype vector, centroid, for each class. This prototype is an average vector over the training documents’ vectors that belong to a certain class. 
+
+$$\boldsymbol{\mu_c} = \frac{1}{|D_c|}\sum_{\mathbf{d} \in D_c}{\mathbf{d}}$$
+
+Where $D_c$ is the set of documents in the corpus that belongs to class $c$ and $d$ is the vector representation of document $d$.
+
+## Rocchio Classifier (Nearest Centroid)
+
+The predicted label of document d is the one with the smallest (Euclidean) distance between the document and the centroid.
+
+$$\hat{c} = \arg \min_c ||\boldsymbol{\mu_c} - \mathbf{d}||$$
+
+## K-Nearest Neighbor 
+
+- Given a test document d,. the KNN algorithm finds the k nearest neighbors of d among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. After sorting the score values, the algorithm assigns the candidate to the class with the highest score. 
+
+- The basic nearest neighbors classification uses uniform weights: that is, the value assigned to a query point is computed from a simple majority vote of the nearest neighbors. Under some circumstances, it is better to weight the neighbors such that nearer neighbors contribute more to the fit. 
+
+```{r, echo=FALSE, out.width="40%", fig.align='right'}
+include_graphics("img/page 60.png")
+```
+
+## Naïve Bayes
+
+- Simple (“naïve”) classification method based on Bayes rule
+
+- Relies on very simple representation of document
+
+  - Bag of words
+  
+## The bag of words representation
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 62.png")
+```
+
+## Bayes’ Rule Applied to Documents and Classes
+
+- For a document <span style="color:red">$d$</span> and a class <span style="color:red">$c$</span>
+
+$$P(c|d) = \frac{P(d|c)P(c)}{P(d)}$$
+
+## Naïve Bayes
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 64.png")
+```
+
+## Naïve Bayes
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 65.png")
+```
+
+## Multinomial Naïve Bayes Independence Assumptions
+
+$$P(x_1, x_2, \ldots, x_n|c)$$
+
+- <b>Bag of Words assumption</b>: Assume position doesn’t matter
+
+- <b>Conditional Independence</b>: Assume the feature probabilities $P(x_i|c_j)$ are independent given the class $c$.
+
+$$P(x_1, \ldots, x_n|c) = P(x_1 | c) \cdot P(x_2|c) \cdot P(x_3|c) \cdot \ldots \cdot P(x_n|c)$$
+\newpage 
+
+## Multinomial Naïve Bayes Classifier
+
+$$C_{MAP} = \underset{c \in C}{\operatorname{argmax}}P(x_1, x_2, \ldots,x_n|c)P(c)$$
+
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{x \in X}{P(x|c)}$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions}{P(x_i|c_i)}$$
+\newpage
+
+## Learning the Multinomial Naïve Bayes Model
+
+- First attempt: maximum likelihood estimates
+
+  - simply use the frequencies in the data
+
+$$\hat{P}(c_j) = \frac{doccount(C = c_j)}{N_{doc}}$$
+$$\hat{P}(w_i|c_j) = \frac{count(w_i, c_j)}{\sum_{w \in V}count(w, c_j)}$$
+\newpage
+
+## Parameter estimation
+
+$$\hat{P}(w_i|c_j) = \frac{count(w_i, c_j)}{\sum_{w \in V}count(w, c_j)}$$
+<p style="color:purple">fraction of times word $w_i$ appears among all words in documents of topic $c_j$
+</p>
+
+- Create mega-document for topic $j$ by concatenating all docs in this topic
+
+  - Use frequency of $w$ in mega-document
+
+\newpage
+
+## Problem with Maximum Likelihood
+
+What if we have seen no training documents with the word <b>fantastic</b>  and classified in the topic <b>positive (thumbs-up)</b>?
+
+$$\hat{P}(\mathrm{"fantastic"|positive}) = \frac{count(\mathrm{"fantastic", positive})}{\sum_{w \in V}{count(\mathrm{w,positive})}}$$
+Zero probabilities cannot be conditioned away, no matter the other evidence!
+
+$$C_{MAP} = \underset{c}{\operatorname{argmax}}\hat{P}(c)\prod_i{\hat{P}(x_i|c)}$$
+\newpage
+
+## Laplace (add-1) smoothing for Naïve Bayes
+$$
+\begin{align}
+\hat{P}(w_i|c) &= \frac{count(w_i,c)+1}{\sum_{w \in V}{(count(w,c)+1)}} \\
+&= \frac{count(w_i,c)+1}{(\sum_{w \in V}{count(w,c) + |V|})}
+\end{align}
+$$
+\newpage
+
+## Multinomial Naïve Bayes: Learning
+- <p style="color:purple">From training corpus, extract <em>Vocabulary</em></p>
+
+<div style="float:left;width:50%">
+- Calculate $P(c_j)$ terms
+  - For each $c_j$ in $C$ do
+  
+  docs $docs_j\leftarrow$ all docs with class = $c_j$
+  
+  $$P(c_j) \leftarrow \frac{|docs_j|}{|total\ \#\ documents|}$$
+</div>
+  
+<div style="float:right;width:50%">
+- <p style="color:purple">Calculate $P(w_k|c_j)$ terms</p>
+  - <p style="color:purple">$Text_j \leftarrow$ single doc containing all $docs_j$</p>
+  
+  - <p style="color:purple">For each word $w_k$ in <em>Vocabulary</em></p>
+  
+    <span style="color:purple">$n_k \leftarrow$ # of occurrences of $w_k$ in $Text_j$</span>
+    
+  $$P(w_k|c_j) \leftarrow \frac{n_k + \alpha}{n + \alpha|Vocabulary|}$$
+</div>
+
+\newpage
+
+## Laplace (add-1) smoothing: unknown words
+
+Add one extra word to the vocabulary, the “unknown word” $w_u$
+
+$$
+\begin{align}
+  \hat{P}(w_u|c) &= \frac{count(w_u,c)+1}{(\sum_{w \in V}{count(w,c)})+|V+1|} \\
+  &= \frac{1}{(\sum_{w \in V}{count(w,c)}) + |V+1|}
+\end{align}
+$$
+
+\newpage 
+
+## Support Vector Machines 
+
+- The main principle of SVM is to determine separators in the search space which can best separate the different classes. Thus SVM tries to make a decision boundary in such a way that the separation between the two classes is as wide as possible.
+
+```{r, echo=FALSE, out.width="50%", fig.align='right'}
+include_graphics("img/page 74.png")
+```
+
+\newpage
+
+## Support Vector Machines 
+
+- We note that it is not necessary to use a linear function for the SVM classifier. Rather, with the kernel trick, SVM can construct a nonlinear decision surface in the original feature space by mapping the data instances non-linearly to a new space where the classes can be separated linearly with a hyperplane. However, in practice, linear SVM is used most often because of their simplicity and ease of interpretability
+
+```{r, echo=FALSE, out.width="50%", fig.align='right'}
+include_graphics("img/page 75.png")
+```
+
+\newpage
+
+## Support Vector Machines 
+
+- As most of real world data are not fully linearly separable, we will allow some margin violation to occur. Margin violation means choosing an hyperplane, which can allow some data points to stay in either incorrect side of hyperplane and between margin and correct side of hyperplane. This type of classification is called soft margin classification.
+
+```{r, echo=FALSE, out.width="50%", fig.align='right'}
+include_graphics("img/page 76.png")
+```
+
+\newpage
+
+## SVM
+- SVM is quite robust to high dimensionality. I It has been noted in that text data is ideally suited for SVM classification because of the sparse high-dimensional nature of text, in which few features are irrelevant, but they tend to be correlated with one another and generally organized into linearly separable categories. I The SVM classifier has also been shown to be useful in large scale scenarios in which a large amount of unlabeled data and a small amount of labeled data is available
+
+\newpage
+
+## Decision Tree 
+
+- A decision tree is a hierarchical decomposition of the (training) data space, in which a condition on the feature value is used in order to divide the data space hierarchically. Algorithms for constructing decision trees usually work top-down, by choosing a variable at each step that best splits the set of items. Different algorithms use different metrics for measuring “best”, such as Gini impurity or information gain. These measure the homogeneity of the target variable within the subsets.
+
+\newpage
+
+## Decision Tree 
+
+- The division of the data space is performed recursively in the decision tree, until the leaf nodes contain a certain minimum number of records, or some conditions on class purity. For a given test instance, we apply the sequence of conditions at the nodes, in order to traverse a path of the tree in top-down fashion and determine the relevant leaf node. The majority (weighted) class label in the leaf node is used for the purposes of classification. 
+
+
+# Evaluation | Binary Classification
+
+## contingency table (confusion matrix)
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 81.png")
+```
+
+\newpage
+
+## Accuracy
+
+- What proportion of instances is correctly classified? <br>
+ 	<center>TP + TN / TP + FP + FN + TN </center>
+
+- Accuracy is a valid choice of evaluation for classification problems which are well balanced and not skewed. 
+
+- Let us say that our target class is very sparse. Do we want accuracy as a metric of our model performance? What if we are predicting if an asteroid will hit the earth? Just say “No” all the time. And you will be 99% accurate. The model can be reasonably accurate, but not at all valuable.
+
+\newpage
+
+## Precision and recall
+
+- <b>Precision</b>: % of selected items that are correct <br> <b>Recall</b>: % of correct items that are selected
+
+- Precision is a valid choice of evaluation metric when we want to be very sure of our prediction.
+
+- Recall is a valid choice of evaluation metric when we want to capture as many positives as possible.
+
+\newpage
+
+## A combined measure: F
+
+A combined measure that assesses the P/R tradeoff is F measure (weighted harmonic mean):
+
+$$F = \frac{1}{\alpha\frac{1}{P}+(1-\alpha)\frac{1}{R}}=\frac{(\beta^2+1)PR}{\beta^2P + R}$$
+
+The harmonic mean is a very conservative average; see 
+IIR § 8.3
+
+People usually use balanced F1 measure
+  -   i.e., with $\beta = 1$ (that is, $\alpha = 1/2$): $F = 2PR/(P+R)$
+  
+\newpage
+
+## AUC score
+
+- AUC provides an aggregate measure of performance across all possible classification thresholds. 
+
+- One way of interpreting AUC is as the probability that a classifier will rank a randomly chosen positive instance higher than a randomly chosen negative one (assuming ‘positive’ ranks higher than ‘negative’). AUC measures how well predictions are ranked, rather than their absolute values. 
+
+- AUC ranges in value from 0 (100% wrong), to 0.5 (random classifier), to 1 (100% correct). So, for example, if you as a marketer want to find a list of users who will respond to a marketing campaign, AUC is a good metric to use since the predictions ranked by probability is the order in which you will create a list of users to send the marketing campaign.
+
+# The Real World
+
+## The Real World
+- Gee, I’m building a text classifier for real, now!
+
+- What should I do?
+
+\newpage
+
+## No training data? <br> Manually written rules
+<p style="color:green">If (wheat or grain) and not (whole or bread) then Categorize as grain</p>
+
+- Need careful crafting 
+
+  - Human tuning on development data
+  
+  - Time-consuming: 2 days per class
+
+\newpage
+
+## Very little data?
+
+- Use Naïve Bayes
+  
+  - Naïve Bayes is a “high-bias” algorithm <span style="color:green; font-size:12px">(Ng and Jordan 2002 NIPS)</span>
+
+- Get more labeled data 
+  
+  - Find clever ways to get humans to label data for you
+
+- Try semi-supervised training methods:
+  
+  - Bootstrapping, EM over unlabeled documents, …
+
+\newpage
+
+## A reasonable amount of data?
+
+- Perfect for all the clever classifiers
+  
+  - SVM
+  
+  - Regularized Logistic Regression
+
+- You can even use user-interpretable decision trees
+  
+  - Users like to hack
+  
+  - Management likes quick fixes
+
+\newpage
+
+## A huge amount of data?
+
+- Can achieve high accuracy!
+
+- At a cost:
+
+  - SVMs (train time) or kNN (test time) can be too slow
+
+  - Regularized logistic regression can be somewhat better
+
+- So Naïve Bayes can come back into its own again!
+
+\newpage
+
+## Accuracy as a function of data size
+<div style="float:left; width:50%">
+- With enough data
+  
+  - Classifier may not matter
+</div>
+<div style="float:right; width:50%">
+```{r,echo=FALSE, out.width="80%"}
+include_graphics("img/page 92.png")
+```
+</div>
+
+\newpage
+
+## How to tweak performance
+- Domain-specific features and weights: very important in real performance
+
+- Sometimes need to collapse terms:
+  
+  - Part numbers, chemical formulas, …
+  
+  - But stemming generally doesn’t help
+
+- Upweighting: Counting a word as if it occurred twice:
+  - title words 
+
+  - first sentence of each paragraph (Murata, 1999)
+  
+  - In sentences that contain title words
+
+# Summary
+
+## Text mining and other terms {.smaller}
+- <p style="font-size:16px"><u><b>Corpus</b></u>: is a large and structured set of texts</p>
+- <p style="font-size:16px"><u><b>Stop words</b></u>:  words which are filtered out before or after processing of natural language data (text)</p>
+- <p style="font-size:16px"><u><b>Unstructured text</b></u>: information that either does not have a pre-defined data model or is not organized in a pre-defined manner.</p>
+- <p style="font-size:16px"><u><b>Tokenizing</b></u>: process of breaking a stream of text up into words, phrases, symbols, or other meaningful elements called tokens (see also lexical analysis)</p>
+- <p style="font-size:16px"><u><b>Natural language processing</b></u>: field of computer science, artificial intelligence, and linguistics concerned with the interactions between computers and human (natural) languages</p>
+- <p style="font-size:16px"><u><b>Term document (or document term) matrix</b></u>:  is a mathematical matrix that describes the frequency of terms that occur in a collection of documents</p>
+- <p style="font-size:16px"><u><b>Supervised learning</b></u>: is the machine learning task of inferring a function from labeled training data</p>
+- <p style="font-size:16px"><u><b>Unsupervised learning</b></u>: find hidden structure in unlabeled data</p>
+- <p style="font-size:16px"><u><b>Stemming</b></u>: the process for reducing inflected (or sometimes derived) words to their word stem, base or root form—generally a written word form</p>
+
+\newpage
+
+## Summary: what did we learn?
+
+- Vector space model & BOW
+
+- Feature Selection
+
+- Text Classification
+
+- Evaluation
+
+# Practical 3

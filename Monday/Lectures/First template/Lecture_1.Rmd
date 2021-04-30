@@ -1,0 +1,41 @@
+---
+title: "Introduction"
+author: "Ayoub Bagheri"
+date: "Data Science: Introduction to Text Mining with R"
+output:
+  ioslides_presentation:
+    logo: logo.png
+    smaller: yes
+    widescreen: no
+---
+
+# Today 
+
+## Course Materials
+
+Everything for today (and more) can be found at
+
+[www.ayoubbagheri.nl/r_tm](https://www.ayoubbagheri.nl/r_tm/)
+
+## This lecture
+
+-	Basic commands in R & Rstudio
+
+- Definitions of text mining
+
+-	Regular expressions
+
+## Packages we use in these slides
+```{r load_packages, message = FALSE, warning = FALSE}
+library(dplyr)     # for data manipulation
+library(plyr)      # for data manipulation
+library(magrittr)  # for pipes
+library(tidyverse) # for tidy data and pipes
+library(ggplot2)   # for visualization
+library(xlsx)      # for working with excel files
+library(qdap)      # provides parsing tools for preparing transcript data
+library(wordcloud) # to create pretty word clouds
+
+```
+
+
