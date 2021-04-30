@@ -13,9 +13,9 @@ This dashboard covers the course materials for the course [S41: Data Science: In
 
 ---
 
-<center>
-![](logo1.png){width=100%}
-</center>
+<!-- <center> -->
+<!-- ![](logo1.png){width=100%} -->
+<!-- </center> -->
 
 ---
 ADD COURSE INFO
@@ -34,6 +34,12 @@ Instructors:
 * [Ayoub Bagheri](https://ayoubbagheri.nl/)\
 * [José de Kruif](https://www.uu.nl/medewerkers/JdeKruif)\
 + [Dong Nguyen](https://dongnguyen.nl/)\
+
+
+Assistants:
+
+- [Qixiang Fang](https://www.uu.nl/medewerkers/QFang)\
++ [José de Kruif](https://www.uu.nl/medewerkers/JdeKruif)\
 
 ---
 
@@ -104,10 +110,10 @@ Add info
 
 Here you will find the lecture slides as well as the practical for Monday.
 
-- [Lecture 1]()
-- [Impractical 1](monday/Practicals/Impractical_1.html)
-- [Practical 1](monday/Practicals/Practical_1.html) 
-- [Practical 1 (Rmd)](monday/Practicals/Practical_1.Rmd) 
+- [Lecture 1](Monday/Lectures/Lecture_1.html)
+- [Impractical 1](Monday/Practicals/Impractical_1.html)
+- [Practical 1](Monday/Practicals/Practical_1.html) 
+- [Practical 1 (Rmd)](Monday/Practicals/Practical_1.Rmd) 
 
 - [Lecture 2]()
 - [Impractical 2]()
