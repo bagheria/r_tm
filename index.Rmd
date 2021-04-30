@@ -132,11 +132,11 @@ Add additional info/references
 
 Here you will find the lecture slides as well as the practical for Tuesday.
 
-- [Lecture 3]()
+- [Lecture 3](Tuesday/Lectures/Lecture 3/Lecture_3.html)
 - [Impractical 3]()
 - [Practical 3]() 
 
-- [Lecture 4]()
+- [Lecture 4](Tuesday/Lectures/Lecture 4/Lecture_4.html)
 - [Impractical 4]()
 - [Practical 4]() 
 
@@ -154,7 +154,7 @@ Add additional info/references
 
 Here you will find the lecture slides as well as the practical for Wednesday.
 
-- [Lecture 5]()
+- [Lecture 5](Wednesday/Lectures/Lecture 5/Lecture_5.html)
 - [Impractical 5]()
 - [Practical 5]() 
 
