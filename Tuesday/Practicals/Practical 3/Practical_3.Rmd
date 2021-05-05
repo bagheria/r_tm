@@ -1,0 +1,346 @@
+---
+title: "Text as features: Text classification"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_3.html
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
+
+In this practical we are going to use the following packages:
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(caret)
+library(tm)
+
+```
+
+---
+
+# Document-term matrix
+
+---
+
+---
+
+## A simple pipeline
+
+--- 
+
+1. **In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:**two medical sentences....
+- 'Cats like to chase mice.', 
+- 'Dogs like to eat big bones.'
+
+|     **Use these sentences as our training set and create a document term matrix (dtm). Hint: here we want to use functions from the tm package. To create a dtm first you need to create a vector space model.**
+
+---
+
+```{r 1, include = TRUE}
+data <- c('Cats like to chase mice.', 'Dogs like to eat big bones.')
+corpus <- VCorpus(VectorSource(data))
+dtm <- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
+
+```
+
+---
+
+2. **Inspect the dtm.**
+
+---
+
+
+```{r 2, include = TRUE}
+# inspect(dtm[1:10, 1:5])
+
+```
+
+---
+
+3. **Convert the dtm object to a dataframe and view the content again. Also add a column for an outcome variable which has the value of 0 and 1 for our data, respectively.**
+
+---
+
+```{r 3, include = TRUE}
+train <- as.matrix(dtm)
+train <- cbind(train, c(0, 1))
+colnames(train)[ncol(train)] <- 'y'
+train <- as.data.frame(train)
+train$y <- as.factor(train$y)
+
+```
+
+
+---
+
+4. **Use the train function with method = 'bayesglm' from the caret package and fit a model on the dtm object.**
+
+---
+
+```{r 4, include = TRUE, warning = FALSE}
+fit <- train(y ~ ., data = train, method = 'bayesglm')
+
+```
+
+---
+
+5. **Use the fitted model to predict the outcome on the training data.**
+
+---
+
+```{r 5, include = TRUE, warning = FALSE}
+predict(fit)
+
+```
+
+---
+
+6. **Use sentence "", as your test data. What is the prediction of your model?**
+
+---
+
+```{r 6, include = TRUE}
+data2 <- c('Bats eat bugs.')
+corpus <- VCorpus(VectorSource(data2))
+dtm <- DocumentTermMatrix(corpus, control = list(dictionary = Terms(dtm), removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
+test <- as.matrix(dtm)
+
+# Check accuracy on test.
+predict(fit, newdata = test)
+
+```
+
+---
+
+7. **Now we want to use a tfidf weighting for creating our dtm object. In addition we want to remove punctuations, stopwords, numbers and apply stemming. What is the difference in this new dtm? Repeat the analysis in Q.3 to Q.7 with the new object.**
+
+---
+
+```{r 7, include = TRUE, warning = FALSE}
+
+```
+
+---
+
+# Compare architectures
+
+---
+
+## Feature selection and classification: Naïve Bayes versus SVM
+
+---
+
+8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
+
+---
+
+```{r 8, include = TRUE, warning = FALSE}
+bbc <- load("data/Dataset.rda")
+View(df_final)
+table(df_final$Category)
+corpus <- VCorpus(VectorSource(df_final$Content))
+dtm <- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
+train <- as.matrix(dtm)
+train <- cbind(train, df_final$Category)
+colnames(train)[ncol(train)] <- 'y'
+train <- as.data.frame(train)
+train$y <- as.factor(train$y)
+fit <- train(y ~ ., data = train, method = 'bayesglm')
+
+```
+
+
+---
+
+9. **Use the `freq_terms` function from the `qdap` package and find the 30 top terms in each set of positive and negative reviews in `imdb_500`.**
+
+---
+
+```{r 9, include = TRUE, warning = FALSE}
+
+```
+
+
+---
+
+10. **Using `ggplot`, plot a barchart for each of the freqent terms dataframes.**
+
+---
+
+```{r 10, include = TRUE, warning = FALSE}
+
+
+
+```
+
+---
+
+11. **Use the `readLines` function to read data from the 'computer.txt' file.**
+
+---
+
+```{r 11, include = TRUE, warning = FALSE}
+
+```
+
+---
+
+12. **Convert the data to a dataframe.**
+
+---
+
+```{r 12, include = TRUE, warning = FALSE}
+
+```
+
+
+---
+
+13. **Use the `head` and `tail` functions to take a look at the dataset.**
+
+---
+
+```{r 13, include = TRUE}
+
+```
+
+---
+
+14. **Except `computer_531`, `imdb_500`, and `blog_gender_1000` remove the other files from the RStudio environment**
+
+---
+
+```{r 14, include = TRUE}
+
+
+```
+
+---
+
+15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your seach.**
+
+---
+
+
+```{r 15, include = TRUE}
+
+```
+
+---
+
+16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
+
+---
+
+```{r 16, include = TRUE}
+
+```
+
+
+`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
+
+---
+
+17. **Use the `regexpr` function to check if there is a fully campitalized word in each of the first 20 blogs in the `blog_gender_1000` data.**
+
+---
+
+```{r 17, include = TRUE}
+
+
+```
+
+The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string. 
+
+The `str_extract` function from `stringr` is also a useful function for this purpose:
+
+```{r str_extract, include = TRUE}
+
+
+```
+
+---
+
+18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
+
+---
+
+```{r 18, include = TRUE}
+
+
+```
+
+---
+
+19. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
+
+---
+
+```{r 19, include = TRUE}
+
+
+```
+
+---
+
+20. **Add a new column to `computer_531` and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. **
+
+---
+
+```{r 20, include = TRUE}
+
+
+```
+
+---
+
+21. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
+
+---
+
+```{r 21, include = TRUE}
+
+
+```
+
+
+Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspects.
+
+---
+
+22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
+
+---
+
+```{r 22, include = TRUE}
+
+
+```
+
+---
+
+# Summary
+
+---
+
+
+
+---
+
+End of Practical
+
+---
