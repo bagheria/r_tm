@@ -372,7 +372,7 @@ gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
 
 ---
 
-20. **Add a new column to `computer_531` and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. **
+20. **Add two new columns to `computer_531` and name them aspect_sentiment and review. Fill the `aspect_sentiment` column for the dataframe with the command you found in the previous question. In the `review` column, only keep the review text for each line in the dataframe.**
 
 ---
 
@@ -380,11 +380,13 @@ gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
 computer_531$aspect_sentiment <- gsub("(.?)(##.*)", "\\1", computer_531[,])
 head(computer_531)
 
+## keep only reviews:
+
 ```
 
 ---
 
-21. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
+21. **Now remove the sentiment scores from aspects. Add only the aspect to another column to `computer_531` and name it `aspects`.**
 
 ---
 
