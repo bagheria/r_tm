@@ -1,0 +1,353 @@
+---
+title: "Text Clustering and Topic Modeling"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_5.html
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+Welcome to the fifth practical of the course "Introduction to Text Mining with R". In this practical, we will apply a clustering and a topic modeling approach on news articles and cluster them into different categories. 
+
+In this practical we are going to use the following packages:
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(tm)
+library(tidytext)
+library(dplyr)
+
+```
+
+---
+
+# Dictionary-based sentiment analysis
+
+---
+
+---
+
+## Read data
+
+---
+
+1. **The dataset that we are going to use is the BBC dataset from practical 3. The BBC dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
+
+---
+
+```{r 1, include = TRUE}
+taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
+
+```
+
+---
+
+2. **First we must preprocess the corpus. Create a document-term matrix from the `news` column of the dataframe. Complete the following preprocessing steps:**
+- convert to lower
+- remove stop words
+- remove numbers
+- remove punctuation
+- use tfidf weighting
+- convert dtm to a dataframe
+
+---
+
+
+```{r 2, include = TRUE}
+docs <- Corpus(VectorSource(taylor_swift_lyrics$Lyrics))
+
+dtm <- DocumentTermMatrix(docs,
+           control = list(tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE,
+                          stopwords = TRUE
+                         ))
+
+dtm <- as.data.frame(as.matrix(dtm))
+
+```
+
+---
+
+3. **Now we can implement k-means clustering, starting out with three centers. What does the output look like?**
+
+---
+
+```{r 3, include = TRUE}
+#inspect(dtm)
+employment_clust <- kmeans(select(employment_demo, -occupation), centers = 3)
+summary(employment_clust)
+
+library(broom)
+tidy(employment_clust)
+
+```
+
+The original format of the output isn’t as practical to deal with in many circumstances, so we can load the broom package (part of tidymodels) and use verbs like tidy(). This will give us the centers of the clusters we found:
+
+If we augment() the clustering results with our original data, we can plot any of the dimensions of our space, such as total employed vs. proportion who are Black. We can see here that there are really separable clusters but instead a smooth, continuous distribution from low to high along both dimensions. Switch out another dimension like asian to see that projection of the space.
+
+```{r}
+augment(employment_clust, employment_demo) %>%
+  ggplot(aes(total, black_or_african_american, color = .cluster)) +
+  geom_point()
+
+```
+
+
+---
+
+## Clustering methods
+## Choosing k
+
+---
+
+4. ** **
+
+We used k = 3 but how do we know that’s right? There are lots of complicated or “more art than science” ways of choosing k. One way is to look at the total within-cluster sum of squares and see if it stops dropping off so quickly at some value for k. We can get that from another verb from broom, glance(); let’s try lots of values for k and see what happens to the total sum of squares.
+
+
+
+---
+
+```{r 4, include = TRUE, warning = FALSE}
+kclusts <-
+  tibble(k = 1:9) %>%
+  mutate(
+    kclust = map(k, ~ kmeans(select(employment_demo, -occupation), .x)),
+    glanced = map(kclust, glance),
+  )
+
+kclusts %>%
+  unnest(cols = c(glanced)) %>%
+  ggplot(aes(k, tot.withinss)) +
+  geom_line(alpha = 0.5, size = 1.2, color = "midnightblue") +
+  geom_point(size = 2, color = "midnightblue")
+
+
+```
+
+---
+
+5. **Fit k-means again with the optimal k.**
+
+---
+
+```{r 5, include = TRUE, warning = FALSE}
+final_clust <- kmeans(select(employment_demo, -occupation), centers = 5)
+
+```
+
+---
+
+---
+
+##
+
+---
+
+6. **Visualise the results**
+
+To visualize this final result, let’s use plotly and add the occupation name to the hover so we can mouse around and see which occupations are more similar.
+---
+
+```{r 6, include = TRUE}
+library(plotly)
+
+p <- augment(final_clust, employment_demo) %>%
+  ggplot(aes(total, women, color = .cluster, name = occupation)) +
+  geom_point()
+
+ggplotly(p, height = 500)
+
+```
+
+---
+
+7. **To calculate a score for each lyric, multiply your dtm object by the scoring dataframe.**
+
+---
+
+```{r 7, include = TRUE, warning = FALSE}
+
+# calculate documents scores with matrix algebra! 
+scores <- as.matrix(dtm) %*% words$score
+
+```
+
+---
+
+8. **Add the calculated scores for each lyric to the original `taylor_swift_lyrics` dataframe.**
+
+---
+
+```{r 8, include = TRUE, warning = FALSE}
+taylor_swift_lyrics$sentiment <- scores
+head(taylor_swift_lyrics)
+
+```
+
+
+---
+
+9. **Using the code you wrote above, we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a data frame with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+
+---
+
+```{r 9, include = TRUE, warning = FALSE}
+sentiment_score <- function(texts, sentiment_dict){
+  # preprocess texts
+  docs <- Corpus(VectorSource(texts))
+  dtm <- DocumentTermMatrix(docs,
+           control = list(stopwords = T,
+                          tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE))
+  dtm <- as.data.frame(as.matrix(dtm))
+  
+  # get all the words in dtm and put it in a dataframe
+  words = data.frame(word = colnames(dtm))
+
+  # get their sentiment scores
+  words <- merge(words, sentiment_dict, all.x = T)
+
+  # replace NAs with 0s
+  words$score[is.na(words$score)] <- 0
+  
+  # calculate documents scores with matrix algebra!
+  scores <- as.matrix(dtm) %*% words$score
+  
+  return(scores)
+  
+}
+
+```
+
+```{r 91, include = TRUE, warning = FALSE}
+sentiment_score(taylor_swift_lyrics$lyrics, afinn_sentiments)
+
+```
+
+---
+
+10. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is.**
+
+---
+
+```{r 10, include = TRUE, warning = FALSE}
+# concatenate to make albums
+albums <- taylor_swift_lyrics %>% group_by(Album) %>%
+  summarise(lyrics = paste0(Lyrics, collapse = ";"))
+
+# add sentiments
+albums$sentiment <- sentiment_score(albums$lyrics, bing_sentiments)
+
+# concatenate to make albums
+albums <- taylor_swift_lyrics %>% group_by(Album) %>%
+  summarise(lyrics = paste0(Lyrics, collapse = ";"))
+
+# add sentiments
+albums$sentiment <- sentiment_score(albums$lyrics, afinn_sentiments)
+
+
+# a ggplot
+
+```
+
+---
+
+# Sentiment analysis of product reviews
+
+---
+
+11. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
+
+---
+
+```{r 11, include = TRUE, warning = FALSE}
+
+```
+
+---
+
+12. **Apply the `sentiment_score` function on the reviews in the dataframe with both the bing and afinn dictionaries.**
+
+---
+
+```{r 12, include = TRUE, warning = FALSE}
+
+```
+
+
+---
+
+13. **Create a confusion matrix. Accuracy, precision, recall and F1 measures.**
+
+---
+
+```{r 13, include = TRUE}
+
+```
+
+---
+
+14. **From the `neuralnet` package, we want to apply a multi-layer perceptron to this dataset and train a model for prediction of the sentiments.**
+
+---
+
+```{r 14, include = TRUE}
+
+
+```
+
+---
+
+15. **Compare nn1, bing and affine ...**
+
+---
+
+
+```{r 15, include = TRUE}
+
+```
+
+---
+
+16. **Visualise the results**
+
+---
+
+```{r 16, include = TRUE}
+
+```
+
+
+---
+
+
+
+---
+
+# Summary
+
+---
+
+
+
+---
+
+End of Practical
+
+---
