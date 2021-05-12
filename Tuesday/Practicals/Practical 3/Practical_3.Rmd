@@ -148,18 +148,39 @@ predict(fit, newdata = test)
 
 ---
 
+The dataset used in this project is the BBC News Dataset. The raw dataset can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
+It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
+
+- Business
+- Entertainment
+- Politics
+- Sport
+- Tech
+
 ```{r 8, include = TRUE, warning = FALSE}
-bbc <- load("data/Dataset.rda")
+load("data/news_dataset.rda")
 View(df_final)
 table(df_final$Category)
-corpus <- VCorpus(VectorSource(df_final$Content))
+df_sample <- sample_n(df_final, 500)
+# df_sample <- df_final %>% group_by(Category) %>% sample_n(size = 100)
+table(df_sample$Category)
+
+corpus <- VCorpus(VectorSource(df_sample$Content))
 dtm <- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
 train <- as.matrix(dtm)
-train <- cbind(train, df_final$Category)
+train <- cbind(train, df_sample$Category)
 colnames(train)[ncol(train)] <- 'y'
 train <- as.data.frame(train)
 train$y <- as.factor(train$y)
-fit <- train(y ~ ., data = train, method = 'bayesglm')
+fit <- train(y ~ ., data = train, method = 'svmLinearWeights2')
+
+library(e1071)
+smodel <- svm(y ~ ., data=train, kernel = 'linear')
+summary(smodel)
+table(predict(smodel), train$y)
+
+# feature selection
+# high-impact words
 
 ```
 
