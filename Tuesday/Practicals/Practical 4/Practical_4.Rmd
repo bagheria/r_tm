@@ -1,0 +1,333 @@
+---
+title: "Sentiment analysis"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_4.html
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+Welcome to the fourth practical of the course "Introduction to Text Mining with R". In this practical, we will analyze sentiments in a text data set, first by using dictionaries and then we will classify sentiment in text reviews comparing a dictionary-based method and a neural network model.
+
+In this practical we are going to use the following packages:
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(tm)
+library(tidytext)
+library(dplyr)
+
+```
+
+---
+
+# Dictionary-based sentiment analysis
+
+---
+
+---
+
+## Read data
+
+---
+
+1. **Read the "taylor_swift.csv" dataset from the data folder.**
+
+---
+
+```{r 1, include = TRUE}
+taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
+
+```
+
+---
+
+2. **First we must preprocess the corpus. Create a document-term matrix from the `lyrics` column of the `ts` data frame. Complete the following preprocessing steps:**
+- convert to lower
+- remove stop words
+- remove numbers
+- remove punctuation.
+
+---
+
+
+```{r 2, include = TRUE}
+docs <- Corpus(VectorSource(taylor_swift_lyrics$Lyrics))
+
+dtm <- DocumentTermMatrix(docs,
+           control = list(tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE,
+                          stopwords = TRUE
+                         ))
+
+```
+
+---
+
+3. **Inspect the dtm object and convert it to a dataframe.**
+
+---
+
+```{r 3, include = TRUE}
+#inspect(dtm)
+dtm <- as.data.frame(as.matrix(dtm))
+
+```
+
+
+---
+
+## Sentiment dictionaries
+
+---
+
+4. **We're going to use sentiment dictionaries from the `tidytext` package. Using the `get_sentiments` function, load the "bing" and "afinn" dictionaries and store them in two objects called `bing_sentiments` and `afinn_sentiments`. **
+
+The tidytext package contains 4 general purpose lexicons in the sentiments dataset.
+
+AFINN - listing of english words rated for valence between -5 and +5
+bing - listing of positive and negative sentiment
+nrc - list of English words and their associations with 8 emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and 2 sentiments (negative and positive); binary
+loughran - list of sentiment words for accounting and finance by category (Negative, Positive, Uncertainty, Litigious, Strong Modal, Weak Modal, Constraining)
+
+---
+
+```{r 4, include = TRUE, warning = FALSE}
+# also “nrc”, “loughran”
+
+bing_sentiments <- get_sentiments("bing")
+afinn_sentiments <- get_sentiments("afinn")
+
+head(bing_sentiments)
+head(afinn_sentiments)
+
+```
+
+---
+
+5. **The afinn_sentiments has the rating for valence between -5 and +5, while the bing_sentiments contains listing of positive and negative sentiment. Add a column to `bing_sentiments` called `score`. This column should hold a "1" for positive words and "-1" for negative words.**
+
+---
+
+```{r 5, include = TRUE, warning = FALSE}
+bing_sentiments$score <- ifelse(bing_sentiments$sentiment=="positive", 1, -1)
+
+```
+
+---
+
+---
+
+## Calculate sentiment score for each lyric
+
+---
+
+6. **Create a dataframe that holds all the words in the dtm object along with their sentiment score.**
+
+---
+
+```{r 6, include = TRUE}
+# get all the words in our dtm and put it in a dataframe
+words = data.frame(word = colnames(dtm))
+head(words)
+
+# get their sentiment scores
+words <- merge(words, bing_sentiments, all.x = T)
+head(words)
+
+# replace NAs with 0s
+words$score[is.na(words$score)] <- 0
+head(words)
+
+```
+
+---
+
+7. **To calculate a score for each lyric, multiply your dtm object by the scoring dataframe.**
+
+---
+
+```{r 7, include = TRUE, warning = FALSE}
+
+# calculate documents scores with matrix algebra! 
+scores <- as.matrix(dtm) %*% words$score
+
+```
+
+---
+
+8. **Add the calculated scores for each lyric to the original `taylor_swift_lyrics` dataframe.**
+
+---
+
+```{r 8, include = TRUE, warning = FALSE}
+taylor_swift_lyrics$sentiment <- scores
+head(taylor_swift_lyrics)
+
+```
+
+
+---
+
+9. **Using the code you wrote above, we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a data frame with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+
+---
+
+```{r 9, include = TRUE, warning = FALSE}
+sentiment_score <- function(texts, sentiment_dict){
+  # preprocess texts
+  docs <- Corpus(VectorSource(texts))
+  dtm <- DocumentTermMatrix(docs,
+           control = list(stopwords = T,
+                          tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE))
+  dtm <- as.data.frame(as.matrix(dtm))
+  
+  # get all the words in dtm and put it in a dataframe
+  words = data.frame(word = colnames(dtm))
+
+  # get their sentiment scores
+  words <- merge(words, sentiment_dict, all.x = T)
+
+  # replace NAs with 0s
+  words$score[is.na(words$score)] <- 0
+  
+  # calculate documents scores with matrix algebra!
+  scores <- as.matrix(dtm) %*% words$score
+  
+  return(scores)
+  
+}
+
+```
+
+```{r 91, include = TRUE, warning = FALSE}
+sentiment_score(taylor_swift_lyrics$lyrics, afinn_sentiments)
+
+```
+
+---
+
+10. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is.**
+
+---
+
+```{r 10, include = TRUE, warning = FALSE}
+# concatenate to make albums
+albums <- taylor_swift_lyrics %>% group_by(Album) %>%
+  summarise(lyrics = paste0(Lyrics, collapse = ";"))
+
+# add sentiments
+albums$sentiment <- sentiment_score(albums$lyrics, bing_sentiments)
+
+# concatenate to make albums
+albums <- taylor_swift_lyrics %>% group_by(Album) %>%
+  summarise(lyrics = paste0(Lyrics, collapse = ";"))
+
+# add sentiments
+albums$sentiment <- sentiment_score(albums$lyrics, afinn_sentiments)
+
+
+# a ggplot
+
+```
+
+---
+
+# Sentiment analysis of product reviews
+
+---
+
+11. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
+
+---
+
+```{r 11, include = TRUE, warning = FALSE}
+
+```
+
+---
+
+12. **Apply the `sentiment_score` function on the reviews in the dataframe with both the bing and afinn dictionaries.**
+
+---
+
+```{r 12, include = TRUE, warning = FALSE}
+
+```
+
+
+---
+
+13. **Create a confusion matrix. Accuracy, precision, recall and F1 measures.**
+
+---
+
+```{r 13, include = TRUE}
+
+```
+
+---
+
+14. **From the `neuralnet` package, we want to apply a multi-layer perceptron to this dataset and train a model for prediction of the sentiments.**
+
+---
+
+```{r 14, include = TRUE}
+
+
+```
+
+---
+
+15. **Compare nn1, bing and affine ...**
+
+---
+
+
+```{r 15, include = TRUE}
+
+```
+
+---
+
+16. **Visualise the results**
+
+---
+
+```{r 16, include = TRUE}
+
+```
+
+
+---
+
+
+
+---
+
+# Summary
+
+---
+
+
+
+---
+
+End of Practical
+
+---
