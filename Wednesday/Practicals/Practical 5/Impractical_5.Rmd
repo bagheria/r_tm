@@ -1,0 +1,107 @@
+---
+title: "Text Clustering and Topic Modeling"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_5.html
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+Welcome to the fifth practical of the course "Introduction to Text Mining with R". In this practical, we will apply a clustering and a topic modeling approach on news articles and cluster them into different categories. 
+
+In this practical we are going to use the following packages:
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(tm)
+library(tidytext)
+library(dplyr)
+
+```
+
+---
+
+# 
+
+---
+
+---
+
+## Read data
+
+---
+
+1. **The dataset that we are going to use is the BBC dataset from practical 3. The BBC dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
+
+---
+
+2. **First we must preprocess the corpus. Create a document-term matrix from the `news` column of the dataframe. Complete the following preprocessing steps:**
+- convert to lower
+- remove stop words
+- remove numbers
+- remove punctuation
+- use tfidf weighting
+- convert dtm to a dataframe
+
+---
+
+3. **Now we can implement k-means clustering, starting out with three centers. What does the output look like?**
+
+---
+
+## Clustering methods
+## Choosing k
+
+---
+
+4. ** **
+
+We used k = 3 but how do we know that’s right? There are lots of complicated or “more art than science” ways of choosing k. One way is to look at the total within-cluster sum of squares and see if it stops dropping off so quickly at some value for k. We can get that from another verb from broom, glance(); let’s try lots of values for k and see what happens to the total sum of squares.
+
+---
+
+5. **Fit k-means again with the optimal k.**
+
+---
+
+
+---
+
+16. **Visualise the results**
+
+---
+
+```{r 16, include = TRUE}
+
+```
+
+
+---
+
+
+
+---
+
+# Summary
+
+---
+
+
+
+---
+
+End of Practical
+
+---
