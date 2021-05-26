@@ -132,12 +132,12 @@ Add additional info/references
 Here you will find the lecture slides as well as the practical for Tuesday.
 
 - [Lecture 3](Tuesday/Lectures/Lecture 3/Lecture_3.html)
-- [Impractical 3]()
-- [Practical 3]() 
+- [Impractical 3](Tuesday/Practicals/Practical 3/Impractical_3.html)
+- [Practical 3](Tuesday/Practicals/Practical 3/Practical_3.html) 
 
 - [Lecture 4](Tuesday/Lectures/Lecture 4/Lecture_4.html)
-- [Impractical 4]()
-- [Practical 4]() 
+- [Impractical 4](Tuesday/Practicals/Practical 4/Impractical_4.html)
+- [Practical 4](Tuesday/Practicals/Practical 4/Practical_4.html) 
 
 
 ## Column 2
@@ -154,8 +154,8 @@ Add additional info/references
 Here you will find the lecture slides as well as the practical for Wednesday.
 
 - [Lecture 5](Wednesday/Lectures/Lecture 5/Lecture_5.html)
-- [Impractical 5]()
-- [Practical 5]() 
+- [Impractical 5](Wednesday/Practicals/Practical 5/Impractical_5.html)
+- [Practical 5](Wednesday/Practicals/Practical 5/Practical_5.html) 
 
 - [Lecture 6]()
 - [Impractical 6]()
