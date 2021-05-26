@@ -33,7 +33,7 @@ library(dplyr)
 
 ---
 
-# Dictionary-based sentiment analysis
+# 
 
 ---
 
@@ -268,7 +268,7 @@ albums$sentiment <- sentiment_score(albums$lyrics, afinn_sentiments)
 
 ---
 
-# Sentiment analysis of product reviews
+#
 
 ---
 
