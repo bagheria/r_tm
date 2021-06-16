@@ -35,10 +35,11 @@ library(ggplot2)   # for visualization
 library(xlsx)      # for working with excel files
 library(qdap)      # provides parsing tools for preparing transcript data
 library(wordcloud) # to create pretty word clouds
+library(stringr)
 
 ```
 
-Before starting the exercises, you need to set your working directory to your Practicals folder. To this end, you can either create a project in RStudio and move the Rmd and data files to the project forlder, or you can use the following line instead of creating a new project:
+Before starting the exercises, you need to set your working directory to your Practicals folder (or create a project folder). To this end, you can either create a project in RStudio and move the Rmd and data files to the project forlder, or you can use the following line instead of creating a new project:
 
 ```{r, message = FALSE, warning = FALSE}
 # setwd("drivename:/folder1/folder2/r_tm/monday/Practicals/")
@@ -70,8 +71,8 @@ blog_gender_data <- read.xlsx("blog-gender-dataset.xlsx", 1)
 
 To learn more about the application of a function or feature in R, you can use one of the two following help commands:
 ```{r help, message = FALSE, warning = FALSE}
-help(your_function_name)
-?your_function_name
+# help(your_function_name)
+# ?your_function_name
 
 ```
 
@@ -392,7 +393,7 @@ head(computer_531)
 
 ```{r 21, include = TRUE}
 
-computer_531$aspects  <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment)
+computer_531$aspects <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment)
 head(computer_531)
 
 # computer_531 <- computer_531 %>% 
@@ -415,7 +416,31 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 ---
 
 ```{r 22, include = TRUE}
+computer_531 <- computer_531 %>%
+  mutate(sentiment_score = 0)
 
+for(i in 1:nrow(computer_531)){ 
+  score_list <- str_extract_all(computer_531[i,]$aspect_sentiment, "-?\\d+")
+    if(length(score_list[[1]]) != 0){
+    computer_531[i,]$sentiment_score <- sum(as.numeric(as.character(unlist(score_list)[[1]])))
+  }
+}
+```
+
+```{r 23, include = TRUE}
+computer_531 <- computer_531 %>%
+  mutate(sentiment = "neutral")
+
+for(i in 1:nrow(computer_531)){ 
+  if (as.numeric(computer_531[i,]$sentiment_score) < 0) {
+      computer_531[i,]$sentiment <- "negative"
+    }
+    else if(as.numeric(computer_531[i,]$sentiment_score) > 0) {
+      computer_531[i,]$sentiment <- "positive"
+    }
+}
+
+head(computer_531)
 
 ```
 
