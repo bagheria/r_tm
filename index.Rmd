@@ -62,6 +62,12 @@ Participants should have a basic knowledge of scripting in R.
 ### Certificate
 Participants will receive a certificate at the end of the course.
 
+### Additional references
+1- Jurafsky, D., Martin, J.H. (2020). Speech and language processing, third edition. Find online chapters [here](https://web.stanford.edu/~jurafsky/slp3/)
+
+
+2- Eisenstein, J. (2018). Natural Language Processing. Find online chapters [here](https://github.com/jacobeisenstein/gt-nlp-class/blob/master/notes/eisenstein-nlp-notes.pdf)
+
 
 ## Column 2
 
@@ -84,19 +90,99 @@ Participants will receive a certificate at the end of the course.
 
 ## Column 1
 
-### Preparing your machine for the course
+### Preparing yourself and your machine for the course
 
-Add machine preparation
+If you have no experience with `R` or another programming language, you are going to need to catch up before starting the course and during the course.
+
+Some good sources are:
+
+  - The first two chapters of [introduction to R on datacamp](https://www.datacamp.com/courses/free-introduction-to-r)
+  - Install `R`, play around, and [read the workflow basics chapter in Hadley Wickham's R for Data Science](http://r4ds.had.co.nz/workflow-basics.html#workflow-basics)
+  - Interactive R course: install `R` as in the previous point and in the console type the following lines one by one
+```r
+install.packages("swirl")
+library(swirl)
+swirl()
+```
+and follow the guide to run the `R Programming: The basics of programming in R` interactive course.
 
 ### System requirements
 
-Add system requirements
+Bring a laptop computer to the course and make sure that you have full write access and administrator rights to the machine. We will explore programming and compiling in this course. This means that you need full access to your machine. Some corporate laptops come with limited access for their users, we therefore advice you to bring a personal laptop computer, if you have one. 
+
+### **1. Install `R`**
+`R` can be obtained [here](https://cran.r-project.org). We won't use `R` directly in the course, but rather call `R` through `RStudio`. Therefore it needs to be installed. 
+
+### **2. Install `RStudio` Desktop**
+
+Rstudio is an Integrated Development Environment (IDE). It can be obtained as stand-alone software [here](https://www.rstudio.com/products/rstudio/download/#download). The free and open source `RStudio Desktop` version is sufficient.
+
+### **3. Start RStudio and install the following packages. **
+
+Execute the following lines of code in the console window:
+
+```{r eval=FALSE, echo = TRUE}
+install.packages(c("ggplot2", "tidyverse", "dplyr", "magrittr", "micemd", "jomo", "pan", 
+                 "lme4", "knitr", "rmarkdown", "plotly", "ggplot2", "shiny", 
+                 "devtools", "boot", "class", "car", "MASS", "ggplot2movies", 
+                 "ISLR", "DAAG", "mice"), 
+                 dependencies = TRUE)
+```
+
+
+If you are not sure where to execute code, use the following figure to identify the console:
+
+<center>
+  <img src="console.png" alt="HTML5 Icon" width = 70%>
+</center>
+
+Just copy and paste the installation command and press the return key. When asked 
+
+```{r eval = FALSE, echo = TRUE}
+Do you want to install from sources the package which needs 
+compilation? (Yes/no/cancel)
+```
+
+type `Yes` in the console and press the return key.
+
+### Required `R` knowledge
+
+The following is the minimum of what you should know about `R` before starting with the first practical
+
+- What is `R` (a fancy calculator) and what is an `.R` file (a recipe for calculations)
+- What is an `R` package (a set of functions you can download to use in your own code)
+- How to run `R` code in `RStudio`
+- What is a variable `x <- 10`
+- What is a function `y <- fun(x = 10)`
+- Understand what the following statements do (tip: you may run it in `R` line by line)
+
+```r
+y <- "Let him go!"
+x <- "Bismillah!"
+z <- paste(x, "No, we will not let you go.", y)
+rep(z, 3)
+1:10
+sample(1:20, 4)
+sample(1:20, 40, replace = TRUE)
+z <- c(1, 2, 3, 4, 5, 4, 3, 2, 1)
+z^2
+z == 2
+z > 2
+install.packages("dplyr")
+library(dplyr)
+```
+
+- Be able to read the help file of any function, (e.g., type `?plot` in the console)
 
 ## Column 2
 
 ### What if the steps to the left do not work for me?
 
-Add info
+If all fails and you have insufficient rights to your machine, the following web-based service will offer a solution. 
+
+1. Open a free account on [rstudio.cloud](https://rstudio.cloud). You can run your own cloud-based `RStudio` environment there. 
+
+Naturally, you will need internet access for these services to be accessed.
 
 # Monday
 ## Column 1
@@ -110,7 +196,8 @@ Here you will find the materials for Monday:
 - Part 1: Introduction
     - [Lecture 1](Monday/Lectures/Lecture 1/Lecture_1.html)
     - [Impractical 1](Monday/Practicals/Practical 1/Impractical_1.html)
-    - [Practical 1](Monday/Practicals/Practical 1/Practical_1.html) 
+    - [Practical 1](Monday/Practicals/Practical 1/Practical_1.html)
+    - [Data for practical 1](Monday/Practicals/Practical 1/data.zip)
 
 - Part 2: Text preprocessing
     - [Lecture 2]()
@@ -119,9 +206,9 @@ Here you will find the materials for Monday:
 
 ## Column 2
 
-### References
+### Additional references
 
-Add additional info/references
+Chapter 2 of ref 1, chapter 3 of ref 2
 
 # Tuesday
 ## Column 1
@@ -145,9 +232,9 @@ Here you will find the materials for Tuesday:
 
 ## Column 2
 
-### References
+### Additional references
 
-Add additional info/references
+Chapter 2 of ref 1, chapter 3 of ref 2
 
 # Wednesday
 ## Column 1
@@ -171,6 +258,6 @@ Here you will find the materials for Wednesday:
 
 ## Column 2
 
-### References
+### Additional references
 
-Add additional info/references
+Chapter 2 of ref 1, chapter 3 of ref 2
