@@ -17,7 +17,7 @@ output:
 
 Welcome to the first practical of the course "Introduction to Text Mining with R". 
 
-In the practicals we will get hands-on experience with the materials in the lectures by programming in R and completing assignments. In this practical, we will work with different formats of text data, regular expressions and some visualisations.
+In the practicals we will get hands-on experience with the materials in the lectures by programming in R and completing assignments. In this practical, we will work with different formats of text data, regular expressions and text visualisations.
 
 The practicals always start with the packages we are going to use. Be sure to run these lines in your session to load their functions before you continue. If there are packages that you have not yet installed, first install them with `install.packages()`.
 
@@ -58,7 +58,7 @@ The dataset is already located in the practical folder. You can also find it onl
 
 ---
 
-It is good to know that, to learn more about the contents of a function, data or variable, use one of the two following help commands:
+To learn more about the application of a function or feature in R, you can use one of the two following help commands:
 ```{r help, message = FALSE, warning = FALSE}
 help(your_function_name)
 ?your_function_name
