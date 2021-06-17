@@ -20,13 +20,16 @@ output:
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
+Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
 
 In this practical we are going to use the following packages:
 
 ```{r load_packages, message = FALSE, warning = FALSE}
 library(caret)
+library(tidyverse)
 library(tm)
+library(dplyr)
+# install.packages(SnowballC)
 
 ```
 
@@ -42,24 +45,33 @@ library(tm)
 
 --- 
 
-1. **In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:**two medical sentences....
+1. **In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:**
 - 'Cats like to chase mice.', 
 - 'Dogs like to eat big bones.'
 
-|     **Use these sentences as our training set and create a document term matrix (dtm). Hint: here we want to use functions from the tm package. To create a dtm first you need to create a vector space model.**
+|     **Use these sentences as our training set and create a document-term matrix (dtm). Hint: Use the tm package. To create a dtm first you need to create a vector space model.**
 
 ---
 
 ```{r 1, include = TRUE}
-data <- c('Cats like to chase mice.', 'Dogs like to eat big bones.')
+data <- c('Cats like to chase mice.', 
+          'Dogs like to eat big bones.')
+
+# convert data to vector space model
 corpus <- VCorpus(VectorSource(data))
-dtm <- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
+
+# create a dtm object
+dtm <- DocumentTermMatrix(corpus, 
+                          list(removePunctuation = TRUE, 
+                               stopwords = TRUE, 
+                               stemming = TRUE, 
+                               removeNumbers = TRUE))
 
 ```
 
 ---
 
-2. **Inspect the dtm.**
+2. **Inspect the dtm object.**
 
 ---
 
@@ -71,23 +83,25 @@ dtm <- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRU
 
 ---
 
-3. **Convert the dtm object to a dataframe and view the content again. Also add a column for an outcome variable which has the value of 0 and 1 for our data, respectively.**
+3. **Convert the dtm object to a matrix and add a 'y' column as the outcome variable which has the values of 0 for the first row and 1 for the second row. Then convert the dtm to a dataframe**
 
 ---
 
 ```{r 3, include = TRUE}
 train <- as.matrix(dtm)
 train <- cbind(train, c(0, 1))
+
 colnames(train)[ncol(train)] <- 'y'
 train <- as.data.frame(train)
 train$y <- as.factor(train$y)
+train
 
 ```
 
 
 ---
 
-4. **Use the train function with method = 'bayesglm' from the caret package and fit a model on the dtm object.**
+4. **From the 'caret' package, use the train function with method = 'bayesglm'  and fit a model on the dtm object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
 
 ---
 
@@ -107,19 +121,30 @@ predict(fit)
 
 ```
 
+Here, you see that the model perfectly predicts the category for our training data.
+
 ---
 
-6. **Use sentence "", as your test data. What is the prediction of your model?**
+6. **Use the sentence "Rats eat cheese.", as your test data. What is the prediction of your model? What steps do you need to get the prediction?**
 
 ---
 
 ```{r 6, include = TRUE}
-data2 <- c('Bats eat bugs.')
+data2 <- c('Rats eat cheese.')
+
+# convert to vector space model
 corpus <- VCorpus(VectorSource(data2))
-dtm <- DocumentTermMatrix(corpus, control = list(dictionary = Terms(dtm), removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
+
+# convert to a dtm
+dtm <- DocumentTermMatrix(corpus, 
+                          control = list(dictionary = Terms(dtm), # remember that we need to use the terminology from the training data
+                                         removePunctuation = TRUE, 
+                                         stopwords = TRUE, 
+                                         stemming = TRUE, 
+                                         removeNumbers = TRUE))
 test <- as.matrix(dtm)
 
-# Check accuracy on test.
+# predict category for the test data
 predict(fit, newdata = test)
 
 ```
@@ -159,7 +184,7 @@ It consists of 2.225 documents from the BBC news website corresponding to storie
 
 ```{r 8, include = TRUE, warning = FALSE}
 load("data/news_dataset.rda")
-View(df_final)
+#View(df_final)
 table(df_final$Category)
 df_sample <- sample_n(df_final, 500)
 # df_sample <- df_final %>% group_by(Category) %>% sample_n(size = 100)
