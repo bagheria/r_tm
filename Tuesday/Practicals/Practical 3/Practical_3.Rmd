@@ -49,7 +49,7 @@ library(dplyr)
 - 'Cats like to chase mice.', 
 - 'Dogs like to eat big bones.'
 
-|     **Use these sentences as our training set and create a document-term matrix (dtm). Hint: Use the tm package. To create a dtm first you need to create a vector space model.**
+|     **Use these sentences as our training set and create a document-term matrix (dtm). Also remove punctuations, stopwords, numbers and apply stemming. Hint: Use the tm package. To create a dtm first you need to create a vector space model.**
 
 ---
 
@@ -77,13 +77,14 @@ dtm <- DocumentTermMatrix(corpus,
 
 
 ```{r 2, include = TRUE}
-# inspect(dtm[1:10, 1:5])
+inspect(dtm)
+#inspect(dtm[1:rownumber, 1:colnumber])
 
 ```
 
 ---
 
-3. **Convert the dtm object to a matrix and add a 'y' column as the outcome variable which has the values of 0 for the first row and 1 for the second row. Then convert the dtm to a dataframe**
+3. **Convert the dtm object to a matrix and add a 'y' column as the outcome variable which is 0 for the first row and 1 for the second row. Then, convert the dtm object to a dataframe.**
 
 ---
 
@@ -101,12 +102,13 @@ train
 
 ---
 
-4. **From the 'caret' package, use the train function with method = 'bayesglm'  and fit a model on the dtm object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
+4. **From the 'caret' package, use the train function with method = 'bayesglm' and fit a model on the dtm object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
 
 ---
 
 ```{r 4, include = TRUE, warning = FALSE}
 fit <- train(y ~ ., data = train, method = 'bayesglm')
+summary(fit)
 
 ```
 
@@ -125,15 +127,15 @@ Here, you see that the model perfectly predicts the category for our training da
 
 ---
 
-6. **Use the sentence "Rats eat cheese.", as your test data. What is the prediction of your model? What steps do you need to get the prediction?**
+6. **Use the sentence "Rats eat cheese." as your test data. What is the prediction of your model? What steps do you need to get the prediction?**
 
 ---
 
 ```{r 6, include = TRUE}
-data2 <- c('Rats eat cheese.')
+test_sentence <- c('Rats eat cheese.')
 
 # convert to vector space model
-corpus <- VCorpus(VectorSource(data2))
+corpus <- VCorpus(VectorSource(test_sentence))
 
 # convert to a dtm
 dtm <- DocumentTermMatrix(corpus, 
@@ -142,20 +144,62 @@ dtm <- DocumentTermMatrix(corpus,
                                          stopwords = TRUE, 
                                          stemming = TRUE, 
                                          removeNumbers = TRUE))
-test <- as.matrix(dtm)
+test_data <- as.matrix(dtm)
 
 # predict category for the test data
-predict(fit, newdata = test)
+predict(fit, newdata = test_data)
 
 ```
 
 ---
 
-7. **Now we want to use a tfidf weighting for creating our dtm object. In addition we want to remove punctuations, stopwords, numbers and apply stemming. What is the difference in this new dtm? Repeat the analysis in Q.3 to Q.7 with the new object.**
+7. **Now we want to use a tfidf weighting for creating our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tfidf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.**
 
 ---
 
 ```{r 7, include = TRUE, warning = FALSE}
+# convert data to vector space model
+corpus <- VCorpus(VectorSource(data))
+
+# create a dtm object
+dtm_tfidf <- DocumentTermMatrix(corpus, 
+                                list(weighting = weightTfIdf,
+                                     removePunctuation = TRUE, 
+                                     stopwords = TRUE, 
+                                     stemming = TRUE, 
+                                     removeNumbers = TRUE))
+
+# create the y variable
+train <- as.matrix(dtm_tfidf)
+train <- cbind(train, c(0, 1))
+colnames(train)[ncol(train)] <- 'y'
+train <- as.data.frame(train)
+train$y <- as.factor(train$y)
+train
+
+# fit the naive Bayes model with the tfidf representation
+fit_by_tfidf <- train(y ~ ., data = train, method = 'bayesglm')
+summary(fit_by_tfidf)
+
+# prediction on training data
+predict(fit_by_tfidf)
+
+# prediction on test data
+# convert to vector space model
+corpus <- VCorpus(VectorSource(test_sentence))
+# convert to a dtm
+dtm <- DocumentTermMatrix(corpus, 
+                          control = list(dictionary = Terms(dtm_tfidf), # remember that we need to use the terminology from the training data
+                                         weighting = weightTfIdf,
+                                         removePunctuation = TRUE, 
+                                         stopwords = TRUE, 
+                                         stemming = TRUE, 
+                                         removeNumbers = TRUE))
+test_data <- as.matrix(dtm)
+
+# predict category for the test data
+predict(fit, newdata = test_data)
+
 
 ```
 
@@ -167,13 +211,7 @@ predict(fit, newdata = test)
 
 ## Feature selection and classification: Naïve Bayes versus SVM
 
----
-
-8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
-
----
-
-The dataset used in this project is the BBC News Dataset. The raw dataset can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
+The dataset used in this part of the practical is the BBC News Dataset. The raw dataset can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
 It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
 
 - Business
@@ -181,6 +219,14 @@ It consists of 2.225 documents from the BBC news website corresponding to storie
 - Politics
 - Sport
 - Tech
+
+---
+
+8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
+
+---
+
+
 
 ```{r 8, include = TRUE, warning = FALSE}
 load("data/news_dataset.rda")
