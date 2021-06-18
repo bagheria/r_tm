@@ -43,7 +43,7 @@ library(dplyr)
 
 ---
 
-1. **Read the "taylor_swift.csv" dataset from the data folder.**
+1. **In today's practical, we want to use Taylor Swift song lyrics data from all her albums. Read the "taylor_swift.csv" dataset from the data folder.**
 
 ---
 
@@ -82,7 +82,7 @@ dtm <- DocumentTermMatrix(docs,
 ---
 
 ```{r 3, include = TRUE}
-#inspect(dtm)
+# inspect(dtm)
 dtm <- as.data.frame(as.matrix(dtm))
 
 ```
@@ -94,7 +94,7 @@ dtm <- as.data.frame(as.matrix(dtm))
 
 ---
 
-4. **We're going to use sentiment dictionaries from the `tidytext` package. Using the `get_sentiments` function, load the "bing" and "afinn" dictionaries and store them in two objects called `bing_sentiments` and `afinn_sentiments`. **
+4. **We're going to use sentiment dictionaries from the `tidytext` package. Using the `get_sentiments` function, load the "bing" and "afinn" dictionaries and store them in two objects called `bing_sentiments` and `afinn_sentiments`. You might need to install the "textdata" package.**
 
 The tidytext package contains 4 general purpose lexicons in the sentiments dataset.
 
@@ -108,7 +108,7 @@ loughran - list of sentiment words for accounting and finance by category (Negat
 ```{r 4, include = TRUE, warning = FALSE}
 # also “nrc”, “loughran”
 
-bing_sentiments <- get_sentiments("bing")
+bing_sentiments  <- get_sentiments("bing")
 afinn_sentiments <- get_sentiments("afinn")
 
 head(bing_sentiments)
@@ -141,7 +141,7 @@ bing_sentiments$score <- ifelse(bing_sentiments$sentiment=="positive", 1, -1)
 
 ```{r 6, include = TRUE}
 # get all the words in our dtm and put it in a dataframe
-words = data.frame(word = colnames(dtm))
+words <- data.frame(word = colnames(dtm))
 head(words)
 
 # get their sentiment scores
@@ -179,10 +179,40 @@ head(taylor_swift_lyrics)
 
 ```
 
+---
+
+8. **Plot the bing sentiment scores for each lyric.**
 
 ---
 
-9. **Using the code you wrote above, we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a data frame with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+```{r 8+1, include = TRUE, warning = FALSE}
+taylor_swift_lyrics[1:60,] %>% ggplot() +
+  geom_col(aes(Title, sentiment), fill = "lightgreen", alpha=.75) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Sentiment Score") +
+  ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
+  coord_flip() +
+  theme_minimal()
+
+taylor_swift_lyrics[61:132,] %>% ggplot() +
+  geom_col(aes(Title, sentiment), fill = "lightgreen", alpha=.75) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Sentiment Score") +
+  ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
+  coord_flip() +
+  theme_minimal()
+
+```
+
+---
+
+9. **Using the code you wrote above, below we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
 
 ---
 
@@ -198,12 +228,13 @@ sentiment_score <- function(texts, sentiment_dict){
   dtm <- as.data.frame(as.matrix(dtm))
   
   # get all the words in dtm and put it in a dataframe
-  words = data.frame(word = colnames(dtm))
+  words <- data.frame(word = colnames(dtm))
 
   # get their sentiment scores
   words <- merge(words, sentiment_dict, all.x = T)
 
   # replace NAs with 0s
+  # words$score[is.na(words$score)] <- 0
   words$score[is.na(words$score)] <- 0
   
   # calculate documents scores with matrix algebra!
@@ -216,13 +247,14 @@ sentiment_score <- function(texts, sentiment_dict){
 ```
 
 ```{r 91, include = TRUE, warning = FALSE}
-sentiment_score(taylor_swift_lyrics$lyrics, afinn_sentiments)
+colnames(afinn_sentiments)[2] <- "score"
+sentiment_score(taylor_swift_lyrics$Lyrics, afinn_sentiments)
 
 ```
 
 ---
 
-10. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is.**
+10. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is. You can also plot the sentiments for albums.**
 
 ---
 
@@ -232,23 +264,45 @@ albums <- taylor_swift_lyrics %>% group_by(Album) %>%
   summarise(lyrics = paste0(Lyrics, collapse = ";"))
 
 # add sentiments
-albums$sentiment <- sentiment_score(albums$lyrics, bing_sentiments)
+albums$sentiment_bing <- sentiment_score(albums$lyrics, bing_sentiments)
 
 # concatenate to make albums
-albums <- taylor_swift_lyrics %>% group_by(Album) %>%
-  summarise(lyrics = paste0(Lyrics, collapse = ";"))
+# albums <- taylor_swift_lyrics %>% group_by(Album) %>%
+#   summarise(lyrics = paste0(Lyrics, collapse = ";"))
 
 # add sentiments
-albums$sentiment <- sentiment_score(albums$lyrics, afinn_sentiments)
+albums$sentiment_afinn <- sentiment_score(albums$lyrics, afinn_sentiments)
 
 
-# a ggplot
+albums %>% ggplot() +
+  geom_col(aes(Album, sentiment_bing), fill = "#edc948", alpha=.75) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Sentiment Score") +
+  ggtitle("Sentiment Analysis of Taylor Swift Albums using the Bing dictionary") +
+  coord_flip() +
+  theme_minimal()
+
+albums %>% ggplot() +
+  geom_col(aes(Album, sentiment_afinn), fill = "lightblue", alpha=.75) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Sentiment Score") +
+  ggtitle("Sentiment Analysis of Taylor Swift Albums using the Afinn dictionary") +
+  coord_flip() +
+  theme_minimal()
+
 
 ```
 
 ---
 
 # Sentiment analysis of product reviews
+In this part of the practical we will do some sentiment analysis on the computer product reviews. For this purpose, we will use our processed data set from the first practical: the computer_531 dataset.
 
 ---
 
