@@ -1320,7 +1320,6 @@ window.initializeCodeFolding = function(show) {
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
     var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    if (showThis) div.collapse('show');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
@@ -1344,13 +1343,27 @@ window.initializeCodeFolding = function(show) {
 
     div.before(buttonRow);
 
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
     // update state of button on show/hide
-    div.on('hidden.bs.collapse', function () {
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
       showCodeText.text('Code');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
     });
     div.on('show.bs.collapse', function () {
       showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
     });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
   });
 
 }
@@ -2838,12 +2851,12 @@ div.tocify {
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row">
-<div class="col-sm-12 col-md-4 col-lg-3">
+<div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
 </div>
 
-<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -2867,10 +2880,14 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Welcome to the third practical of the course “Introduction to Text Mining with R”. In this practical we start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.</p>
+<p>Welcome to the third practical of the course “Introduction to Text Mining with R”. In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.</p>
 <p>In this practical we are going to use the following packages:</p>
 <pre class="r"><code>library(caret)
-library(tm)</code></pre>
+library(tidyverse)
+library(tm)
+library(dplyr)
+library(e1071)
+# install.packages(SnowballC)</code></pre>
 <hr />
 </div>
 <div id="document-term-matrix" class="section level1">
@@ -2881,40 +2898,93 @@ library(tm)</code></pre>
 <h2>A simple pipeline</h2>
 <hr />
 <ol style="list-style-type: decimal">
-<li><strong>In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:</strong>two medical sentences….</li>
+<li><strong>In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:</strong></li>
 </ol>
 <ul>
 <li>‘Cats like to chase mice.’,</li>
 <li>‘Dogs like to eat big bones.’</li>
 </ul>
-<div class="line-block">    <strong>Use these sentences as our training set and create a document term matrix (dtm). Hint: here we want to use functions from the tm package. To create a dtm first you need to create a vector space model.</strong></div>
+<div class="line-block">    <strong>Use these sentences as our training set and create a document-term matrix (dtm). Also remove punctuations, stopwords, numbers and apply stemming. Hint: Use the tm package. To create a dtm first you need to create a vector space model.</strong></div>
 <hr />
-<pre class="r"><code>data &lt;- c(&#39;Cats like to chase mice.&#39;, &#39;Dogs like to eat big bones.&#39;)
+<pre class="r"><code>data &lt;- c(&#39;Cats like to chase mice.&#39;, 
+          &#39;Dogs like to eat big bones.&#39;)
+
+# convert data to vector space model
 corpus &lt;- VCorpus(VectorSource(data))
-dtm &lt;- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))</code></pre>
+
+# create a dtm object
+dtm &lt;- DocumentTermMatrix(corpus, 
+                          list(removePunctuation = TRUE, 
+                               stopwords = TRUE, 
+                               stemming = TRUE, 
+                               removeNumbers = TRUE))</code></pre>
 <hr />
 <ol start="2" style="list-style-type: decimal">
-<li><strong>Inspect the dtm.</strong></li>
+<li><strong>Inspect the dtm object.</strong></li>
 </ol>
 <hr />
-<pre class="r"><code># inspect(dtm[1:10, 1:5])
-</code></pre>
+<pre class="r"><code>inspect(dtm)
+## &lt;&lt;DocumentTermMatrix (documents: 2, terms: 8)&gt;&gt;
+## Non-/sparse entries: 9/7
+## Sparsity           : 44%
+## Maximal term length: 5
+## Weighting          : term frequency (tf)
+## Sample             :
+##     Terms
+## Docs big bone cat chase dog eat like mice
+##    1   0    0   1     1   0   0    1    1
+##    2   1    1   0     0   1   1    1    0
+#inspect(dtm[1:rownumber, 1:colnumber])</code></pre>
 <hr />
 <ol start="3" style="list-style-type: decimal">
-<li><strong>Convert the dtm object to a dataframe and view the content again. Also add a column for an outcome variable which has the value of 0 and 1 for our data, respectively.</strong></li>
+<li><strong>Convert the dtm object to a matrix and add a ‘y’ column as the outcome variable which is 0 for the first row and 1 for the second row. Then, convert the dtm object to a dataframe.</strong></li>
 </ol>
 <hr />
 <pre class="r"><code>train &lt;- as.matrix(dtm)
 train &lt;- cbind(train, c(0, 1))
+
 colnames(train)[ncol(train)] &lt;- &#39;y&#39;
 train &lt;- as.data.frame(train)
-train$y &lt;- as.factor(train$y)</code></pre>
+train$y &lt;- as.factor(train$y)
+train</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["big"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["bone"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["cat"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["chase"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["dog"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["eat"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["like"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["mice"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["y"],"name":[9],"type":["fct"],"align":["left"]}],"data":[{"1":"0","2":"0","3":"1","4":"1","5":"0","6":"0","7":"1","8":"1","9":"0","_rn_":"1"},{"1":"1","2":"1","3":"0","4":"0","5":"1","6":"1","7":"1","8":"0","9":"1","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 <hr />
 <ol start="4" style="list-style-type: decimal">
-<li><strong>Use the train function with method = ‘bayesglm’ from the caret package and fit a model on the dtm object.</strong></li>
+<li><strong>From the ‘caret’ package, use the train function with method = ‘bayesglm’ and fit a model on the dtm object. For ‘bayesglm’, you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.</strong></li>
 </ol>
 <hr />
-<pre class="r"><code>fit &lt;- train(y ~ ., data = train, method = &#39;bayesglm&#39;)</code></pre>
+<pre class="r"><code>fit &lt;- train(y ~ ., data = train, method = &#39;bayesglm&#39;)
+summary(fit)
+## 
+## Call:
+## NULL
+## 
+## Deviance Residuals: 
+## [1]  0  0
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  -0.3102     4.6597  -0.067    0.947
+## big           0.6204     2.3431   0.265    0.791
+## bone          0.6204     2.3431   0.265    0.791
+## cat          -0.6204     2.3431  -0.265    0.791
+## chase        -0.6204     2.3431  -0.265    0.791
+## dog           0.6204     2.3431   0.265    0.791
+## eat           0.6204     2.3431   0.265    0.791
+## like          0.0000     2.5000   0.000    1.000
+## mice         -0.6204     2.3431  -0.265    0.791
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 2.77259  on  1  degrees of freedom
+## Residual deviance: 0.43185  on -7  degrees of freedom
+## AIC: 18.432
+## 
+## Number of Fisher Scoring iterations: 20</code></pre>
 <hr />
 <ol start="5" style="list-style-type: decimal">
 <li><strong>Use the fitted model to predict the outcome on the training data.</strong></li>
@@ -2923,25 +2993,111 @@ train$y &lt;- as.factor(train$y)</code></pre>
 <pre class="r"><code>predict(fit)
 ## [1] 0 1
 ## Levels: 0 1</code></pre>
+<p>Here, you see that the model perfectly predicts the category for our training data.</p>
 <hr />
 <ol start="6" style="list-style-type: decimal">
-<li><strong>Use sentence &quot;&quot;, as your test data. What is the prediction of your model?</strong></li>
+<li><strong>Use the sentence “Rats eat cheese.” as your test data. What is the prediction of your model? What steps do you need to get the prediction?</strong></li>
 </ol>
 <hr />
-<pre class="r"><code>data2 &lt;- c(&#39;Bats eat bugs.&#39;)
-corpus &lt;- VCorpus(VectorSource(data2))
-dtm &lt;- DocumentTermMatrix(corpus, control = list(dictionary = Terms(dtm), removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
-test &lt;- as.matrix(dtm)
+<pre class="r"><code>test_sentence &lt;- c(&#39;Rats eat cheese.&#39;)
 
-# Check accuracy on test.
-predict(fit, newdata = test)
+# convert to vector space model
+corpus &lt;- VCorpus(VectorSource(test_sentence))
+
+# convert to a dtm
+dtm &lt;- DocumentTermMatrix(corpus, 
+                          control = list(dictionary = Terms(dtm), # remember that we need to use the terminology from the training data
+                                         removePunctuation = TRUE, 
+                                         stopwords = TRUE, 
+                                         stemming = TRUE, 
+                                         removeNumbers = TRUE))
+test_data &lt;- as.matrix(dtm)
+
+# predict category for the test data
+predict(fit, newdata = test_data)
 ## [1] 1
 ## Levels: 0 1</code></pre>
 <hr />
 <ol start="7" style="list-style-type: decimal">
-<li><strong>Now we want to use a tfidf weighting for creating our dtm object. We also want to remove punctuations, stopwords, numbers and apply stemming. What is the difference in this new dtm? Repeat the analysis in Q.3 to Q.7 with the new object.</strong></li>
+<li><strong>Now we want to use a tfidf weighting for creating our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tfidf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code># convert data to vector space model
+corpus &lt;- VCorpus(VectorSource(data))
+
+# create a dtm object
+dtm_tfidf &lt;- DocumentTermMatrix(corpus, 
+                                list(weighting = weightTfIdf,
+                                     removePunctuation = TRUE, 
+                                     stopwords = TRUE, 
+                                     stemming = TRUE, 
+                                     removeNumbers = TRUE))
+
+# create the y variable
+train &lt;- as.matrix(dtm_tfidf)
+train &lt;- cbind(train, c(0, 1))
+colnames(train)[ncol(train)] &lt;- &#39;y&#39;
+train &lt;- as.data.frame(train)
+train$y &lt;- as.factor(train$y)
+train</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["big"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["bone"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["cat"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["chase"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["dog"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["eat"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["like"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["mice"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["y"],"name":[9],"type":["fct"],"align":["left"]}],"data":[{"1":"0.0","2":"0.0","3":"0.25","4":"0.25","5":"0.0","6":"0.0","7":"0","8":"0.25","9":"0","_rn_":"1"},{"1":"0.2","2":"0.2","3":"0.00","4":"0.00","5":"0.2","6":"0.2","7":"0","8":"0.00","9":"1","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>
+# fit the naive Bayes model with the tfidf representation
+fit_by_tfidf &lt;- train(y ~ ., data = train, method = &#39;bayesglm&#39;)
+summary(fit_by_tfidf)
+## 
+## Call:
+## NULL
+## 
+## Deviance Residuals: 
+## [1]  0  0
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  -0.3102     3.9294  -0.079    0.937
+## big           3.1021    11.7155   0.265    0.791
+## bone          3.1021    11.7155   0.265    0.791
+## cat          -2.4817     9.3724  -0.265    0.791
+## chase        -2.4817     9.3724  -0.265    0.791
+## dog           3.1021    11.7155   0.265    0.791
+## eat           3.1021    11.7155   0.265    0.791
+## like          0.0000     2.5000   0.000    1.000
+## mice         -2.4817     9.3724  -0.265    0.791
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 2.77259  on  1  degrees of freedom
+## Residual deviance: 0.43185  on -7  degrees of freedom
+## AIC: 18.432
+## 
+## Number of Fisher Scoring iterations: 20
+
+# prediction on training data
+predict(fit_by_tfidf)
+## [1] 0 1
+## Levels: 0 1
+
+# prediction on test data
+# convert to vector space model
+corpus &lt;- VCorpus(VectorSource(test_sentence))
+# convert to a dtm
+dtm &lt;- DocumentTermMatrix(corpus, 
+                          control = list(dictionary = Terms(dtm_tfidf), # remember that we need to use the vocabulary from the training data
+                                         weighting = weightTfIdf,
+                                         removePunctuation = TRUE, 
+                                         stopwords = TRUE, 
+                                         stemming = TRUE, 
+                                         removeNumbers = TRUE))
+test_data &lt;- as.matrix(dtm)
+
+# predict category for the test data
+predict(fit, newdata = test_data)
+## [1] 0
+## Levels: 0 1</code></pre>
 <hr />
 </div>
 </div>
@@ -2950,91 +3106,471 @@ predict(fit, newdata = test)
 <hr />
 <div id="feature-selection-and-classification-naïve-bayes-versus-svm" class="section level2">
 <h2>Feature selection and classification: Naïve Bayes versus SVM</h2>
+<p>The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from <a href="http://mlg.ucd.ie/datasets/bbc.html">here</a>. It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:</p>
+<ul>
+<li>Business</li>
+<li>Entertainment</li>
+<li>Politics</li>
+<li>Sport</li>
+<li>Tech</li>
+</ul>
 <hr />
 <ol start="8" style="list-style-type: decimal">
-<li><strong>Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.</strong></li>
+<li><strong>Load the data set from the data folder and inspect its first rows.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code>load(&quot;data/news_dataset.rda&quot;)
+head(df_final)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["File_Name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Content"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Category"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Complete_Filename"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"001.txt","2":"Ad sales boost Time Warner profit\\n\\nQuarterly profits at US media giant TimeWarner jumped 76% to $1.13bn (Â£600m) for the three months to December, from $639m year-earlier.\\n\\nThe firm, which is now one of the biggest investors in Google, benefited from sales of high-speed internet connections and higher advert sales. TimeWarner said fourth quarter sales rose 2% to $11.1bn from $10.9bn. Its profits were buoyed by one-off gains which offset a profit dip at Warner Bros, and less users for AOL.\\n\\nTime Warner said on Friday that it now owns 8% of search-engine Google. But its own internet business, AOL, had has mixed fortunes. It lost 464,000 subscribers in the fourth quarter profits were lower than in the preceding three quarters. However, the company said AOL's underlying profit before exceptional items rose 8% on the back of stronger internet advertising revenues. It hopes to increase subscribers by offering the online service free to TimeWarner internet customers and will try to sign up AOL's existing customers for high-speed broadband. TimeWarner also has to restate 2000 and 2003 results following a probe by the US Securities Exchange Commission (SEC), which is close to concluding.\\n\\nTime Warner's fourth quarter profits were slightly better than analysts' expectations. But its film division saw profits slump 27% to $284m, helped by box-office flops Alexander and Catwoman, a sharp contrast to year-earlier, when the third and final film in the Lord of the Rings trilogy boosted results. For the full-year, TimeWarner posted a profit of $3.36bn, up 27% from its 2003 performance, while revenues grew 6.4% to $42.09bn. \"Our financial performance was strong, meeting or exceeding all of our full-year objectives and greatly enhancing our flexibility,\" chairman and chief executive Richard Parsons said. For 2005, TimeWarner is projecting operating earnings growth of around 5%, and also expects higher revenue and wider profit margins.\\n\\nTimeWarner is to restate its accounts as part of efforts to resolve an inquiry into AOL by US market regulators. It has already offered to pay $300m to settle charges, in a deal that is under review by the SEC. The company said it was unable to estimate the amount it needed to set aside for legal reserves, which it previously set at $500m. It intends to adjust the way it accounts for a deal with German music publisher Bertelsmann's purchase of a stake in AOL Europe, which it had reported as advertising revenue. It will now book the sale of its stake in AOL Europe as a loss on the value of that stake.","3":"business","4":"001.txt-business","_rn_":"1"},{"1":"002.txt","2":"Dollar gains on Greenspan speech\\n\\nThe dollar has hit its highest level against the euro in almost three months after the Federal Reserve head said the US trade deficit is set to stabilise.\\n\\nAnd Alan Greenspan highlighted the US government's willingness to curb spending and rising household savings as factors which may help to reduce it. In late trading in New York, the dollar reached $1.2871 against the euro, from $1.2974 on Thursday. Market concerns about the deficit has hit the greenback in recent months. On Friday, Federal Reserve chairman Mr Greenspan's speech in London ahead of the meeting of G7 finance ministers sent the dollar higher after it had earlier tumbled on the back of worse-than-expected US jobs data. \"I think the chairman's taking a much more sanguine view on the current account deficit than he's taken for some time,\" said Robert Sinche, head of currency strategy at Bank of America in New York. \"He's taking a longer-term view, laying out a set of conditions under which the current account deficit can improve this year and next.\"\\n\\nWorries about the deficit concerns about China do, however, remain. China's currency remains pegged to the dollar and the US currency's sharp falls in recent months have therefore made Chinese export prices highly competitive. But calls for a shift in Beijing's policy have fallen on deaf ears, despite recent comments in a major Chinese newspaper that the \"time is ripe\" for a loosening of the peg. The G7 meeting is thought unlikely to produce any meaningful movement in Chinese policy. In the meantime, the US Federal Reserve's decision on 2 February to boost interest rates by a quarter of a point - the sixth such move in as many months - has opened up a differential with European rates. The half-point window, some believe, could be enough to keep US assets looking more attractive, and could help prop up the dollar. The recent falls have partly been the result of big budget deficits, as well as the US's yawning current account gap, both of which need to be funded by the buying of US bonds and assets by foreign firms and governments. The White House will announce its budget on Monday, and many commentators believe the deficit will remain at close to half a trillion dollars.","3":"business","4":"002.txt-business","_rn_":"2"},{"1":"003.txt","2":"Yukos unit buyer faces loan claim\\n\\nThe owners of embattled Russian oil giant Yukos are to ask the buyer of its former production unit to pay back a $900m (Â£479m) loan.\\n\\nState-owned Rosneft bought the Yugansk unit for $9.3bn in a sale forced by Russia to part settle a $27.5bn tax claim against Yukos. Yukos' owner Menatep Group says it will ask Rosneft to repay a loan that Yugansk had secured on its assets. Rosneft already faces a similar $540m repayment demand from foreign banks. Legal experts said Rosneft's purchase of Yugansk would include such obligations. \"The pledged assets are with Rosneft, so it will have to pay real money to the creditors to avoid seizure of Yugansk assets,\" said Moscow-based US lawyer Jamie Firestone, who is not connected to the case. Menatep Group's managing director Tim Osborne told the Reuters news agency: \"If they default, we will fight them where the rule of law exists under the international arbitration clauses of the credit.\"\\n\\nRosneft officials were unavailable for comment. But the company has said it intends to take action against Menatep to recover some of the tax claims and debts owed by Yugansk. Yukos had filed for bankruptcy protection in a US court in an attempt to prevent the forced sale of its main production arm. The sale went ahead in December and Yugansk was sold to a little-known shell company which in turn was bought by Rosneft. Yukos claims its downfall was punishment for the political ambitions of its founder Mikhail Khodorkovsky and has vowed to sue any participant in the sale.","3":"business","4":"003.txt-business","_rn_":"3"},{"1":"004.txt","2":"High fuel prices hit BA's profits\\n\\nBritish Airways has blamed high fuel prices for a 40% drop in profits.\\n\\nReporting its results for the three months to 31 December 2004, the airline made a pre-tax profit of Â£75m ($141m) compared with Â£125m a year earlier. Rod Eddington, BA's chief executive, said the results were \"respectable\" in a third quarter when fuel costs rose by Â£106m or 47.3%. BA's profits were still better than market expectation of Â£59m, and it expects a rise in full-year revenues.\\n\\nTo help offset the increased price of aviation fuel, BA last year introduced a fuel surcharge for passengers.\\n\\nIn October, it increased this from Â£6 to Â£10 one-way for all long-haul flights, while the short-haul surcharge was raised from Â£2.50 to Â£4 a leg. Yet aviation analyst Mike Powell of Dresdner Kleinwort Wasserstein says BA's estimated annual surcharge revenues - Â£160m - will still be way short of its additional fuel costs - a predicted extra Â£250m. Turnover for the quarter was up 4.3% to Â£1.97bn, further benefiting from a rise in cargo revenue. Looking ahead to its full year results to March 2005, BA warned that yields - average revenues per passenger - were expected to decline as it continues to lower prices in the face of competition from low-cost carriers. However, it said sales would be better than previously forecast. \"For the year to March 2005, the total revenue outlook is slightly better than previous guidance with a 3% to 3.5% improvement anticipated,\" BA chairman Martin Broughton said. BA had previously forecast a 2% to 3% rise in full-year revenue.\\n\\nIt also reported on Friday that passenger numbers rose 8.1% in January. Aviation analyst Nick Van den Brul of BNP Paribas described BA's latest quarterly results as \"pretty modest\". \"It is quite good on the revenue side and it shows the impact of fuel surcharges and a positive cargo development, however, operating margins down and cost impact of fuel are very strong,\" he said. Since the 11 September 2001 attacks in the United States, BA has cut 13,000 jobs as part of a major cost-cutting drive. \"Our focus remains on reducing controllable costs and debt whilst continuing to invest in our products,\" Mr Eddington said. \"For example, we have taken delivery of six Airbus A321 aircraft and next month we will start further improvements to our Club World flat beds.\" BA's shares closed up four pence at 274.5 pence.","3":"business","4":"004.txt-business","_rn_":"4"},{"1":"005.txt","2":"Pernod takeover talk lifts Domecq\\n\\nShares in UK drinks and food firm Allied Domecq have risen on speculation that it could be the target of a takeover by France's Pernod Ricard.\\n\\nReports in the Wall Street Journal and the Financial Times suggested that the French spirits firm is considering a bid, but has yet to contact its target. Allied Domecq shares in London rose 4% by 1200 GMT, while Pernod shares in Paris slipped 1.2%. Pernod said it was seeking acquisitions but refused to comment on specifics.\\n\\nPernod's last major purchase was a third of US giant Seagram in 2000, the move which propelled it into the global top three of drinks firms. The other two-thirds of Seagram was bought by market leader Diageo. In terms of market value, Pernod - at 7.5bn euros ($9.7bn) - is about 9% smaller than Allied Domecq, which has a capitalisation of Â£5.7bn ($10.7bn; 8.2bn euros). Last year Pernod tried to buy Glenmorangie, one of Scotland's premier whisky firms, but lost out to luxury goods firm LVMH. Pernod is home to brands including Chivas Regal Scotch whisky, Havana Club rum and Jacob's Creek wine. Allied Domecq's big names include Malibu rum, Courvoisier brandy, Stolichnaya vodka and Ballantine's whisky - as well as snack food chains such as Dunkin' Donuts and Baskin-Robbins ice cream. The WSJ said that the two were ripe for consolidation, having each dealt with problematic parts of their portfolio. Pernod has reduced the debt it took on to fund the Seagram purchase to just 1.8bn euros, while Allied has improved the performance of its fast-food chains.","3":"business","4":"005.txt-business","_rn_":"5"},{"1":"006.txt","2":"Japan narrowly escapes recession\\n\\nJapan's economy teetered on the brink of a technical recession in the three months to September, figures show.\\n\\nRevised figures indicated growth of just 0.1% - and a similar-sized contraction in the previous quarter. On an annual basis, the data suggests annual growth of just 0.2%, suggesting a much more hesitant recovery than had previously been thought. A common technical definition of a recession is two successive quarters of negative growth.\\n\\nThe government was keen to play down the worrying implications of the data. \"I maintain the view that Japan's economy remains in a minor adjustment phase in an upward climb, and we will monitor developments carefully,\" said economy minister Heizo Takenaka. But in the face of the strengthening yen making exports less competitive and indications of weakening economic conditions ahead, observers were less sanguine. \"It's painting a picture of a recovery... much patchier than previously thought,\" said Paul Sheard, economist at Lehman Brothers in Tokyo. Improvements in the job market apparently have yet to feed through to domestic demand, with private consumption up just 0.2% in the third quarter.","3":"business","4":"006.txt-business","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>
+
+# feature selection
+# high-impact words
+</code></pre>
 <hr />
 <ol start="9" style="list-style-type: decimal">
-<li><strong>Use the <code>freq_terms</code> function from the <code>qdap</code> package and find the 30 top terms in each set of positive and negative reviews in <code>imdb_500</code>.</strong></li>
+<li><strong>Find out about the name of the categories and the number of observations in each of them.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code># list of the categories in the data set
+unique(df_final$Category)
+## [1] &quot;business&quot;      &quot;entertainment&quot; &quot;politics&quot;      &quot;sport&quot;        
+## [5] &quot;tech&quot;
+table(df_final$Category)
+## 
+##      business entertainment      politics         sport          tech 
+##           510           386           417           511           401</code></pre>
 <hr />
 <ol start="10" style="list-style-type: decimal">
-<li><strong>Using <code>ggplot</code>, plot a barchart for each of the freqent terms dataframes.</strong></li>
+<li><strong>Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, and whitespaces.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code>## set the seed to make your partition reproducible
+set.seed(123)
+
+corpus &lt;- Corpus(VectorSource(df_final$Content))
+# standardize to lowercase
+corpus &lt;- tm_map(corpus, content_transformer(tolower))
+# remove tm stopwords
+corpus &lt;- tm_map(corpus, removeWords, stopwords())
+# standardize whitespaces
+corpus &lt;- tm_map(corpus, stripWhitespace)
+# remove punctuation
+corpus &lt;- tm_map(corpus, removePunctuation)
+# remove numbers
+corpus &lt;- tm_map(corpus, removeNumbers)
+
+dtm &lt;- DocumentTermMatrix(corpus)
+
+# words appearing more than 10x
+features &lt;- findFreqTerms(dtm, 10)
+
+head(features)
+## [1] &quot;accounts&quot;    &quot;advert&quot;      &quot;advertising&quot; &quot;alexander&quot;   &quot;already&quot;    
+## [6] &quot;also&quot;</code></pre>
 <hr />
 <ol start="11" style="list-style-type: decimal">
-<li><strong>Use the <code>readLines</code> function to read data from the ‘computer.txt’ file.</strong></li>
+<li><strong>Partition the original data and the corpus object into training and test sets with 80% for the training set and 20% for the test set.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code>
+train_idx &lt;- createDataPartition(df_final$Category, p=0.80, list=FALSE)
+# set for the original raw data 
+train1 &lt;- df_final[train_idx,]
+test1 &lt;- df_final[-train_idx,]
+# set for the cleaned-up data
+train2 &lt;- corpus[train_idx]
+test2 &lt;- corpus[-train_idx]</code></pre>
 <hr />
 <ol start="12" style="list-style-type: decimal">
-<li><strong>Convert the data to a dataframe.</strong></li>
+<li><strong>Create separate document-term matrices for the training and the test sets using the features variable as dictionary and convert them into data frames.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code>dtm_train &lt;- DocumentTermMatrix(train2, list(dictionary=features))
+dtm_test  &lt;- DocumentTermMatrix(test2, list(dictionary=features))
+
+dtm_train &lt;- as.data.frame(as.matrix(dtm_train))
+dtm_test &lt;- as.data.frame(as.matrix(dtm_test))
+str(dtm_test)
+## &#39;data.frame&#39;:    444 obs. of  6604 variables:
+##  $ accounts            : num  2 0 1 0 0 0 0 0 0 0 ...
+##  $ advert              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ advertising         : num  2 0 0 0 0 0 0 0 0 0 ...
+##  $ alexander           : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ already             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ also                : num  2 2 1 0 1 0 1 0 0 1 ...
+##  $ amount              : num  1 0 0 0 0 1 0 0 0 0 ...
+##  $ analysts            : num  1 0 0 1 0 0 0 1 1 0 ...
+##  $ aol                 : num  5 0 0 0 0 0 0 0 0 0 ...
+##  $ around              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ aside               : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ back                : num  1 0 0 0 1 0 1 2 1 0 ...
+##  $ better              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ biggest             : num  1 0 0 0 0 1 0 0 0 0 ...
+##  $ book                : num  1 0 0 0 0 0 0 0 0 1 ...
+##  $ boost               : num  1 0 0 0 0 0 0 1 0 0 ...
+##  $ boosted             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ broadband           : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ bros                : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ business            : num  1 0 0 0 0 5 1 0 0 0 ...
+##  $ chairman            : num  1 0 0 0 0 0 0 0 0 1 ...
+##  $ charges             : num  1 0 0 0 0 2 0 0 0 0 ...
+##  $ chief               : num  1 1 0 3 0 0 0 0 0 0 ...
+##  $ close               : num  1 0 1 0 0 1 0 0 0 0 ...
+##  $ commission          : num  1 2 0 0 0 0 0 0 0 0 ...
+##  $ company             : num  2 0 1 0 0 1 1 0 0 0 ...
+##  $ connections         : num  1 0 0 0 0 1 0 0 0 0 ...
+##  $ contrast            : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ customers           : num  2 1 0 0 0 0 0 0 0 0 ...
+##  $ deal                : num  2 0 1 0 0 0 0 0 0 2 ...
+##  $ december            : num  1 0 1 0 0 0 0 0 0 0 ...
+##  $ dip                 : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ division            : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ earnings            : num  1 0 1 0 0 0 1 0 0 0 ...
+##  $ efforts             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ estimate            : num  1 0 0 0 1 0 0 1 0 0 ...
+##  $ europe              : num  2 0 0 0 0 0 0 0 0 0 ...
+##  $ exceptional         : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ exchange            : num  1 0 0 0 0 1 0 0 0 0 ...
+##  $ executive           : num  1 1 0 1 0 0 0 0 0 0 ...
+##  $ existing            : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ expectations        : num  1 0 0 0 0 0 0 1 0 0 ...
+##  $ expects             : num  1 0 0 0 0 0 0 0 0 1 ...
+##  $ film                : num  2 0 0 0 0 0 0 0 0 0 ...
+##  $ final               : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ financial           : num  1 0 2 1 0 0 0 0 0 0 ...
+##  $ firm                : num  1 0 2 0 0 0 1 0 0 1 ...
+##  $ flexibility         : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ following           : num  1 0 0 0 1 0 0 0 0 0 ...
+##  $ fortunes            : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ fourth              : num  3 0 1 0 0 0 1 1 0 0 ...
+##  $ free                : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ friday              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ gains               : num  1 0 0 0 1 0 0 0 0 0 ...
+##  $ german              : num  1 0 0 0 0 0 1 0 0 0 ...
+##  $ giant               : num  1 0 0 0 1 0 0 0 0 0 ...
+##  $ google              : num  2 0 0 0 0 0 0 0 0 0 ...
+##  $ grew                : num  1 0 0 0 0 0 0 1 0 0 ...
+##  $ growth              : num  1 0 0 2 1 0 1 5 2 0 ...
+##  $ helped              : num  1 0 0 0 0 0 1 0 0 0 ...
+##  $ higher              : num  2 1 0 0 0 0 1 0 2 1 ...
+##  $ highspeed           : num  2 0 0 0 0 0 0 0 0 0 ...
+##  $ hopes               : num  1 0 0 1 0 0 0 0 0 0 ...
+##  $ however             : num  1 2 1 1 0 0 0 2 0 1 ...
+##  $ increase            : num  1 1 0 2 0 0 0 0 0 0 ...
+##  $ inquiry             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ intends             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ internet            : num  4 0 0 0 0 0 0 0 0 0 ...
+##  $ investors           : num  1 0 0 3 0 0 0 0 0 0 ...
+##  $ items               : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ jumped              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ legal               : num  1 1 2 0 0 0 0 0 0 0 ...
+##  $ less                : num  1 0 1 0 0 1 0 0 0 0 ...
+##  $ lord                : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ loss                : num  1 0 0 0 0 0 1 0 0 0 ...
+##  $ lost                : num  1 0 1 0 0 0 0 0 0 0 ...
+##  $ lower               : num  1 0 0 0 0 0 0 1 0 0 ...
+##  $ margins             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ market              : num  1 0 0 5 1 1 0 1 0 1 ...
+##  $ media               : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ meeting             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ mixed               : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ months              : num  1 0 0 0 0 0 0 3 0 0 ...
+##  $ music               : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ needed              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ now                 : num  3 2 0 0 1 1 1 0 0 0 ...
+##  $ objectives          : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ offered             : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ offering            : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ offset              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ one                 : num  2 1 1 0 0 4 0 1 1 0 ...
+##  $ online              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ operating           : num  1 0 0 0 0 0 0 0 0 3 ...
+##  $ owns                : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ part                : num  1 0 0 1 0 0 0 0 0 0 ...
+##  $ pay                 : num  1 1 0 0 0 0 0 0 0 0 ...
+##  $ performance         : num  2 0 0 0 0 0 0 2 0 0 ...
+##  $ posted              : num  1 0 0 0 0 0 0 0 0 0 ...
+##  $ previously          : num  1 1 0 0 0 0 0 0 0 0 ...
+##   [list output truncated]</code></pre>
+<hr />
+<ol start="12" style="list-style-type: decimal">
+<li><strong>Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.</strong></li>
+</ol>
+<hr />
+<pre class="r"><code>
+freq &lt;- colSums(dtm_train)
+head(freq, 10)
+##    account      ahead       alan     almost    america   announce     assets 
+##        100        215         86        196         82         33         55 
+## attractive       back       bank 
+##         17        601        289</code></pre>
+<pre class="r"><code>tail(freq,10)
+##      cebit       hdtv       voip        dtt  everquest        emi      aguas 
+##         14         13         11         11         11          0          0 
+## roundabout      vogts  llewellyn 
+##          0          0          0</code></pre>
+<pre class="r"><code>plot(sort(freq, decreasing = T),
+     col  = &quot;blue&quot;,
+     main = &quot;Word TF frequencies&quot;, 
+     xlab = &quot;TF-based rank&quot;, 
+     ylab = &quot;TF&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" width="672" /></p>
 <hr />
 <ol start="13" style="list-style-type: decimal">
-<li><strong>Use the <code>head</code> and <code>tail</code> functions to take a look at the dataset.</strong></li>
+<li><strong>Show 20 most frequent terms and their frequencies in a bar plot.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code>high_freq    &lt;- tail(sort(freq), n = 20)
+hfp_df       &lt;- as.data.frame(sort(high_freq))
+hfp_df$names &lt;- rownames(hfp_df) 
+
+ggplot(hfp_df, aes(reorder(names, high_freq), high_freq)) +
+  geom_bar(stat=&quot;identity&quot;) + 
+  coord_flip() + 
+  xlab(&quot;Terms&quot;) + 
+  ylab(&quot;Frequency&quot;) +
+  ggtitle(&quot;Term frequencies&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" width="672" /></p>
 <hr />
 <ol start="14" style="list-style-type: decimal">
-<li><strong>Except <code>computer_531</code>, <code>imdb_500</code>, and <code>blog_gender_1000</code> remove the other files from the RStudio environment</strong></li>
+<li><strong>Use the cbind function to add the categories to the train_dtm data and name the column y.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code>dtm_train1 &lt;- cbind(cat=factor(train1$Category), dtm_train)
+dtm_test1 &lt;- cbind(cat=factor(test1$Category), dtm_test)
+dtm_train1&lt;-as.data.frame(dtm_train1)
+dtm_test1&lt;-as.data.frame(dtm_test1)</code></pre>
 <hr />
 <ol start="15" style="list-style-type: decimal">
-<li><strong>Use regular expressions to find the number of reviews in <code>imdb_500</code> that contain words “Action”, “Comedy”, “Drama”. Also include the lower case of the words in your seach.</strong></li>
+<li><strong>Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.</strong></li>
 </ol>
 <hr />
+<pre class="r"><code># gc()
+# Naive Bayes with Laplace smoothing
+fit_nb &lt;- naiveBayes(cat~., data=dtm_train1, laplace = 1)
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+summary(fit_nb)
+##           Length Class  Mode     
+## apriori      5   table  numeric  
+## tables    6604   -none- list     
+## levels       5   -none- character
+## isnumeric 6604   -none- logical  
+## call         4   -none- call
+
+pred_nb_train &lt;- predict(fit_nb, na.omit(dtm_train1))
+fit_nb_table &lt;- table(na.omit(dtm_train1$cat), pred_nb_train, dnn=c(&quot;Actual&quot;, &quot;Predicted&quot;))
+fit_nb_table
+##                Predicted
+## Actual          business entertainment politics sport tech
+##   business           234             3        3   168    0
+##   entertainment        0           190        0   119    0
+##   politics             4             6      225    99    0
+##   sport                2             0        0   407    0
+##   tech                 4             7        2   189  119</code></pre>
+<p>The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.</p>
 <hr />
 <ol start="16" style="list-style-type: decimal">
-<li><strong>Use regular expressions to find the reviews in <code>imdb_500</code> that contain word “Action”. Hint: Set the <code>value</code> in the <code>grep</code> function equal to <code>TRUE</code></strong></li>
+<li><strong>Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.</strong></li>
 </ol>
 <hr />
-<p><code>grep()</code> and the <code>grepl()</code> functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.</p>
+<pre class="r"><code>fit_svm &lt;- svm(cat~., data=dtm_train1)
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in terms.formula(formula, data = data): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+## Warning in svm.default(x, y, scale = scale, ..., na.action = na.action):
+## Variable(s) &#39;emi&#39; and &#39;aguas&#39; and &#39;roundabout&#39; and &#39;vogts&#39; and &#39;llewellyn&#39;
+## constant. Cannot scale data.
+summary(fit_svm)
+## 
+## Call:
+## svm(formula = cat ~ ., data = dtm_train1)
+## 
+## 
+## Parameters:
+##    SVM-Type:  C-classification 
+##  SVM-Kernel:  radial 
+##        cost:  1 
+## 
+## Number of Support Vectors:  1502
+## 
+##  ( 360 290 263 344 245 )
+## 
+## 
+## Number of Classes:  5 
+## 
+## Levels: 
+##  business entertainment politics sport tech
+
+pred_svm_train &lt;- predict(fit_svm, na.omit(dtm_train1))
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+fit_svm_table &lt;- table(na.omit(dtm_train1$cat), pred_svm_train, dnn=c(&quot;Actual&quot;, &quot;Predicted&quot;))
+fit_svm_table
+##                Predicted
+## Actual          business entertainment politics sport tech
+##   business           404             0        2     1    1
+##   entertainment       15           247        1    44    2
+##   politics            23             0      281    29    1
+##   sport                0             0        0   408    1
+##   tech                21             3        0    14  283</code></pre>
 <hr />
 <ol start="17" style="list-style-type: decimal">
-<li><strong>Use the <code>regexpr</code> function to check if there is a fully campitalized word in each of the first 20 blogs in the <code>blog_gender_1000</code> data.</strong></li>
+<li><strong>Now prepare the test data for the models, then check the prediction performances.</strong></li>
 </ol>
 <hr />
-<p>The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string.</p>
-<p>The <code>str_extract</code> function from <code>stringr</code> is also a useful function for this purpose:</p>
+<pre class="r"><code># prediction on test data
+pred_nb_test &lt;- predict(fit_nb, na.omit(dtm_test1))
+fit_nb_test &lt;- table(na.omit(dtm_test1$cat), pred_nb_test, dnn=c(&quot;Actual&quot;, &quot;Predicted&quot;))
+fit_nb_test
+##                Predicted
+## Actual          business entertainment politics sport tech
+##   business            50             0        1    51    0
+##   entertainment        0            35        0    41    1
+##   politics             1             0       45    37    0
+##   sport                0             0        0   102    0
+##   tech                 4             3        1    55   17</code></pre>
+<pre class="r"><code># prediction on test data
+pred_svm_test &lt;- predict(fit_svm, na.omit(dtm_test1))
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(predvars, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to
+## native encoding
+## Warning in eval(extras, data, env): unable to translate &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to
+## native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;m&#39; to native encoding
+## Warning in eval(substitute(subset), data, env): unable to translate
+## &#39;&lt;e2&gt;&lt;U+00A3&gt;bn&#39; to native encoding
+fit_svm_test &lt;- table(na.omit(dtm_test1$cat), pred_svm_test, dnn=c(&quot;Actual&quot;, &quot;Predicted&quot;))
+fit_svm_test
+##                Predicted
+## Actual          business entertainment politics sport tech
+##   business           101             0        1     0    0
+##   entertainment        8            52        0    16    1
+##   politics             3             0       72     8    0
+##   sport                0             0        0   102    0
+##   tech                12             0        0     6   62</code></pre>
 <hr />
 <ol start="18" style="list-style-type: decimal">
-<li><strong><code>regexpr</code> and <code>str_extract</code> only give you the first match of the string (reading left to right). On the other hand, <code>gregexpr</code> and <code>str_match_all</code> will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the <code>blog_gender_1000</code> data.</strong></li>
+<li><strong>Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.</strong></li>
 </ol>
 <hr />
-<hr />
-<ol start="19" style="list-style-type: decimal">
-<li><strong>Now we want to process the <code>computer_531</code> data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until <code>##</code>. Apply this only for the first 20 reviews in data. Use <code>str_extract</code> or <code>gsub</code> function.</strong></li>
-</ol>
-<hr />
-<hr />
-<ol start="20" style="list-style-type: decimal">
-<li><strong>Add a new column to <code>computer_531</code> and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. </strong></li>
-</ol>
-<hr />
-<hr />
-<ol start="21" style="list-style-type: decimal">
-<li><strong>Now remove the sentiment scores from aspects. Add the only-aspect to another column to <code>computer_531</code> and name it <code>aspects</code>.</strong></li>
-</ol>
-<hr />
-<p>Using <code>unlist(strsplit(string, &quot;,&quot;))</code> gives you back a vector of separated aspects.</p>
-<hr />
-<ol start="22" style="list-style-type: decimal">
-<li><strong>Create a new column <code>sentiment</code> with the values <code>positive</code>, <code>negative</code> and <code>neutral</code>. Set a value <code>neutral</code> if there is no aspect in the corresponding column or the sum of scores is equal to zero.</strong></li>
-</ol>
-<hr />
+<pre class="r"><code>confusionMatrix(fit_svm_test)
+## Confusion Matrix and Statistics
+## 
+##                Predicted
+## Actual          business entertainment politics sport tech
+##   business           101             0        1     0    0
+##   entertainment        8            52        0    16    1
+##   politics             3             0       72     8    0
+##   sport                0             0        0   102    0
+##   tech                12             0        0     6   62
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.8761          
+##                  95% CI : (0.8418, 0.9053)
+##     No Information Rate : 0.2973          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.8434          
+##                                           
+##  Mcnemar&#39;s Test P-Value : NA              
+## 
+## Statistics by Class:
+## 
+##                      Class: business Class: entertainment Class: politics
+## Sensitivity                   0.8145               1.0000          0.9863
+## Specificity                   0.9969               0.9362          0.9704
+## Pos Pred Value                0.9902               0.6753          0.8675
+## Neg Pred Value                0.9327               1.0000          0.9972
+## Prevalence                    0.2793               0.1171          0.1644
+## Detection Rate                0.2275               0.1171          0.1622
+## Detection Prevalence          0.2297               0.1734          0.1869
+## Balanced Accuracy             0.9057               0.9681          0.9783
+##                      Class: sport Class: tech
+## Sensitivity                0.7727      0.9841
+## Specificity                1.0000      0.9528
+## Pos Pred Value             1.0000      0.7750
+## Neg Pred Value             0.9123      0.9973
+## Prevalence                 0.2973      0.1419
+## Detection Rate             0.2297      0.1396
+## Detection Prevalence       0.2297      0.1802
+## Balanced Accuracy          0.8864      0.9684</code></pre>
 <hr />
 </div>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <hr />
+<p>In this practical, we learned about:</p>
+<ul>
+<li>Documet-term matrix representation</li>
+<li>tf and tfidf methods</li>
+<li>Naive Bayes and SVM</li>
+<li>Model comparison</li>
+</ul>
 <hr />
 <p>End of Practical</p>
 <hr />
