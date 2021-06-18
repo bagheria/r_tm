@@ -28,7 +28,7 @@ In this practical we are going to use the following packages:
 library(tm)
 library(tidytext)
 library(dplyr)
-
+library(ggplot2)
 ```
 
 ---
@@ -326,7 +326,7 @@ albums %>% ggplot() +
 ---
 
 # Sentiment analysis of product reviews
-In this part of the practical we will do some sentiment analysis on the computer product reviews. For this purpose, we will use our processed data set from the first practical: the computer_531 dataset.
+In this part of the practical, we will do some sentiment analysis on computer product reviews. For this purpose, we will use our processed data set from the first practical: the computer_531 dataset.
 
 ---
 
@@ -336,15 +336,21 @@ In this part of the practical we will do some sentiment analysis on the computer
 
 ```{r 11, include = TRUE, warning = FALSE}
 
+computer_531 <- read.csv("computer_531.csv")
+
 ```
 
 ---
 
-12. **Apply the `sentiment_score` function on the reviews in the dataframe with both the bing and afinn dictionaries.**
+12. **Apply the `sentiment_score` function on the reviews in the dataframe with both bing and afinn dictionaries.**
 
 ---
 
 ```{r 12, include = TRUE, warning = FALSE}
+computer_531$sentiment_bing  <- sentiment_score(computer_531$review, bing_sentiments)
+computer_531$sentiment_afinn <- sentiment_score(computer_531$review, afinn_sentiments)
+
+head(computer_531[,c("review", "sentiment", "sentiment_bing", "sentiment_afinn")], n = 10)
 
 ```
 
@@ -356,6 +362,19 @@ In this part of the practical we will do some sentiment analysis on the computer
 ---
 
 ```{r 13, include = TRUE}
+
+computer_531 <- computer_531 %>%
+  mutate(sentiment_bing1 = 0)
+
+for(i in 1:nrow(computer_531)){ 
+  if(computer_531[i,]$sentiment_bing >= 1){
+    computer_531[i,]$sentiment_bing1 <- 1
+    } else if(computer_531[i,]$sentiment_bing <= -1){
+    computer_531[i,]$sentiment_bing1 <- -1
+    } else{
+    computer_531[i,]$sentiment_bing1 <- 0
+    }
+}
 
 ```
 
