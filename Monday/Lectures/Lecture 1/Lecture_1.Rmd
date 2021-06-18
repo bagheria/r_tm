@@ -159,9 +159,9 @@ include_graphics("img/page 11.png")
 
   - When **Carrie**, her colleague from the **IT department**, hears the situation, she offers Garry to use Text Mining!!
 
-  - She says: “<span style="color:blue">Text mining is your friend; it can help you to make the faster by filtering and recommending possible words…</span>”
+  - She says: “Text mining is your friend; it can help you to make the faster by filtering and recommending possible words…”
 
-  - She continues : “Text mining is a subfield of AI and NLP and is related to data science, data mining and machine learning. It will make the process faster and cuts some of the expenses!”
+  - She continues : “<span style="color:blue">Text mining is a subfield of AI and NLP and is related to data science, data mining and machine learning. It will make the process faster and cuts some of the expenses!</span>”
 
   - After consulting with Larry and Harry, They decide to give text mining a try!
 </div>
@@ -452,7 +452,7 @@ Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5
 <br>
 <br>
 <div style="margin: auto 3em; text-align: justify; width: 80%">
-<font size="+2">In <span style="text-decoration:underline">computing</span>, a regular expression, also referred to as "regex" or "regexp", provides a concise and flexible means for matching strings of <span style="text-decoration:underline">text</span>, such as particular characters, words, or patterns of characters. A regular expression is written in a formal language <span style="text-decoration:underline">that can be interpreted</span> by a regular expression processor.</font>
+<font size="+2">In <a href="https://en.wikipedia.org/wiki/Computing">computing</a>, a regular expression, also referred to as "regex" or "regexp", provides a concise and flexible means for matching strings of <a href="https://en.wikipedia.org/wiki/String_(computer_science)">text</a>, such as particular characters, words, or patterns of characters. A regular expression is written in a formal language <a href="https://en.wikipedia.org/wiki/Formal_language#Programming_languages">that can be interpreted</a> by a regular expression processor.</font>
 
 <br>
 <br>
@@ -590,32 +590,69 @@ include_graphics("img/page 57.png")
 
 ## Regular Expression Quick Guide
 
-```{r, echo=FALSE}
-sign <- c("^", "$", ".", "\\s", "\\S", "*", "*?", "+", "+?", "[aeiou]", "[^XYZ]", "[a-z0-9]", "(",")")
-func <- c("Matches the beginning of a line",
-          "Matches the end of the line",
-          "Matches any character",
-          "Matches whitespace",
-          "Matches any non-whitespace character",
-          "Repeats a character zero or more times",
-          "Repeats a character zero or more times (non-greedy)",
-          "Repeats a chracter one or more times",
-          "Repeats a character one or more times (non-greedy)",
-          "Matches a single character in the listed set",
-          "Matches a single character not in the listed set",
-          "The set of characters can include a range",
-          "Indicates where string extraction is to start",
-          "Indicates where string extraction is to end")
-data <- data.frame(sign = sign, func = func)
-colnames(data) <- c("","")
-data %>% 
-  kbl %>% 
-  kable_styling(fixed_thead = T) %>%
-  kable_paper("hover", full_width=F) %>%
-  column_spec(1, width = "3cm") %>% 
-  column_spec(2, width = "10cm")
+<center>
+<table style="width:100%;margin-left:auto;margin-right:auto">
+  <tr>
+    <td><span style="font-size:18px">^</span></td>
+    <td><span style="font-size:18px">Matches the beginning of a line</span></td>
+  </tr>
+  <tr>
+    <td><span style="font-size:18px">$</span></td>
+    <td><span style="font-size:18px">Matches the end of the line</span></td>
+  </tr>
+  <tr>
+    <td><span style="font-size:18px">.</span></td>
+    <td><span style="font-size:18px">Matches any character</span></td>
+  </tr>
+  <tr>
+    <td><span style="font-size:18px">&Backslash;s</span></td>
+    <td><span style="font-size:18px">Matches whitespace</span></td>
+  </tr>
+  <tr>
+    <td><span style="font-size:18px">&Backslash;S</span></td>
+    <td><span style="font-size:18px">Matches any non-whitespace character</span></td>
+  </tr>
+  <tr>
+    <td><span style="font-size:18px">*</span></td>
+    <td><span style="font-size:18px">Repeats a character zero or more times</span></td>
+  </tr>
+  <tr>
+    <td><span style="font-size:18px">*?</span></td>
+    <td><span style="font-size:18px">Repeats a character zero or more times (non-greedy)</span></td>
+  </tr>  
+  <tr>
+    <td><span style="font-size:18px">+</span></td>
+    <td><span style="font-size:18px">Repeats a chracter one or more times</span></td>
+  </tr>    
+  <tr>
+    <td><span style="font-size:18px">+?</span></td>
+    <td><span style="font-size:18px">Repeats a character one or more times (non-greedy)</span></td>
+  </tr>    
+  <tr>
+    <td><span style="font-size:18px">[aeiou]</span></td>
+    <td><span style="font-size:18px">Matches a single character in the listed set</span></td>
+  </tr>   
+  <tr>
+    <td><span style="font-size:18px">[^XYZ]</span></td>
+    <td><span style="font-size:18px">Matches a single character not in the listed set</span></td>
+  </tr>  
+  <tr>
+    <td><span style="font-size:18px">[a-z0-9]</span></td>
+    <td><span style="font-size:18px">The set of characters can include a range</span></td>
+  </tr>  
+  <tr>
+    <td><span style="font-size:18px">(</span></td>
+    <td><span style="font-size:18px">Indicates where string extraction is to start</span></td>
+  </tr>  
+  <tr>
+    <td><span style="font-size:18px">)</span></td>
+    <td><span style="font-size:18px">Indicates where string extraction is to end</span></td>
+  </tr> 
+</table>
+</center>
 
-```
+
+
 
 ## In R: Medical example
 
