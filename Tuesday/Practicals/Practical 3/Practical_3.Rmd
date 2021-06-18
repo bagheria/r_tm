@@ -29,6 +29,7 @@ library(caret)
 library(tidyverse)
 library(tm)
 library(dplyr)
+library(e1071)
 # install.packages(SnowballC)
 
 ```
@@ -189,7 +190,7 @@ predict(fit_by_tfidf)
 corpus <- VCorpus(VectorSource(test_sentence))
 # convert to a dtm
 dtm <- DocumentTermMatrix(corpus, 
-                          control = list(dictionary = Terms(dtm_tfidf), # remember that we need to use the terminology from the training data
+                          control = list(dictionary = Terms(dtm_tfidf), # remember that we need to use the vocabulary from the training data
                                          weighting = weightTfIdf,
                                          removePunctuation = TRUE, 
                                          stopwords = TRUE, 
@@ -211,7 +212,7 @@ predict(fit, newdata = test_data)
 
 ## Feature selection and classification: Naïve Bayes versus SVM
 
-The dataset used in this part of the practical is the BBC News Dataset. The raw dataset can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
+The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
 It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
 
 - Business
@@ -222,33 +223,19 @@ It consists of 2.225 documents from the BBC news website corresponding to storie
 
 ---
 
-8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
+8. **Load the data set from the data folder and inspect its first rows.**
 
 ---
-
-
-
 ```{r 8, include = TRUE, warning = FALSE}
 load("data/news_dataset.rda")
-#View(df_final)
-table(df_final$Category)
-df_sample <- sample_n(df_final, 500)
-# df_sample <- df_final %>% group_by(Category) %>% sample_n(size = 100)
-table(df_sample$Category)
+head(df_final)
 
-corpus <- VCorpus(VectorSource(df_sample$Content))
-dtm <- DocumentTermMatrix(corpus, list(removePunctuation = TRUE, stopwords = TRUE, stemming = TRUE, removeNumbers = TRUE))
-train <- as.matrix(dtm)
-train <- cbind(train, df_sample$Category)
-colnames(train)[ncol(train)] <- 'y'
-train <- as.data.frame(train)
-train$y <- as.factor(train$y)
-fit <- train(y ~ ., data = train, method = 'svmLinearWeights2')
+```
 
-library(e1071)
-smodel <- svm(y ~ ., data=train, kernel = 'linear')
-summary(smodel)
-table(predict(smodel), train$y)
+
+
+```{r, include = TRUE, warning = FALSE}
+
 
 # feature selection
 # high-impact words
@@ -258,168 +245,215 @@ table(predict(smodel), train$y)
 
 ---
 
-9. **Use the `freq_terms` function from the `qdap` package and find the 30 top terms in each set of positive and negative reviews in `imdb_500`.**
+9. **Find out about the name of the categories and the number of observations in each of them.**
 
 ---
 
 ```{r 9, include = TRUE, warning = FALSE}
+# list of the categories in the data set
+unique(df_final$Category)
+table(df_final$Category)
 
 ```
 
 
 ---
 
-10. **Using `ggplot`, plot a barchart for each of the freqent terms dataframes.**
+10. **Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, and whitespaces.**
 
 ---
 
 ```{r 10, include = TRUE, warning = FALSE}
+## set the seed to make your partition reproducible
+set.seed(123)
 
+corpus <- Corpus(VectorSource(df_final$Content))
+# standardize to lowercase
+corpus <- tm_map(corpus, content_transformer(tolower))
+# remove tm stopwords
+corpus <- tm_map(corpus, removeWords, stopwords())
+# standardize whitespaces
+corpus <- tm_map(corpus, stripWhitespace)
+# remove punctuation
+corpus <- tm_map(corpus, removePunctuation)
+# remove numbers
+corpus <- tm_map(corpus, removeNumbers)
 
+dtm <- DocumentTermMatrix(corpus)
+
+# words appearing more than 10x
+features <- findFreqTerms(dtm, 10)
+
+head(features)
 
 ```
 
 ---
 
-11. **Use the `readLines` function to read data from the 'computer.txt' file.**
+11. **Partition the original data and the corpus object into training and test sets with 80% for the training set and 20% for the test set.**
+
+---
+
+```{r 10+1, include = TRUE, warning = FALSE}
+
+train_idx <- createDataPartition(df_final$Category, p=0.80, list=FALSE)
+# set for the original raw data 
+train1 <- df_final[train_idx,]
+test1 <- df_final[-train_idx,]
+# set for the cleaned-up data
+train2 <- corpus[train_idx]
+test2 <- corpus[-train_idx]
+
+```
+---
+
+
+12. **Create separate document-term matrices for the training and the test sets using the features variable as dictionary and convert them into data frames.**
 
 ---
 
 ```{r 11, include = TRUE, warning = FALSE}
+dtm_train <- DocumentTermMatrix(train2, list(dictionary=features))
+dtm_test  <- DocumentTermMatrix(test2, list(dictionary=features))
+
+dtm_train <- as.data.frame(as.matrix(dtm_train))
+dtm_test <- as.data.frame(as.matrix(dtm_test))
+str(dtm_test)
+
 
 ```
 
 ---
 
-12. **Convert the data to a dataframe.**
+12. **Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.**
 
 ---
 
 ```{r 12, include = TRUE, warning = FALSE}
 
+freq <- colSums(dtm_train)
+head(freq, 10)
+
+```
+```{r}
+tail(freq,10)
+
 ```
 
+```{r}
+plot(sort(freq, decreasing = T),
+     col  = "blue",
+     main = "Word TF frequencies", 
+     xlab = "TF-based rank", 
+     ylab = "TF")
+
+```
 
 ---
 
-13. **Use the `head` and `tail` functions to take a look at the dataset.**
+13. **Show 20 most frequent terms and their frequencies in a bar plot.**
 
 ---
 
 ```{r 13, include = TRUE}
+high_freq    <- tail(sort(freq), n = 20)
+hfp_df       <- as.data.frame(sort(high_freq))
+hfp_df$names <- rownames(hfp_df) 
+
+ggplot(hfp_df, aes(reorder(names, high_freq), high_freq)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  xlab("Terms") + 
+  ylab("Frequency") +
+  ggtitle("Term frequencies")
 
 ```
 
 ---
 
-14. **Except `computer_531`, `imdb_500`, and `blog_gender_1000` remove the other files from the RStudio environment**
+14. **Use the cbind function to add the categories to the train_dtm data and name the column y.**
 
 ---
 
 ```{r 14, include = TRUE}
-
+dtm_train1 <- cbind(cat=factor(train1$Category), dtm_train)
+dtm_test1 <- cbind(cat=factor(test1$Category), dtm_test)
+dtm_train1<-as.data.frame(dtm_train1)
+dtm_test1<-as.data.frame(dtm_test1)
 
 ```
 
 ---
 
-15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your seach.**
+15. **Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
 
 ```{r 15, include = TRUE}
+# gc()
+# Naive Bayes with Laplace smoothing
+fit_nb <- naiveBayes(cat~., data=dtm_train1, laplace = 1)
+summary(fit_nb)
+
+pred_nb_train <- predict(fit_nb, na.omit(dtm_train1))
+fit_nb_table <- table(na.omit(dtm_train1$cat), pred_nb_train, dnn=c("Actual", "Predicted"))
+fit_nb_table
+
 
 ```
 
+The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.
+
 ---
 
-16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
+16. **Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
 ```{r 16, include = TRUE}
+fit_svm <- svm(cat~., data=dtm_train1)
+summary(fit_svm)
+
+pred_svm_train <- predict(fit_svm, na.omit(dtm_train1))
+fit_svm_table <- table(na.omit(dtm_train1$cat), pred_svm_train, dnn=c("Actual", "Predicted"))
+fit_svm_table
 
 ```
 
 
-`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
 
 ---
 
-17. **Use the `regexpr` function to check if there is a fully campitalized word in each of the first 20 blogs in the `blog_gender_1000` data.**
+17. **Now prepare the test data for the models, then check the prediction performances.**
 
 ---
 
 ```{r 17, include = TRUE}
-
+# prediction on test data
+pred_nb_test <- predict(fit_nb, na.omit(dtm_test1))
+fit_nb_test <- table(na.omit(dtm_test1$cat), pred_nb_test, dnn=c("Actual", "Predicted"))
+fit_nb_test
 
 ```
 
-The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string. 
 
-The `str_extract` function from `stringr` is also a useful function for this purpose:
-
-```{r str_extract, include = TRUE}
-
+```{r svm_test, include = TRUE}
+# prediction on test data
+pred_svm_test <- predict(fit_svm, na.omit(dtm_test1))
+fit_svm_test <- table(na.omit(dtm_test1$cat), pred_svm_test, dnn=c("Actual", "Predicted"))
+fit_svm_test
 
 ```
 
 ---
 
-18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
+18. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
 
 ---
 
 ```{r 18, include = TRUE}
-
-
-```
-
----
-
-19. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
-
----
-
-```{r 19, include = TRUE}
-
-
-```
-
----
-
-20. **Add a new column to `computer_531` and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. **
-
----
-
-```{r 20, include = TRUE}
-
-
-```
-
----
-
-21. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
-
----
-
-```{r 21, include = TRUE}
-
-
-```
-
-
-Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspects.
-
----
-
-22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
-
----
-
-```{r 22, include = TRUE}
-
+confusionMatrix(fit_svm_test)
 
 ```
 
@@ -429,7 +463,12 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 
 ---
 
+In this practical, we learned about:
 
+- Documet-term matrix representation
+- tf and tfidf methods
+- Naive Bayes and SVM
+- Model comparison
 
 ---
 
