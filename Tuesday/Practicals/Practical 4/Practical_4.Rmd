@@ -174,7 +174,7 @@ scores <- as.matrix(dtm) %*% words$score
 ---
 
 ```{r 8, include = TRUE, warning = FALSE}
-taylor_swift_lyrics$sentiment <- scores
+taylor_swift_lyrics$sentiment_bing <- scores
 head(taylor_swift_lyrics)
 
 ```
@@ -187,7 +187,7 @@ head(taylor_swift_lyrics)
 
 ```{r 8+1, include = TRUE, warning = FALSE}
 taylor_swift_lyrics[1:60,] %>% ggplot() +
-  geom_col(aes(Title, sentiment), fill = "lightgreen", alpha=.75) +
+  geom_col(aes(Title, sentiment_bing), fill = "lightgreen", alpha=.75) +
   theme(legend.position = "none", 
         plot.title = element_text(hjust = 0.5),
         panel.grid.major = element_blank()) +
@@ -198,7 +198,7 @@ taylor_swift_lyrics[1:60,] %>% ggplot() +
   theme_minimal()
 
 taylor_swift_lyrics[61:132,] %>% ggplot() +
-  geom_col(aes(Title, sentiment), fill = "lightgreen", alpha=.75) +
+  geom_col(aes(Title, sentiment_bing), fill = "lightgreen", alpha=.75) +
   theme(legend.position = "none", 
         plot.title = element_text(hjust = 0.5),
         panel.grid.major = element_blank()) +
@@ -248,8 +248,32 @@ sentiment_score <- function(texts, sentiment_dict){
 
 ```{r 91, include = TRUE, warning = FALSE}
 colnames(afinn_sentiments)[2] <- "score"
-sentiment_score(taylor_swift_lyrics$Lyrics, afinn_sentiments)
+taylor_swift_lyrics$sentiment_afinn <- sentiment_score(taylor_swift_lyrics$Lyrics, afinn_sentiments)
 
+```
+
+```{r}
+taylor_swift_lyrics[1:60,] %>% ggplot() +
+  geom_col(aes(Title, sentiment_afinn), fill = "orange", alpha=.75) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Sentiment Score") +
+  ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
+  coord_flip() +
+  theme_minimal()
+
+taylor_swift_lyrics[61:132,] %>% ggplot() +
+  geom_col(aes(Title, sentiment_afinn), fill = "orange", alpha=.75) +
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank()) +
+  xlab("") + 
+  ylab("Sentiment Score") +
+  ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
+  coord_flip() +
+  theme_minimal()
 ```
 
 ---
