@@ -29,6 +29,9 @@ library(tm)
 library(tidytext)
 library(dplyr)
 library(ggplot2)
+library(caret)
+library(rpart)
+library(rpart.plot)
 ```
 
 ---
@@ -357,63 +360,141 @@ head(computer_531[,c("review", "sentiment", "sentiment_bing", "sentiment_afinn")
 
 ---
 
-13. **Create a confusion matrix. Accuracy, precision, recall and F1 measures.**
+13. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the bing dictionary.**
 
 ---
 
 ```{r 13, include = TRUE}
-
+# converting numbers into neutral, positive and negative classes for the output of the bing dictionary
 computer_531 <- computer_531 %>%
-  mutate(sentiment_bing1 = 0)
+  mutate(sentiment_bing1 = "neutral")
 
 for(i in 1:nrow(computer_531)){ 
   if(computer_531[i,]$sentiment_bing >= 1){
-    computer_531[i,]$sentiment_bing1 <- 1
+    computer_531[i,]$sentiment_bing1 <- "positive"
     } else if(computer_531[i,]$sentiment_bing <= -1){
-    computer_531[i,]$sentiment_bing1 <- -1
-    } else{
-    computer_531[i,]$sentiment_bing1 <- 0
+    computer_531[i,]$sentiment_bing1 <- "negative"
     }
 }
+
+# performance of bing
+confusionMatrix(table(computer_531$sentiment, computer_531$sentiment_bing1, dnn=c("Actual", "Predicted")))
 
 ```
 
 ---
 
-14. **From the `neuralnet` package, we want to apply a multi-layer perceptron to this dataset and train a model for prediction of the sentiments.**
+14. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the afinn dictionary.**
 
 ---
 
 ```{r 14, include = TRUE}
+# converting numbers into neutral, positive and negative classes for the output of the afinn dictionary
+computer_531 <- computer_531 %>%
+  mutate(sentiment_afinn1 = "neutral")
+for(i in 1:nrow(computer_531)){ 
+  if(computer_531[i,]$sentiment_afinn >= 1){
+    computer_531[i,]$sentiment_afinn1 <- "positive"
+    } else if(computer_531[i,]$sentiment_afinn <= -1){
+    computer_531[i,]$sentiment_afinn1 <- "negative"
+    }
+}
 
+# performance of afinn
+confusionMatrix(table(computer_531$sentiment, computer_531$sentiment_afinn1, dnn=c("Actual", "Predicted")))
 
 ```
 
----
-
-15. **Compare nn1, bing and affine ...**
 
 ---
 
+15. **From the `rpart` package, we want to build a tree on this dataset to predict sentiments. For this purpose, first prepare your data by doing preprocessing on reviews, converting to dtm and creating training and test sets.**
+
+---
 
 ```{r 15, include = TRUE}
 
+set.seed(123)
+
+corpus <- Corpus(VectorSource(computer_531$review))
+# standardize to lowercase
+corpus <- tm_map(corpus, content_transformer(tolower))
+# remove tm stopwords
+corpus <- tm_map(corpus, removeWords, stopwords())
+# standardize whitespaces
+corpus <- tm_map(corpus, stripWhitespace)
+# remove punctuation
+corpus <- tm_map(corpus, removePunctuation)
+# remove numbers
+corpus <- tm_map(corpus, removeNumbers)
+dtm <- DocumentTermMatrix(corpus)
+# words appearing more than 10x
+features <- findFreqTerms(dtm, 10)
+head(features)
+
+train_idx <- createDataPartition(computer_531$sentiment, p=0.80, list=FALSE)
+# set for the original raw data 
+train1    <- computer_531[train_idx,]
+test1     <- computer_531[-train_idx,]
+# set for the cleaned-up data
+train2    <- corpus[train_idx]
+test2     <- corpus[-train_idx]
+
+
+dtm_train <- DocumentTermMatrix(train2, list(dictionary=features))
+dtm_test  <- DocumentTermMatrix(test2, list(dictionary=features))
+dtm_train <- as.data.frame(as.matrix(dtm_train))
+dtm_test  <- as.data.frame(as.matrix(dtm_test))
+
+
+dtm_train1 <- cbind(cat=factor(train1$sentiment), dtm_train)
+dtm_test1  <- cbind(cat=factor(test1$sentiment), dtm_test)
+dtm_train1 <- as.data.frame(dtm_train1)
+dtm_test1  <- as.data.frame(dtm_test1)
+
 ```
 
 ---
 
-16. **Visualise the results**
+16. **Now build a tree with the default setting of the rpart function, and visualize the tree.**
 
 ---
+
 
 ```{r 16, include = TRUE}
+# build a small tree for prediction
+fit_tree <- rpart(cat ~ ., data = dtm_train1, method = "class")
+rpart.plot(fit_tree)
 
 ```
 
+---
+
+17. **Check the performamce of the tree on your training set.**
 
 ---
 
+```{r 17, include = TRUE}
+# performance on train
+preds <- predict(fit_tree, type = c("class"))
+confusionMatrix(table(dtm_train1$cat, preds, dnn=c("Actual", "Predicted")))
 
+```
+
+---
+
+18. **Check the performamce of the tree on the test set, and compare it with the training performance.**
+
+---
+
+```{r 18, include = TRUE}
+# performance on test
+preds <- predict(fit_tree, newdata = dtm_test1, type = c("class"))
+confusionMatrix(table(dtm_test1$cat, preds, dnn=c("Actual", "Predicted")))
+
+```
+
+Here you found out that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better!
 
 ---
 
@@ -421,7 +502,13 @@ for(i in 1:nrow(computer_531)){
 
 ---
 
+In this practical, we learned about:
 
+- Sentiment analysis
+- Dictionary-based methods
+- Available sentiment dictionaries
+- Learning sentiments
+- Decision trees
 
 ---
 
