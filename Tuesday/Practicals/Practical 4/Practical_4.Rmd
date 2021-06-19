@@ -494,7 +494,7 @@ confusionMatrix(table(dtm_test1$cat, preds, dnn=c("Actual", "Predicted")))
 
 ```
 
-Here you found out that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better!
+Here you found out that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better, but you will lose interpretability!
 
 ---
 
