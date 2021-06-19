@@ -213,7 +213,7 @@ predict(fit, newdata = test_data)
 ## Feature selection and classification: Naïve Bayes versus SVM
 
 The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
-It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
+It consists of 2225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
 
 - Business
 - Entertainment
@@ -231,17 +231,6 @@ load("data/news_dataset.rda")
 head(df_final)
 
 ```
-
-
-
-```{r, include = TRUE, warning = FALSE}
-
-
-# feature selection
-# high-impact words
-
-```
-
 
 ---
 
