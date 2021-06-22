@@ -20,7 +20,7 @@ output:
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the fifth practical of the course "Introduction to Text Mining with R". In this practical, we will apply a clustering and a topic modeling approach on news articles and cluster them into different categories. 
+Welcome to the fifth practical of the course "Introduction to Text Mining with R". In this practical, we will apply a clustering method and a topic modeling approach on news articles and cluster them into different categories. 
 
 In this practical we are going to use the following packages:
 
@@ -48,7 +48,8 @@ library(dplyr)
 ---
 
 ```{r 1, include = TRUE}
-taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
+load("data/news_dataset.rda")
+head(df_final)
 
 ```
 
@@ -66,7 +67,7 @@ taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
 
 
 ```{r 2, include = TRUE}
-docs <- Corpus(VectorSource(taylor_swift_lyrics$Lyrics))
+docs <- Corpus(VectorSource(df_final$Content))
 
 dtm <- DocumentTermMatrix(docs,
            control = list(tolower = TRUE,
@@ -75,23 +76,33 @@ dtm <- DocumentTermMatrix(docs,
                           stopwords = TRUE
                          ))
 
-dtm <- as.data.frame(as.matrix(dtm))
+#dtm <- as.data.frame(as.matrix(dtm))
+dtm <- as.matrix(dtm)
 
 ```
 
 ---
 
-3. **Now we can implement k-means clustering, starting out with three centers. What does the output look like?**
+3. **Now we can run a k-means clustering method, starting out with three centers. What does the output look like?**
 
 ---
 
 ```{r 3, include = TRUE}
-#inspect(dtm)
-employment_clust <- kmeans(select(employment_demo, -occupation), centers = 3)
-summary(employment_clust)
+text_kmeans_clust3 <- kmeans(dtm, centers = 3)
+summary(text_kmeans_clust3)
+
+# Cosine distance matrix (useful for specific clustering algorithms) 
+library(proxy)
+dist_matrix <- dist(dtm, method = "cosine")
+
+clustering.hierarchical <- hclust(dist_matrix, method = "ward.D2") 
+plot(clustering.hierarchical, cex=0.9, hang=-1)
+rect.hclust(clustering.hierarchical, k=5)
+
+clustering.dbscan <- dbscan::hdbscan(dist_matrix, minPts = 10)
 
 library(broom)
-tidy(employment_clust)
+tidy(text_kmeans_clust3)
 
 ```
 
@@ -100,8 +111,8 @@ The original format of the output isn’t as practical to deal with in many circ
 If we augment() the clustering results with our original data, we can plot any of the dimensions of our space, such as total employed vs. proportion who are Black. We can see here that there are really separable clusters but instead a smooth, continuous distribution from low to high along both dimensions. Switch out another dimension like asian to see that projection of the space.
 
 ```{r}
-augment(employment_clust, employment_demo) %>%
-  ggplot(aes(total, black_or_african_american, color = .cluster)) +
+text_kmeans_clust3 %>%
+  ggplot(aes(also, advert, color = .cluster)) +
   geom_point()
 
 ```
@@ -116,7 +127,7 @@ augment(employment_clust, employment_demo) %>%
 
 4. ** **
 
-We used k = 3 but how do we know that’s right? There are lots of complicated or “more art than science” ways of choosing k. One way is to look at the total within-cluster sum of squares and see if it stops dropping off so quickly at some value for k. We can get that from another verb from broom, glance(); let’s try lots of values for k and see what happens to the total sum of squares.
+We used k = 3 but how do we know that’s right? There are lots of complicated or “more art than science” ways of choosing k. One way is to look at the total within-cluster sum of squares and see if it stops dropping off so quickly at some value for k. We can get that from another function from the broom package, glance(); let’s try lots of values for k and see what happens to the total sum of squares.
 
 
 
@@ -126,7 +137,7 @@ We used k = 3 but how do we know that’s right? There are lots of complicated o
 kclusts <-
   tibble(k = 1:9) %>%
   mutate(
-    kclust = map(k, ~ kmeans(select(employment_demo, -occupation), .x)),
+    kclust = map(k, ~ kmeans(dtm, .x)),
     glanced = map(kclust, glance),
   )
 
@@ -166,103 +177,57 @@ To visualize this final result, let’s use plotly and add the occupation name t
 ```{r 6, include = TRUE}
 library(plotly)
 
-p <- augment(final_clust, employment_demo) %>%
+p <- augment(text_kmeans_clust3, dtm) %>%
   ggplot(aes(total, women, color = .cluster, name = occupation)) +
   geom_point()
 
 ggplotly(p, height = 500)
 
+dtm
+
 ```
 
 ---
 
-7. **To calculate a score for each lyric, multiply your dtm object by the scoring dataframe.**
+7. **.**
 
 ---
 
 ```{r 7, include = TRUE, warning = FALSE}
 
-# calculate documents scores with matrix algebra! 
-scores <- as.matrix(dtm) %*% words$score
 
 ```
 
 ---
 
-8. **Add the calculated scores for each lyric to the original `taylor_swift_lyrics` dataframe.**
+8. **.**
 
 ---
 
 ```{r 8, include = TRUE, warning = FALSE}
-taylor_swift_lyrics$sentiment <- scores
-head(taylor_swift_lyrics)
+
 
 ```
 
 
 ---
 
-9. **Using the code you wrote above, we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a data frame with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+9. ** .**
 
 ---
 
 ```{r 9, include = TRUE, warning = FALSE}
-sentiment_score <- function(texts, sentiment_dict){
-  # preprocess texts
-  docs <- Corpus(VectorSource(texts))
-  dtm <- DocumentTermMatrix(docs,
-           control = list(stopwords = T,
-                          tolower = TRUE,
-                          removeNumbers = TRUE,
-                          removePunctuation = TRUE))
-  dtm <- as.data.frame(as.matrix(dtm))
-  
-  # get all the words in dtm and put it in a dataframe
-  words = data.frame(word = colnames(dtm))
 
-  # get their sentiment scores
-  words <- merge(words, sentiment_dict, all.x = T)
-
-  # replace NAs with 0s
-  words$score[is.na(words$score)] <- 0
-  
-  # calculate documents scores with matrix algebra!
-  scores <- as.matrix(dtm) %*% words$score
-  
-  return(scores)
-  
-}
-
-```
-
-```{r 91, include = TRUE, warning = FALSE}
-sentiment_score(taylor_swift_lyrics$lyrics, afinn_sentiments)
 
 ```
 
 ---
 
-10. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is.**
+10. **.**
 
 ---
 
 ```{r 10, include = TRUE, warning = FALSE}
-# concatenate to make albums
-albums <- taylor_swift_lyrics %>% group_by(Album) %>%
-  summarise(lyrics = paste0(Lyrics, collapse = ";"))
-
-# add sentiments
-albums$sentiment <- sentiment_score(albums$lyrics, bing_sentiments)
-
-# concatenate to make albums
-albums <- taylor_swift_lyrics %>% group_by(Album) %>%
-  summarise(lyrics = paste0(Lyrics, collapse = ";"))
-
-# add sentiments
-albums$sentiment <- sentiment_score(albums$lyrics, afinn_sentiments)
-
-
-# a ggplot
 
 ```
 
