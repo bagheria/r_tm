@@ -250,6 +250,21 @@ plot(points,
 ---
 
 ```{r 10, include = TRUE, warning = FALSE}
+library(topicmodels)
+
+dtm <- DocumentTermMatrix(docs,
+           control = list(tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE,
+                          stopwords = TRUE
+                         ))
+# We remove A LOT of features. R is natively very weak with high dimensional matrix
+dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
+
+
+# A LDA topic model with 5 topics; if it takes a lot of time for you to run this change k to 2
+out_lda <- LDA(dtm_cut, k = 5, method= "Gibbs", control = list(seed = 321))
+out_lda
 
 ```
 
@@ -259,12 +274,13 @@ plot(points,
 
 ---
 
-11. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
+11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilites for each term and topic.**
 
 ---
 
 ```{r 11, include = TRUE, warning = FALSE}
-
+lda_topics <- tidy(out_lda, matrix = "beta")
+lda_topics
 ```
 
 ---
@@ -274,7 +290,21 @@ plot(points,
 ---
 
 ```{r 12, include = TRUE, warning = FALSE}
+library(ggplot2)
+library(dplyr)
 
+lda_top_terms <- lda_topics %>%
+  group_by(topic) %>%
+  slice_max(beta, n = 20) %>% # We use dplyr’s slice_max() to find the top 10 terms within each topic.
+  ungroup() %>%
+  arrange(topic, -beta)
+
+lda_top_terms %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  scale_y_reordered()
 ```
 
 
@@ -285,7 +315,15 @@ plot(points,
 ---
 
 ```{r 13, include = TRUE}
+library(tidyr)
 
+beta_wide <- lda_topics %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>% 
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_wide
 ```
 
 ---
@@ -295,8 +333,16 @@ plot(points,
 ---
 
 ```{r 14, include = TRUE}
+lda_documents <- tidy(out_lda, matrix = "gamma")
+lda_documents[lda_documents$document == 1,]
+lda_documents[lda_documents$document == 1000,]
+lda_documents[lda_documents$document == 2000,]
+lda_documents[lda_documents$document == 2225,]
+tidy(dtm_cut) %>%
+  filter(document == 2225) %>%
+  arrange(desc(count))
 
-
+df_final[2225,]$Content
 ```
 
 ---
@@ -308,6 +354,9 @@ plot(points,
 
 ```{r 15, include = TRUE}
 
+tidy(dtm_cut) %>%
+  filter(document == 6) %>%
+  arrange(desc(count))
 ```
 
 ---
@@ -317,13 +366,24 @@ plot(points,
 ---
 
 ```{r 16, include = TRUE}
+# reorder titles in order of topic 1, topic 2, etc before plotting
+lda_documents[lda_documents$document %in% c(1,1000,2000,2225),] %>%
+  mutate(document = reorder(document, gamma * topic)) %>%
+  ggplot(aes(factor(topic), gamma)) +
+  geom_boxplot() +
+  facet_wrap(~ document) +
+  labs(x = "topic", y = expression(gamma)) +
+  theme_minimal()
+
 
 ```
 
 
 ---
 
+### Alternative LDA implementations
 
+The LDA() function in the topicmodels package is only one implementation of the latent Dirichlet allocation algorithm. For example, the mallet package (Mimno 2013) implements a wrapper around the MALLET Java package for text classification tools, and the tidytext package provides tidiers for this model output as well. The textmineR package has extensive functionality for topic modeling. You can fit Latent Dirichlet Allocation (LDA), Correlated Topic Models (CTM), and Latent Semantic Analysis (LSA) from within textmineR (https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html). 
 
 ---
 
