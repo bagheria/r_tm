@@ -476,6 +476,7 @@ The LDA() function in the topicmodels package is only one implementation of the 
 # Summary
 
 ---
+
 In this practical, we learned about:
 
 - Text clustering algorithms
