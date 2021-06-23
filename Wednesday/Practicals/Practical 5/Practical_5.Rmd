@@ -28,7 +28,7 @@ In this practical we are going to use the following packages:
 library(tm)
 library(tidytext)
 library(dplyr)
-
+library(proxy)
 ```
 
 ---
@@ -43,7 +43,7 @@ library(dplyr)
 
 ---
 
-1. **The dataset that we are going to use is the BBC dataset from practical 3. The BBC dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
+1. **The dataset that we are going to use is the BBC dataset from practical 3. This dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
 
 ---
 
@@ -60,7 +60,6 @@ head(df_final)
 - remove stop words
 - remove numbers
 - remove punctuation
-- use tfidf weighting
 - convert dtm to a dataframe
 
 ---
@@ -75,151 +74,174 @@ dtm <- DocumentTermMatrix(docs,
                           removePunctuation = TRUE,
                           stopwords = TRUE
                          ))
+# We remove A LOT of features. R is natively very weak with high dimensional matrix
+dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
+# with sparse = 0.93 the dtm will end up with 359 terms; you can change this number to based on your available memory
 
-#dtm <- as.data.frame(as.matrix(dtm))
-dtm <- as.matrix(dtm)
-
+# dtm <- as.matrix(dtm) # if you have a supercomputer you can continute with this obejct, otherwise use the dtm_cut
+dtm_cut <- as.matrix(dtm_cut)
+# you can also check the wordclouds for dtm_cut
+#library(wordcloud)
+#wordcloud(colnames(dtm), dtm[5,], max.words = 50)
 ```
 
 ---
 
-3. **Now we can run a k-means clustering method, starting out with three centers. What does the output look like?**
+3. **Use the dist() function from the proxy library and calculate a distance matrix for the dtm_cut object with cosine similarity method. We will use the distance matrix for specific clustering algorithms.**
 
 ---
 
 ```{r 3, include = TRUE}
-text_kmeans_clust3 <- kmeans(dtm, centers = 3)
+# Cosine distance matrix
+dist_matrix <- dist(dtm_cut, method = "cosine")
+# if it takes a lot of time for your computer to create the distance matrix load the available computed dist_matrix. We made this available for you. # save(dist_matrix, file = "dist_matrix.RData")
+# load("dist_matrix.RData")
+
+```
+
+---
+
+4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for kmeans. What does the output look like? Also check the cluster centers.**
+
+---
+
+```{r 4, include = TRUE}
+text_kmeans_clust3 <- kmeans(dtm_cut, centers = 3)
 summary(text_kmeans_clust3)
-
-# Cosine distance matrix (useful for specific clustering algorithms) 
-library(proxy)
-dist_matrix <- dist(dtm, method = "cosine")
-
-clustering.hierarchical <- hclust(dist_matrix, method = "ward.D2") 
-plot(clustering.hierarchical, cex=0.9, hang=-1)
-rect.hclust(clustering.hierarchical, k=5)
-
-clustering.dbscan <- dbscan::hdbscan(dist_matrix, minPts = 10)
-
-library(broom)
-tidy(text_kmeans_clust3)
+broom::tidy(text_kmeans_clust3)
 
 ```
-
-The original format of the output isn’t as practical to deal with in many circumstances, so we can load the broom package (part of tidymodels) and use verbs like tidy(). This will give us the centers of the clusters we found:
-
-If we augment() the clustering results with our original data, we can plot any of the dimensions of our space, such as total employed vs. proportion who are Black. We can see here that there are really separable clusters but instead a smooth, continuous distribution from low to high along both dimensions. Switch out another dimension like asian to see that projection of the space.
-
-```{r}
-text_kmeans_clust3 %>%
-  ggplot(aes(also, advert, color = .cluster)) +
-  geom_point()
-
-```
-
 
 ---
 
 ## Clustering methods
-## Choosing k
 
 ---
 
-4. ** **
+5. **Apply a PCA with 2 components on the distance matrix, and then plot the output of kmeans clustering on using the PCA outputs.**
 
-We used k = 3 but how do we know that’s right? There are lots of complicated or “more art than science” ways of choosing k. One way is to look at the total within-cluster sum of squares and see if it stops dropping off so quickly at some value for k. We can get that from another function from the broom package, glance(); let’s try lots of values for k and see what happens to the total sum of squares.
+```{r, include = TRUE}
+# Running the PCA
+points <- cmdscale(dist_matrix, k = 2) 
 
-
-
----
-
-```{r 4, include = TRUE, warning = FALSE}
-kclusts <-
-  tibble(k = 1:9) %>%
-  mutate(
-    kclust = map(k, ~ kmeans(dtm, .x)),
-    glanced = map(kclust, glance),
-  )
-
-kclusts %>%
-  unnest(cols = c(glanced)) %>%
-  ggplot(aes(k, tot.withinss)) +
-  geom_line(alpha = 0.5, size = 1.2, color = "midnightblue") +
-  geom_point(size = 2, color = "midnightblue")
-
+kmeans_clusters <- text_kmeans_clust3$cluster
+plot(points,
+     main = 'K-Means clustering with 3 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
 
 ```
 
 ---
 
-5. **Fit k-means again with the optimal k.**
+6. **There are different ways of choosing k. Let's repeat steps 3 and 4 with 4, 5 and 6 cluster centers for k-means and compare the visualizations.**
 
 ---
 
-```{r 5, include = TRUE, warning = FALSE}
-final_clust <- kmeans(select(employment_demo, -occupation), centers = 5)
+```{r 6, include = TRUE, warning = FALSE}
+text_kmeans_clust4 <- kmeans(dtm_cut, centers = 4)
+tidy(text_kmeans_clust4)
+kmeans_clusters <- text_kmeans_clust4$cluster
+plot(points,
+     main = 'K-Means clustering with 4 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
 
+text_kmeans_clust5 <- kmeans(dtm_cut, centers = 5)
+tidy(text_kmeans_clust5)
+kmeans_clusters <- text_kmeans_clust5$cluster
+plot(points,
+     main = 'K-Means clustering with 5 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+
+text_kmeans_clust6 <- kmeans(dtm_cut, centers = 6)
+tidy(text_kmeans_clust6)
+kmeans_clusters <- text_kmeans_clust6$cluster
+plot(points,
+     main = 'K-Means clustering with 6 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
 ```
 
 ---
 
----
-
-##
-
----
-
-6. **Visualise the results**
-
-To visualize this final result, let’s use plotly and add the occupation name to the hover so we can mouse around and see which occupations are more similar.
----
-
-```{r 6, include = TRUE}
-library(plotly)
-
-p <- augment(text_kmeans_clust3, dtm) %>%
-  ggplot(aes(total, women, color = .cluster, name = occupation)) +
-  geom_point()
-
-ggplotly(p, height = 500)
-
-dtm
-
-```
-
----
-
-7. **.**
+7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustring trees (dendrograms).**
 
 ---
 
 ```{r 7, include = TRUE, warning = FALSE}
+hierarcom_clustering <- hclust(dist_matrix, method = "complete")
+plot(hierarcom_clustering, cex = 0.9, hang = -1)
+rect.hclust(hierarcom_clustering, k = 5)
 
+hierarWard_clustering <- hclust(dist_matrix, method = "ward.D2")
+plot(hierarWard_clustering, cex = 0.9, hang = -1)
+rect.hclust(hierarWard_clustering, k = 5)
 
 ```
 
 ---
 
-8. **.**
+8. **Plot the output of clustering with PCA components where you cut the tree into 5 groups.**
 
 ---
 
 ```{r 8, include = TRUE, warning = FALSE}
+hierar_clusters_com <- cutree(hierarcom_clustering, k = 5)
+plot(points,
+     main = 'Hierarchical clustering complete linkage',
+     col = as.factor(hierar_clusters_com),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
 
-
+hierar_clusters_ward <- cutree(hierarWard_clustering, k = 5)
+plot(points,
+     main = 'Hierarchical clustering complete Ward',
+     col = as.factor(hierar_clusters_ward),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
 ```
 
 
 ---
 
-9. ** .**
+9. **From the library dbscan apply the dbscan algorithm on the distance matrix and plot the output with the PCA components. Compare the visualization with the output of previous methods.**
 
 ---
 
 ```{r 9, include = TRUE, warning = FALSE}
-
+library(dbscan)
+dbscan_clustering <- hdbscan(dist_matrix, minPts = 10)
+dbscan_clusters <- dbscan_clustering$cluster
+plot(points,
+     main = 'Density-based clustering',
+     col = as.factor(dbscan_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
 
 ```
+---
+
+# Topic Modeling
 
 ---
 
