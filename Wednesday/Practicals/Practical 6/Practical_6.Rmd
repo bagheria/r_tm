@@ -1,0 +1,493 @@
+---
+title: "Word embedding approaches"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_6.html
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+Welcome to the last practical of the course "Introduction to Text Mining with R". In this practical, we will apply word embedding approaches. 
+
+In this practical, we are going to use the following packages:
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(tm)
+library(tidytext)
+library(dplyr)
+library(proxy)
+library(topicmodels)
+library(ggplot2)
+library(tidyr)
+library(dbscan)
+```
+
+---
+
+# Read data
+
+---
+
+1. **The dataset that we are going to use is the BBC dataset from practical 3. This dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
+
+---
+
+```{r 1, message = FALSE, warning = FALSE, include = TRUE}
+load("data/news_dataset.rda")
+head(df_final)
+
+```
+
+---
+
+2. **First we must preprocess the corpus. Create a document-term matrix from the `news` column of the dataframe. Complete the following preprocessing steps:**
+- convert to lower
+- remove stop words
+- remove numbers
+- remove punctuation
+- convert dtm to a dataframe
+
+---
+
+
+```{r 2, message = FALSE, warning = FALSE, include = TRUE}
+docs <- Corpus(VectorSource(df_final$Content))
+
+dtm <- DocumentTermMatrix(docs,
+           control = list(tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE,
+                          stopwords = TRUE
+                         ))
+# We remove A LOT of features. R is natively very weak with high dimensional matrix
+dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
+# with sparse = 0.93 the dtm will end up with 359 terms; you can change this number to based on your available memory
+
+# dtm <- as.matrix(dtm) # if you have a supercomputer you can continute with this obejct, otherwise use the dtm_cut
+dtm_cut <- as.matrix(dtm_cut)
+# you can also check the wordclouds for dtm_cut
+#library(wordcloud)
+#wordcloud(colnames(dtm), dtm[5,], max.words = 50)
+```
+
+---
+
+# Clustering methods
+
+---
+
+3. **Use the dist() function from the proxy library and calculate a distance matrix for the dtm_cut object with cosine similarity method. We will use the distance matrix for specific clustering algorithms.**
+
+---
+
+```{r 3, message = FALSE, warning = FALSE, include = TRUE}
+# Cosine distance matrix
+dist_matrix <- dist(dtm_cut, method = "cosine")
+# if it takes a lot of time for your computer to create the distance matrix load the available computed dist_matrix. We made this available for you. # save(dist_matrix, file = "dist_matrix.RData")
+# load("dist_matrix.RData")
+
+```
+
+---
+
+4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for kmeans. What does the output look like? Also check the cluster centers.**
+
+---
+
+```{r 4, message = FALSE, warning = FALSE, include = TRUE}
+text_kmeans_clust3 <- kmeans(dtm_cut, centers = 3)
+summary(text_kmeans_clust3)
+broom::tidy(text_kmeans_clust3)
+
+```
+
+---
+
+5. **Apply a PCA with 2 components on the distance matrix, and then plot the output of kmeans clustering on using the PCA outputs.**
+
+```{r 5, message = FALSE, warning = FALSE, include = TRUE}
+# Running the PCA
+points <- cmdscale(dist_matrix, k = 2) 
+
+kmeans_clusters <- text_kmeans_clust3$cluster
+plot(points,
+     main = 'K-Means clustering with 3 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+
+```
+
+---
+
+6. **There are different ways of choosing k. Let's repeat steps 3 and 4 with 4, 5 and 6 cluster centers for k-means and compare the visualizations.**
+
+---
+
+```{r 6, message = FALSE, warning = FALSE, include = TRUE}
+text_kmeans_clust4 <- kmeans(dtm_cut, centers = 4)
+tidy(text_kmeans_clust4)
+kmeans_clusters <- text_kmeans_clust4$cluster
+plot(points,
+     main = 'K-Means clustering with 4 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+
+text_kmeans_clust5 <- kmeans(dtm_cut, centers = 5)
+tidy(text_kmeans_clust5)
+kmeans_clusters <- text_kmeans_clust5$cluster
+plot(points,
+     main = 'K-Means clustering with 5 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+
+text_kmeans_clust6 <- kmeans(dtm_cut, centers = 6)
+tidy(text_kmeans_clust6)
+kmeans_clusters <- text_kmeans_clust6$cluster
+plot(points,
+     main = 'K-Means clustering with 6 clusters',
+     col = as.factor(kmeans_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+```
+
+---
+
+7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustring trees (dendrograms).**
+
+---
+
+```{r 7, message = FALSE, warning = FALSE, include = TRUE}
+hierarcom_clustering <- hclust(dist_matrix, method = "complete")
+plot(hierarcom_clustering, cex = 0.9, hang = -1)
+rect.hclust(hierarcom_clustering, k = 5)
+
+hierarWard_clustering <- hclust(dist_matrix, method = "ward.D2")
+plot(hierarWard_clustering, cex = 0.9, hang = -1)
+rect.hclust(hierarWard_clustering, k = 5)
+
+```
+
+---
+
+8. **Plot the output of clustering with PCA components where you cut the tree into 5 groups.**
+
+---
+
+```{r 8, message = FALSE, warning = FALSE, include = TRUE}
+hierar_clusters_com <- cutree(hierarcom_clustering, k = 5)
+plot(points,
+     main = 'Hierarchical clustering complete linkage',
+     col = as.factor(hierar_clusters_com),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+
+hierar_clusters_ward <- cutree(hierarWard_clustering, k = 5)
+plot(points,
+     main = 'Hierarchical clustering complete Ward',
+     col = as.factor(hierar_clusters_ward),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+```
+
+
+---
+
+9. **From the library dbscan apply the dbscan algorithm on the distance matrix and plot the output with the PCA components. Compare the visualization with the output of previous methods.**
+
+---
+
+```{r 9, message = FALSE, warning = FALSE, include = TRUE}
+dbscan_clustering <- hdbscan(dist_matrix, minPts = 10)
+dbscan_clusters <- dbscan_clustering$cluster
+plot(points,
+     main = 'Density-based clustering',
+     col = as.factor(dbscan_clusters),
+     mai = c(0, 0, 0, 0),
+     mar = c(0, 0, 0, 0),
+     xaxt = 'n', yaxt = 'n',
+     xlab = '', ylab = '')
+
+```
+---
+
+# Topic Modeling
+
+---
+
+Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a topic model. It treats each document as a mixture of topics, and each topic as a mixture of words. This allows documents to “overlap” each other in terms of content, rather than being separated into discrete groups, in a way that mirrors typical use of natural language.
+
+10. **Use the LDA function from the topicmodels package and train an LDA model with 5 topics with the Gibbs sampling method.**
+
+---
+
+```{r 10, message = FALSE, warning = FALSE, include = TRUE}
+dtm <- DocumentTermMatrix(docs,
+           control = list(tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE,
+                          stopwords = TRUE
+                         ))
+# We remove A LOT of features. R is natively very weak with high dimensional matrix
+dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
+
+# A LDA topic model with 5 topics; if it takes a lot of time for you to run this change k to 2
+out_lda <- LDA(dtm_cut, k = 5, method= "Gibbs", control = list(seed = 321))
+out_lda
+
+```
+
+---
+
+11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilites for each term and topic.**
+
+---
+
+```{r 11, message = FALSE, warning = FALSE, include = TRUE}
+lda_topics <- tidy(out_lda, matrix = "beta")
+lda_topics
+```
+
+---
+
+12. **Plot the top 20 terms within each topic. Try to label them and compare your labeling with the original categories in the dataset.**
+
+---
+
+```{r 12, message = FALSE, warning = FALSE, include = TRUE}
+lda_top_terms <- lda_topics %>%
+  group_by(topic) %>%
+  slice_max(beta, n = 20) %>% # We use dplyr’s slice_max() to find the top 10 terms within each topic.
+  ungroup() %>%
+  arrange(topic, -beta)
+
+lda_top_terms %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  scale_y_reordered()
+
+```
+
+
+---
+
+13. **Use the code below to present and save the terms and topics in a wide format.**
+
+---
+
+```{r 13, message = FALSE, warning = FALSE, include = TRUE}
+beta_wide <- lda_topics %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>% 
+  mutate(log_ratio21 = log2(topic2 / topic1)) %>% 
+  mutate(log_ratio31 = log2(topic3 / topic1))%>% 
+  mutate(log_ratio41 = log2(topic4 / topic1))%>% 
+  mutate(log_ratio51 = log2(topic5 / topic1))
+
+beta_wide
+
+```
+
+---
+
+14. **Use the log ratios to visualize the words with the greatest differences between topic 1 and other topics.**
+
+---
+
+```{r 14, message = FALSE, warning = FALSE, include = TRUE}
+# topic 1 versus topic 2
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio21, n = 10) %>%
+  arrange(term, -log_ratio21)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio21, n = 10) %>%
+  arrange(term, -log_ratio21)
+
+lda_top_terms12 <- rbind(lda_top_terms1, lda_top_terms2)
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms12$term <- factor(lda_top_terms12$term, levels = lda_top_terms12$term[order(lda_top_terms12$log_ratio21)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms12 %>%
+  ggplot(aes(log_ratio21, term, fill = (log_ratio21 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+
+
+# topic 1 versus topic 3
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio31, n = 10) %>%
+  arrange(term, -log_ratio31)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio31, n = 10) %>%
+  arrange(term, -log_ratio31)
+
+lda_top_terms13 <- rbind(lda_top_terms1, lda_top_terms2)
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms13$term <- factor(lda_top_terms13$term, levels = lda_top_terms13$term[order(lda_top_terms13$log_ratio31)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms13 %>%
+  ggplot(aes(log_ratio31, term, fill = (log_ratio31 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+
+
+# topic 1 versus topic 4
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio41, n = 10) %>%
+  arrange(term, -log_ratio41)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio41, n = 10) %>%
+  arrange(term, -log_ratio41)
+
+lda_top_terms14 <- rbind(lda_top_terms1, lda_top_terms2)
+
+lda_top_terms14[1,]$term <- 'SPELLING ERROR!'
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms14$term <- factor(lda_top_terms14$term, levels = lda_top_terms14$term[order(lda_top_terms14$log_ratio41)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms14 %>%
+  ggplot(aes(log_ratio41, term, fill = (log_ratio41 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+
+
+# topic 1 versus topic 5
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio51, n = 10) %>%
+  arrange(term, -log_ratio51)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio51, n = 10) %>%
+  arrange(term, -log_ratio51)
+
+lda_top_terms15 <- rbind(lda_top_terms1, lda_top_terms2)
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms15$term <- factor(lda_top_terms15$term, levels = lda_top_terms15$term[order(lda_top_terms15$log_ratio51)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms15 %>%
+  ggplot(aes(log_ratio51, term, fill = (log_ratio51 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+```
+
+
+---
+
+15. **Besides estimating each topic as a mixture of words, LDA also models each document as a mixture of topics. We can examine the per-document-per-topic probabilities, called “gamma”, with the matrix = "gamma" argument to tidy(). Call this function for your LDA model and save the probabilities in a varibale named lda_documents.**
+
+---
+
+```{r 15, message = FALSE, warning = FALSE, include = TRUE}
+lda_documents <- tidy(out_lda, matrix = "gamma")
+
+```
+
+---
+
+16. **Check the topic probabilities for some of the documents (for example documents 1, 1000, 2000, 2225). Also look at the contents of some them.**
+
+---
+
+```{r 16, message = FALSE, warning = FALSE, include = TRUE}
+lda_documents[lda_documents$document == 1,]
+lda_documents[lda_documents$document == 1000,]
+lda_documents[lda_documents$document == 2000,]
+lda_documents[lda_documents$document == 2225,]
+
+tidy(dtm_cut) %>%
+  filter(document == 2225) %>%
+  arrange(desc(count))
+
+df_final[2225,]$Content
+```
+
+---
+
+17. **Visualise the topic probabilities for example documents using boxplots.**
+
+---
+
+```{r 17, message = FALSE, warning = FALSE, include = TRUE}
+# reorder titles in order of topic 1, topic 2, etc before plotting
+lda_documents[lda_documents$document %in% c(1, 1000, 2000, 2225),] %>%
+  mutate(document = reorder(document, gamma * topic)) %>%
+  ggplot(aes(factor(topic), gamma)) +
+  geom_boxplot() +
+  facet_wrap(~ document) +
+  labs(x = "topic", y = expression(gamma)) +
+  theme_minimal()
+
+
+```
+
+
+---
+
+# Alternative LDA implementations
+
+The LDA() function in the topicmodels package is only one implementation of the latent Dirichlet allocation algorithm. For example, the mallet package (Mimno 2013) implements a wrapper around the MALLET Java package for text classification tools, and the tidytext package provides tidiers for this model output as well. The textmineR package has extensive functionality for topic modeling. You can fit Latent Dirichlet Allocation (LDA), Correlated Topic Models (CTM), and Latent Semantic Analysis (LSA) from within textmineR (https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html). 
+
+---
+
+# Summary
+
+---
+
+In this practical, we learned about:
+
+- Text clustering algorithms
+- Kmeans
+- Hclust
+- Dbscan
+- Topic modeling
+- LDA
+
+---
+
+End of Practical
+
+---
