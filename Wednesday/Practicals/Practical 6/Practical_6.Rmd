@@ -37,17 +37,23 @@ library(dbscan)
 
 ---
 
-# Read data
+# Word embeddings
 
 ---
+
+A key idea in the working with text data concerns representing words as numeric quantities. There are a number of ways to go about this, and we have actually already done so. One other method that we want to explore today is word embeddings. Word embedding techniques such as word2vec and GloVe use neural networks approaches to construct word vectors. With these vector representations of words we can see how similar they are to each other, and perform other tasks based on that information. Here are two famous example:
+
+king - man + woman = queen
+Paris - France + Germany = Berlin
+
 
 1. **The dataset that we are going to use is the BBC dataset from practical 3. This dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
 
 ---
 
 ```{r 1, message = FALSE, warning = FALSE, include = TRUE}
-load("data/news_dataset.rda")
-head(df_final)
+load("data/shakes_words_df_4text2vec.RData")
+library(text2vec)
 
 ```
 
@@ -64,23 +70,10 @@ head(df_final)
 
 
 ```{r 2, message = FALSE, warning = FALSE, include = TRUE}
-docs <- Corpus(VectorSource(df_final$Content))
-
-dtm <- DocumentTermMatrix(docs,
-           control = list(tolower = TRUE,
-                          removeNumbers = TRUE,
-                          removePunctuation = TRUE,
-                          stopwords = TRUE
-                         ))
-# We remove A LOT of features. R is natively very weak with high dimensional matrix
-dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
-# with sparse = 0.93 the dtm will end up with 359 terms; you can change this number to based on your available memory
-
-# dtm <- as.matrix(dtm) # if you have a supercomputer you can continute with this obejct, otherwise use the dtm_cut
-dtm_cut <- as.matrix(dtm_cut)
-# you can also check the wordclouds for dtm_cut
-#library(wordcloud)
-#wordcloud(colnames(dtm), dtm[5,], max.words = 50)
+shakes_words_ls = list(shakes_words$word)
+it = itoken(shakes_words_ls, progressbar = FALSE)
+shakes_vocab = create_vocabulary(it)
+shakes_vocab = prune_vocabulary(shakes_vocab, term_count_min = 5)
 ```
 
 ---
@@ -94,10 +87,11 @@ dtm_cut <- as.matrix(dtm_cut)
 ---
 
 ```{r 3, message = FALSE, warning = FALSE, include = TRUE}
-# Cosine distance matrix
-dist_matrix <- dist(dtm_cut, method = "cosine")
-# if it takes a lot of time for your computer to create the distance matrix load the available computed dist_matrix. We made this available for you. # save(dist_matrix, file = "dist_matrix.RData")
-# load("dist_matrix.RData")
+# maps words to indices
+vectorizer = vocab_vectorizer(shakes_vocab)
+
+# use window of 10 for context words
+shakes_tcm = create_tcm(it, vectorizer, skip_grams_window = 10)
 
 ```
 
@@ -108,10 +102,18 @@ dist_matrix <- dist(dtm_cut, method = "cosine")
 ---
 
 ```{r 4, message = FALSE, warning = FALSE, include = TRUE}
-text_kmeans_clust3 <- kmeans(dtm_cut, centers = 3)
-summary(text_kmeans_clust3)
-broom::tidy(text_kmeans_clust3)
+glove = GlobalVectors$new(rank = 50, x_max = 10)
+shakes_wv_main = glove$fit_transform(shakes_tcm, n_iter = 10, convergence_tol = 0.001)
 
+# dim(shakes_wv_main)
+
+shakes_wv_context = glove$components
+
+# dim(shakes_wv_context)
+
+# Either word-vectors matrices could work, but the developers of the technique
+# suggest the sum/mean may work better
+shakes_word_vectors = shakes_wv_main + t(shakes_wv_context)
 ```
 
 ---
@@ -119,17 +121,12 @@ broom::tidy(text_kmeans_clust3)
 5. **Apply a PCA with 2 components on the distance matrix, and then plot the output of kmeans clustering on using the PCA outputs.**
 
 ```{r 5, message = FALSE, warning = FALSE, include = TRUE}
-# Running the PCA
-points <- cmdscale(dist_matrix, k = 2) 
+rom = shakes_word_vectors["romeo", , drop = F]
+# ham = shakes_word_vectors["hamlet", , drop = F]
 
-kmeans_clusters <- text_kmeans_clust3$cluster
-plot(points,
-     main = 'K-Means clustering with 3 clusters',
-     col = as.factor(kmeans_clusters),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
+cos_sim_rom = sim2(x = shakes_word_vectors, y = rom, method = "cosine", norm = "l2")
+head(sort(cos_sim_rom[,1], decreasing = T), 10)
+
 
 ```
 
@@ -140,38 +137,10 @@ plot(points,
 ---
 
 ```{r 6, message = FALSE, warning = FALSE, include = TRUE}
-text_kmeans_clust4 <- kmeans(dtm_cut, centers = 4)
-tidy(text_kmeans_clust4)
-kmeans_clusters <- text_kmeans_clust4$cluster
-plot(points,
-     main = 'K-Means clustering with 4 clusters',
-     col = as.factor(kmeans_clusters),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
+love = shakes_word_vectors["love", , drop = F]
 
-text_kmeans_clust5 <- kmeans(dtm_cut, centers = 5)
-tidy(text_kmeans_clust5)
-kmeans_clusters <- text_kmeans_clust5$cluster
-plot(points,
-     main = 'K-Means clustering with 5 clusters',
-     col = as.factor(kmeans_clusters),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
-
-text_kmeans_clust6 <- kmeans(dtm_cut, centers = 6)
-tidy(text_kmeans_clust6)
-kmeans_clusters <- text_kmeans_clust6$cluster
-plot(points,
-     main = 'K-Means clustering with 6 clusters',
-     col = as.factor(kmeans_clusters),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
+cos_sim_rom = sim2(x = shakes_word_vectors, y = love, method = "cosine", norm = "l2")
+head(sort(cos_sim_rom[,1], decreasing = T), 10)
 ```
 
 ---
@@ -181,14 +150,12 @@ plot(points,
 ---
 
 ```{r 7, message = FALSE, warning = FALSE, include = TRUE}
-hierarcom_clustering <- hclust(dist_matrix, method = "complete")
-plot(hierarcom_clustering, cex = 0.9, hang = -1)
-rect.hclust(hierarcom_clustering, k = 5)
+test = shakes_word_vectors["romeo", , drop = F] -
+  shakes_word_vectors["mercutio", , drop = F] +
+  shakes_word_vectors["nurse", , drop = F]
 
-hierarWard_clustering <- hclust(dist_matrix, method = "ward.D2")
-plot(hierarWard_clustering, cex = 0.9, hang = -1)
-rect.hclust(hierarWard_clustering, k = 5)
-
+cos_sim_test = sim2(x = shakes_word_vectors, y = test, method = "cosine", norm = "l2")
+head(sort(cos_sim_test[,1], decreasing = T), 10)
 ```
 
 ---
@@ -198,23 +165,26 @@ rect.hclust(hierarWard_clustering, k = 5)
 ---
 
 ```{r 8, message = FALSE, warning = FALSE, include = TRUE}
-hierar_clusters_com <- cutree(hierarcom_clustering, k = 5)
-plot(points,
-     main = 'Hierarchical clustering complete linkage',
-     col = as.factor(hierar_clusters_com),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
+text8_file = "data/text8/text8"
+if (!file.exists(text8_file)) {
+  download.file("http://mattmahoney.net/dc/text8.zip", "data/text8.zip")
+  unzip("data/text8.zip", files = "text8", exdir = "data/texts_raw/")
+}
+wiki = readLines(text8_file, n = 1, warn = FALSE)
 
-hierar_clusters_ward <- cutree(hierarWard_clustering, k = 5)
-plot(points,
-     main = 'Hierarchical clustering complete Ward',
-     col = as.factor(hierar_clusters_ward),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
+tokens = space_tokenizer(wiki)
+it = itoken(tokens, progressbar = FALSE)
+vocab = create_vocabulary(it)
+vocab = prune_vocabulary(vocab, term_count_min = 5L)
+vectorizer = vocab_vectorizer(vocab)
+
+tcm = create_tcm(it, vectorizer, skip_grams_window = 5L)
+
+glove = GlobalVectors$new(rank = 50, x_max = 10)
+
+wv_main = glove$fit_transform(tcm, n_iter = 20, convergence_tol = 0.001)
+wv_context = glove$components
+word_vectors = wv_main + t(wv_context)
 ```
 
 
@@ -225,15 +195,11 @@ plot(points,
 ---
 
 ```{r 9, message = FALSE, warning = FALSE, include = TRUE}
-dbscan_clustering <- hdbscan(dist_matrix, minPts = 10)
-dbscan_clusters <- dbscan_clustering$cluster
-plot(points,
-     main = 'Density-based clustering',
-     col = as.factor(dbscan_clusters),
-     mai = c(0, 0, 0, 0),
-     mar = c(0, 0, 0, 0),
-     xaxt = 'n', yaxt = 'n',
-     xlab = '', ylab = '')
+berlin = word_vectors["paris", , drop = FALSE] -
+  word_vectors["france", , drop = FALSE] +
+  word_vectors["germany", , drop = FALSE]
+berlin_cos_sim = sim2(x = word_vectors, y = berlin, method = "cosine", norm = "l2")
+head(sort(berlin_cos_sim[,1], decreasing = TRUE), 5)
 
 ```
 ---
@@ -242,26 +208,17 @@ plot(points,
 
 ---
 
-Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a topic model. It treats each document as a mixture of topics, and each topic as a mixture of words. This allows documents to “overlap” each other in terms of content, rather than being separated into discrete groups, in a way that mirrors typical use of natural language.
 
 10. **Use the LDA function from the topicmodels package and train an LDA model with 5 topics with the Gibbs sampling method.**
 
 ---
 
 ```{r 10, message = FALSE, warning = FALSE, include = TRUE}
-dtm <- DocumentTermMatrix(docs,
-           control = list(tolower = TRUE,
-                          removeNumbers = TRUE,
-                          removePunctuation = TRUE,
-                          stopwords = TRUE
-                         ))
-# We remove A LOT of features. R is natively very weak with high dimensional matrix
-dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
-
-# A LDA topic model with 5 topics; if it takes a lot of time for you to run this change k to 2
-out_lda <- LDA(dtm_cut, k = 5, method= "Gibbs", control = list(seed = 321))
-out_lda
-
+queen = word_vectors["king", , drop = FALSE] -
+  word_vectors["man", , drop = FALSE] +
+  word_vectors["woman", , drop = FALSE]
+queen_cos_sim = sim2(x = word_vectors, y = queen, method = "cosine", norm = "l2")
+head(sort(queen_cos_sim[,1], decreasing = TRUE), 20)
 ```
 
 ---
@@ -467,9 +424,97 @@ lda_documents[lda_documents$document %in% c(1, 1000, 2000, 2225),] %>%
 
 ---
 
-# Alternative LDA implementations
+# TensorFlow and Keras (Optional)
 
-The LDA() function in the topicmodels package is only one implementation of the latent Dirichlet allocation algorithm. For example, the mallet package (Mimno 2013) implements a wrapper around the MALLET Java package for text classification tools, and the tidytext package provides tidiers for this model output as well. The textmineR package has extensive functionality for topic modeling. You can fit Latent Dirichlet Allocation (LDA), Correlated Topic Models (CTM), and Latent Semantic Analysis (LSA) from within textmineR (https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html). 
+In this part of the practical, we will show an example of loading pre-trained word vectors and fine-tune them for our purpose of sentiment classification for movie reviews. First, we need to install the TensorFlow and Keras packages for R.
+
+The tensorflow package provides code completion and inline help for the [TensorFlow API](https://www.tensorflow.org/api_docs/python/tf/all_symbols) when running within the RStudio IDE. The TensorFlow API is composed of a set of Python modules that enable constructing and executing TensorFlow graphs.
+
+To get started, install the devtools package from CRAN:
+
+```{r}
+# This line is commented because I already have the package installed!
+# install.packages("devtools")
+
+```
+
+The aim of devtools is to make package development easier by providing R functions that simplify and expedite common tasks.
+
+Then, install the tensorflow R package from GitHub as follows:
+
+```{r}
+# devtools::install_github("rstudio/tensorflow")
+
+```
+
+Then, use the install_tensorflow() function to install TensorFlow:
+
+```{r}
+# library(tensorflow)
+# install_tensorflow(package_url = "https://pypi.python.org/packages/b8/d6/af3d52dd52150ec4a6ceb7788bfeb2f62ecb6aa2d1172211c4db39b349a2/tensorflow-1.3.0rc0-cp27-cp27mu-manylinux1_x86_64.whl#md5=1cf77a2360ae2e38dd3578618eacc03b")
+
+```
+
+The provided url just installs the latest tensorflow version, you can also run this line without providing any argument to the install_tensorflow function.
+
+Finally, you can confirm that the installation succeeded with:
+
+```{r}
+tmr <- tf$constant("Text Mining with R!")
+print(tmr)
+
+```
+
+This will provide you with a default installation of TensorFlow suitable for getting started with the tensorflow R package. See the article on installation (https://tensorflow.rstudio.com/installation/) to learn about more advanced options, including installing a version of TensorFlow that takes advantage of Nvidia GPUs if you have the correct CUDA libraries installed.
+
+
+To install the Keras package you first run either of the following lines:
+```{r}
+# install.packages("keras")
+
+```
+
+```{r}
+# devtools::install_github("rstudio/keras")
+
+```
+
+Then, use the install_keras() function to install keras:
+
+```{r}
+install_keras()
+
+```
+
+The Keras R interface uses the TensorFlow backend engine by default. This will provide you with default CPU-based installations of Keras and TensorFlow. If you want a more customized installation, e.g. if you want to take advantage of NVIDIA GPUs, see the documentation for install_keras() and the article on installation (https://tensorflow.rstudio.com/installation/).
+
+
+# Sentiment classification with pre-trained word vectors (Optional)
+
+Now we have TensorFlow and Keras ready for fine-tuning pre-trained word embeddings for sentiment classification of movie reviews. 
+
+
+---
+
+17. **Here we want to use [GloVe](https://nlp.stanford.edu/projects/glove/) pretrained word vectors. In the data folder **
+
+---
+
+```{r 17, message = FALSE, warning = FALSE, include = TRUE}
+# reorder titles in order of topic 1, topic 2, etc before plotting
+lda_documents[lda_documents$document %in% c(1, 1000, 2000, 2225),] %>%
+  mutate(document = reorder(document, gamma * topic)) %>%
+  ggplot(aes(factor(topic), gamma)) +
+  geom_boxplot() +
+  facet_wrap(~ document) +
+  labs(x = "topic", y = expression(gamma)) +
+  theme_minimal()
+
+
+```
+
+
+---
 
 ---
 
