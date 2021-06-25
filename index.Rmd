@@ -250,8 +250,8 @@ Here you will find the materials for Wednesday:
 
 - Part 6: Word embedding
     - [Lecture 6]()
-    - [Impractical 6]()
-    - [Practical 6]() 
+    - [Impractical 6](Wednesday/Practicals/Practical 6/Impractical_6.html)
+    - [Practical 6](Wednesday/Practicals/Practical 6/Practical_6.html) 
 
 
 ## Column 2
