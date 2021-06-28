@@ -283,7 +283,7 @@ head(features)
 
 ---
 
-```{r 10+1, include = TRUE, warning = FALSE}
+```{r 11, include = TRUE, warning = FALSE}
 
 train_idx <- createDataPartition(df_final$Category, p=0.80, list=FALSE)
 # set for the original raw data 
@@ -301,7 +301,7 @@ test2 <- corpus[-train_idx]
 
 ---
 
-```{r 11, include = TRUE, warning = FALSE}
+```{r 12, include = TRUE, warning = FALSE}
 dtm_train <- DocumentTermMatrix(train2, list(dictionary=features))
 dtm_test  <- DocumentTermMatrix(test2, list(dictionary=features))
 
@@ -314,11 +314,11 @@ str(dtm_test)
 
 ---
 
-12. **Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.**
+13. **Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.**
 
 ---
 
-```{r 12, include = TRUE, warning = FALSE}
+```{r 13, include = TRUE, warning = FALSE}
 
 freq <- colSums(dtm_train)
 head(freq, 10)
@@ -340,11 +340,11 @@ plot(sort(freq, decreasing = T),
 
 ---
 
-13. **Show 20 most frequent terms and their frequencies in a bar plot.**
+14. **Show 20 most frequent terms and their frequencies in a bar plot.**
 
 ---
 
-```{r 13, include = TRUE}
+```{r 14, include = TRUE}
 high_freq    <- tail(sort(freq), n = 20)
 hfp_df       <- as.data.frame(sort(high_freq))
 hfp_df$names <- rownames(hfp_df) 
@@ -360,11 +360,11 @@ ggplot(hfp_df, aes(reorder(names, high_freq), high_freq)) +
 
 ---
 
-14. **Use the cbind function to add the categories to the train_dtm data and name the column y.**
+15. **Use the cbind function to add the categories to the train_dtm data and name the column y.**
 
 ---
 
-```{r 14, include = TRUE}
+```{r 15, include = TRUE}
 dtm_train1 <- cbind(cat=factor(train1$Category), dtm_train)
 dtm_test1 <- cbind(cat=factor(test1$Category), dtm_test)
 dtm_train1<-as.data.frame(dtm_train1)
@@ -374,12 +374,12 @@ dtm_test1<-as.data.frame(dtm_test1)
 
 ---
 
-15. **Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.**
+16. **Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
 
-```{r 15, include = TRUE}
+```{r 16, include = TRUE}
 # gc()
 # Naive Bayes with Laplace smoothing
 fit_nb <- naiveBayes(cat~., data=dtm_train1, laplace = 1)
@@ -396,11 +396,11 @@ The predict function allows you to specify whether you want the most probable cl
 
 ---
 
-16. **Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.**
+17. **Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
-```{r 16, include = TRUE}
+```{r 17, include = TRUE}
 fit_svm <- svm(cat~., data=dtm_train1)
 summary(fit_svm)
 
@@ -414,11 +414,11 @@ fit_svm_table
 
 ---
 
-17. **Now prepare the test data for the models, then check the prediction performances.**
+18. **Now prepare the test data for the models, then check the prediction performances.**
 
 ---
 
-```{r 17, include = TRUE}
+```{r 18, include = TRUE}
 # prediction on test data
 pred_nb_test <- predict(fit_nb, na.omit(dtm_test1))
 fit_nb_test <- table(na.omit(dtm_test1$cat), pred_nb_test, dnn=c("Actual", "Predicted"))
@@ -437,11 +437,11 @@ fit_svm_test
 
 ---
 
-18. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
+19. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
 
 ---
 
-```{r 18, include = TRUE}
+```{r 19, include = TRUE}
 confusionMatrix(fit_svm_test)
 
 ```
