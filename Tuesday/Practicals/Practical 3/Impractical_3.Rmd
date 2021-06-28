@@ -20,13 +20,17 @@ output:
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
+Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
 
 In this practical we are going to use the following packages:
 
 ```{r load_packages, message = FALSE, warning = FALSE}
 library(caret)
+library(tidyverse)
 library(tm)
+library(dplyr)
+library(e1071)
+# install.packages(SnowballC)
 
 ```
 
@@ -42,29 +46,23 @@ library(tm)
 
 --- 
 
-1. **In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:**two medical sentences....
+1. **In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:**
 - 'Cats like to chase mice.', 
 - 'Dogs like to eat big bones.'
 
-|     **Use these sentences as our training set and create a document term matrix (dtm). Hint: here we want to use functions from the tm package. To create a dtm first you need to create a vector space model.**
+|     **Use these sentences as our training set and create a document-term matrix (dtm). Also remove punctuations, stopwords, numbers and apply stemming. Hint: Use the tm package. To create a dtm first you need to create a vector space model.**
 
 ---
 
-2. **Inspect the dtm.**
+2. **Inspect the dtm object.**
 
 ---
 
----
-
-3. **Convert the dtm object to a dataframe and view the content again. Also add a column for an outcome variable which has the value of 0 and 1 for our data, respectively.**
+3. **Convert the dtm object to a matrix and add a 'y' column as the outcome variable which is 0 for the first row and 1 for the second row. Then, convert the dtm object to a dataframe.**
 
 ---
 
----
-
-4. **Use the train function with method = 'bayesglm' from the caret package and fit a model on the dtm object.**
-
----
+4. **From the 'caret' package, use the train function with method = 'bayesglm' and fit a model on the dtm object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
 
 ---
 
@@ -72,17 +70,15 @@ library(tm)
 
 ---
 
----
-
-6. **Use sentence "", as your test data. What is the prediction of your model?**
+Here, you see that the model perfectly predicts the category for our training data.
 
 ---
 
----
-
-7. **Now we want to use a tfidf weighting for creating our dtm object. In addition we want to remove punctuations, stopwords, numbers and apply stemming. What is the difference in this new dtm? Repeat the analysis in Q.3 to Q.7 with the new object.**
+6. **Use the sentence "Rats eat cheese." as your test data. What is the prediction of your model? What steps do you need to get the prediction?**
 
 ---
+
+7. **Now we want to use a tfidf weighting for creating our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tfidf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.**
 
 ---
 
@@ -94,12 +90,8 @@ library(tm)
 
 ---
 
-8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
-
----
-
-The dataset used in this project is the BBC News Dataset. The raw dataset can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
-It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
+The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
+It consists of 2225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
 
 - Business
 - Entertainment
@@ -107,100 +99,57 @@ It consists of 2.225 documents from the BBC news website corresponding to storie
 - Sport
 - Tech
 
+---
+
+8. **Load the data set from the data folder and inspect its first rows.**
 
 ---
 
-9. **Use the `freq_terms` function from the `qdap` package and find the 30 top terms in each set of positive and negative reviews in `imdb_500`.**
+9. **Find out about the name of the categories and the number of observations in each of them.**
 
 ---
 
----
-
-10. **Using `ggplot`, plot a barchart for each of the freqent terms dataframes.**
+10. **Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, and whitespaces.**
 
 ---
 
----
-
-11. **Use the `readLines` function to read data from the 'computer.txt' file.**
+11. **Partition the original data and the corpus object into training and test sets with 80% for the training set and 20% for the test set.**
 
 ---
 
----
-
-12. **Convert the data to a dataframe.**
+12. **Create separate document-term matrices for the training and the test sets using the features variable as dictionary and convert them into data frames.**
 
 ---
 
----
-
-13. **Use the `head` and `tail` functions to take a look at the dataset.**
+13. **Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.**
 
 ---
 
----
-
-14. **Except `computer_531`, `imdb_500`, and `blog_gender_1000` remove the other files from the RStudio environment**
+14. **Show 20 most frequent terms and their frequencies in a bar plot.**
 
 ---
 
----
-
-15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your seach.**
+15. **Use the cbind function to add the categories to the train_dtm data and name the column y.**
 
 ---
 
----
-
-16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
+16. **Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
-`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
+The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.
 
 ---
 
-17. **Use the `regexpr` function to check if there is a fully campitalized word in each of the first 20 blogs in the `blog_gender_1000` data.**
+17. **Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
-The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string. 
-
-The `str_extract` function from `stringr` is also a useful function for this purpose:
-
+18. **Now prepare the test data for the models, then check the prediction performances.**
 
 ---
 
-18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
-
----
-
----
-
-19. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
-
----
-
----
-
-20. **Add a new column to `computer_531` and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. **
-
----
-
----
-
-21. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
-
----
-
-
-Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspects.
-
----
-
-22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
-
----
+19. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
 
 ---
 
@@ -208,7 +157,12 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 
 ---
 
+In this practical, we learned about:
 
+- Documet-term matrix representation
+- tf and tfidf methods
+- Naive Bayes and SVM
+- Model comparison
 
 ---
 
