@@ -1320,7 +1320,6 @@ window.initializeCodeFolding = function(show) {
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
     var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    if (showThis) div.collapse('show');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
@@ -1344,13 +1343,27 @@ window.initializeCodeFolding = function(show) {
 
     div.before(buttonRow);
 
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
     // update state of button on show/hide
-    div.on('hidden.bs.collapse', function () {
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
       showCodeText.text('Code');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
     });
     div.on('show.bs.collapse', function () {
       showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
     });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
   });
 
 }
@@ -2838,12 +2851,12 @@ div.tocify {
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row">
-<div class="col-sm-12 col-md-4 col-lg-3">
+<div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
 </div>
 
-<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -2867,10 +2880,14 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Welcome to the third practical of the course “Introduction to Text Mining with R”. In this practical we start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.</p>
+<p>Welcome to the third practical of the course “Introduction to Text Mining with R”. In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.</p>
 <p>In this practical we are going to use the following packages:</p>
 <pre class="r"><code>library(caret)
-library(tm)</code></pre>
+library(tidyverse)
+library(tm)
+library(dplyr)
+library(e1071)
+# install.packages(SnowballC)</code></pre>
 <hr />
 </div>
 <div id="document-term-matrix" class="section level1">
@@ -2881,43 +2898,39 @@ library(tm)</code></pre>
 <h2>A simple pipeline</h2>
 <hr />
 <ol style="list-style-type: decimal">
-<li><strong>In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:</strong>two medical sentences….</li>
+<li><strong>In this part, we will use two sentences to train a model and one sentence to test it. Assume our data consists of two sentences:</strong></li>
 </ol>
 <ul>
 <li>‘Cats like to chase mice.’,</li>
 <li>‘Dogs like to eat big bones.’</li>
 </ul>
-<div class="line-block">    <strong>Use these sentences as our training set and create a document term matrix (dtm). Hint: here we want to use functions from the tm package. To create a dtm first you need to create a vector space model.</strong></div>
+<div class="line-block">    <strong>Use these sentences as our training set and create a document-term matrix (dtm). Also remove punctuations, stopwords, numbers and apply stemming. Hint: Use the tm package. To create a dtm first you need to create a vector space model.</strong></div>
 <hr />
 <ol start="2" style="list-style-type: decimal">
-<li><strong>Inspect the dtm.</strong></li>
+<li><strong>Inspect the dtm object.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="3" style="list-style-type: decimal">
-<li><strong>Convert the dtm object to a dataframe and view the content again. Also add a column for an outcome variable which has the value of 0 and 1 for our data, respectively.</strong></li>
+<li><strong>Convert the dtm object to a matrix and add a ‘y’ column as the outcome variable which is 0 for the first row and 1 for the second row. Then, convert the dtm object to a dataframe.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="4" style="list-style-type: decimal">
-<li><strong>Use the train function with method = ‘bayesglm’ from the caret package and fit a model on the dtm object.</strong></li>
+<li><strong>From the ‘caret’ package, use the train function with method = ‘bayesglm’ and fit a model on the dtm object. For ‘bayesglm’, you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="5" style="list-style-type: decimal">
 <li><strong>Use the fitted model to predict the outcome on the training data.</strong></li>
 </ol>
 <hr />
+<p>Here, you see that the model perfectly predicts the category for our training data.</p>
 <hr />
 <ol start="6" style="list-style-type: decimal">
-<li><strong>Use sentence &quot;&quot;, as your test data. What is the prediction of your model?</strong></li>
+<li><strong>Use the sentence “Rats eat cheese.” as your test data. What is the prediction of your model? What steps do you need to get the prediction?</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="7" style="list-style-type: decimal">
-<li><strong>Now we want to use a tfidf weighting for creating our dtm object. In addition we want to remove punctuations, stopwords, numbers and apply stemming. What is the difference in this new dtm? Repeat the analysis in Q.3 to Q.7 with the new object.</strong></li>
+<li><strong>Now we want to use a tfidf weighting for creating our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tfidf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.</strong></li>
 </ol>
-<hr />
 <hr />
 </div>
 </div>
@@ -2927,11 +2940,7 @@ library(tm)</code></pre>
 <div id="feature-selection-and-classification-naïve-bayes-versus-svm" class="section level2">
 <h2>Feature selection and classification: Naïve Bayes versus SVM</h2>
 <hr />
-<ol start="8" style="list-style-type: decimal">
-<li><strong>Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.</strong></li>
-</ol>
-<hr />
-<p>The dataset used in this project is the BBC News Dataset. The raw dataset can be downloaded from <a href="http://mlg.ucd.ie/datasets/bbc.html">here</a>. It consists of 2.225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:</p>
+<p>The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from <a href="http://mlg.ucd.ie/datasets/bbc.html">here</a>. It consists of 2225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:</p>
 <ul>
 <li>Business</li>
 <li>Entertainment</li>
@@ -2940,85 +2949,68 @@ library(tm)</code></pre>
 <li>Tech</li>
 </ul>
 <hr />
-<ol start="9" style="list-style-type: decimal">
-<li><strong>Use the <code>freq_terms</code> function from the <code>qdap</code> package and find the 30 top terms in each set of positive and negative reviews in <code>imdb_500</code>.</strong></li>
+<ol start="8" style="list-style-type: decimal">
+<li><strong>Load the data set from the data folder and inspect its first rows.</strong></li>
 </ol>
 <hr />
+<ol start="9" style="list-style-type: decimal">
+<li><strong>Find out about the name of the categories and the number of observations in each of them.</strong></li>
+</ol>
 <hr />
 <ol start="10" style="list-style-type: decimal">
-<li><strong>Using <code>ggplot</code>, plot a barchart for each of the freqent terms dataframes.</strong></li>
+<li><strong>Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, and whitespaces.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="11" style="list-style-type: decimal">
-<li><strong>Use the <code>readLines</code> function to read data from the ‘computer.txt’ file.</strong></li>
+<li><strong>Partition the original data and the corpus object into training and test sets with 80% for the training set and 20% for the test set.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="12" style="list-style-type: decimal">
-<li><strong>Convert the data to a dataframe.</strong></li>
+<li><strong>Create separate document-term matrices for the training and the test sets using the features variable as dictionary and convert them into data frames.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="13" style="list-style-type: decimal">
-<li><strong>Use the <code>head</code> and <code>tail</code> functions to take a look at the dataset.</strong></li>
+<li><strong>Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="14" style="list-style-type: decimal">
-<li><strong>Except <code>computer_531</code>, <code>imdb_500</code>, and <code>blog_gender_1000</code> remove the other files from the RStudio environment</strong></li>
+<li><strong>Show 20 most frequent terms and their frequencies in a bar plot.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="15" style="list-style-type: decimal">
-<li><strong>Use regular expressions to find the number of reviews in <code>imdb_500</code> that contain words “Action”, “Comedy”, “Drama”. Also include the lower case of the words in your seach.</strong></li>
+<li><strong>Use the cbind function to add the categories to the train_dtm data and name the column y.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="16" style="list-style-type: decimal">
-<li><strong>Use regular expressions to find the reviews in <code>imdb_500</code> that contain word “Action”. Hint: Set the <code>value</code> in the <code>grep</code> function equal to <code>TRUE</code></strong></li>
+<li><strong>Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.</strong></li>
 </ol>
 <hr />
-<p><code>grep()</code> and the <code>grepl()</code> functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.</p>
+<p>The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.</p>
 <hr />
 <ol start="17" style="list-style-type: decimal">
-<li><strong>Use the <code>regexpr</code> function to check if there is a fully campitalized word in each of the first 20 blogs in the <code>blog_gender_1000</code> data.</strong></li>
+<li><strong>Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.</strong></li>
 </ol>
-<hr />
-<p>The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string.</p>
-<p>The <code>str_extract</code> function from <code>stringr</code> is also a useful function for this purpose:</p>
 <hr />
 <ol start="18" style="list-style-type: decimal">
-<li><strong><code>regexpr</code> and <code>str_extract</code> only give you the first match of the string (reading left to right). On the other hand, <code>gregexpr</code> and <code>str_match_all</code> will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the <code>blog_gender_1000</code> data.</strong></li>
+<li><strong>Now prepare the test data for the models, then check the prediction performances.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="19" style="list-style-type: decimal">
-<li><strong>Now we want to process the <code>computer_531</code> data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until <code>##</code>. Apply this only for the first 20 reviews in data. Use <code>str_extract</code> or <code>gsub</code> function.</strong></li>
+<li><strong>Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.</strong></li>
 </ol>
-<hr />
-<hr />
-<ol start="20" style="list-style-type: decimal">
-<li><strong>Add a new column to <code>computer_531</code> and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. </strong></li>
-</ol>
-<hr />
-<hr />
-<ol start="21" style="list-style-type: decimal">
-<li><strong>Now remove the sentiment scores from aspects. Add the only-aspect to another column to <code>computer_531</code> and name it <code>aspects</code>.</strong></li>
-</ol>
-<hr />
-<p>Using <code>unlist(strsplit(string, &quot;,&quot;))</code> gives you back a vector of separated aspects.</p>
-<hr />
-<ol start="22" style="list-style-type: decimal">
-<li><strong>Create a new column <code>sentiment</code> with the values <code>positive</code>, <code>negative</code> and <code>neutral</code>. Set a value <code>neutral</code> if there is no aspect in the corresponding column or the sum of scores is equal to zero.</strong></li>
-</ol>
-<hr />
 <hr />
 </div>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <hr />
+<p>In this practical, we learned about:</p>
+<ul>
+<li>Documet-term matrix representation</li>
+<li>tf and tfidf methods</li>
+<li>Naive Bayes and SVM</li>
+<li>Model comparison</li>
+</ul>
 <hr />
 <p>End of Practical</p>
 <hr />
