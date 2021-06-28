@@ -36,13 +36,7 @@ library(rpart.plot)
 
 ---
 
-# Dictionary-based sentiment analysis
-
----
-
----
-
-## Read data
+# Read data
 
 ---
 
@@ -50,7 +44,7 @@ library(rpart.plot)
 
 ---
 
-```{r 1, include = TRUE}
+```{r 1, message = FALSE, warning = FALSE, include = TRUE}
 taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
 
 ```
@@ -66,7 +60,7 @@ taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
 ---
 
 
-```{r 2, include = TRUE}
+```{r 2, message = FALSE, warning = FALSE, include = TRUE}
 docs <- Corpus(VectorSource(taylor_swift_lyrics$Lyrics))
 
 dtm <- DocumentTermMatrix(docs,
@@ -84,7 +78,7 @@ dtm <- DocumentTermMatrix(docs,
 
 ---
 
-```{r 3, include = TRUE}
+```{r 3, message = FALSE, warning = FALSE, include = TRUE}
 # inspect(dtm)
 dtm <- as.data.frame(as.matrix(dtm))
 
@@ -93,7 +87,7 @@ dtm <- as.data.frame(as.matrix(dtm))
 
 ---
 
-## Sentiment dictionaries
+# Sentiment dictionaries
 
 ---
 
@@ -102,13 +96,16 @@ dtm <- as.data.frame(as.matrix(dtm))
 The tidytext package contains 4 general purpose lexicons in the sentiments dataset.
 
 AFINN - listing of english words rated for valence between -5 and +5
+
 bing - listing of positive and negative sentiment
+
 nrc - list of English words and their associations with 8 emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and 2 sentiments (negative and positive); binary
+
 loughran - list of sentiment words for accounting and finance by category (Negative, Positive, Uncertainty, Litigious, Strong Modal, Weak Modal, Constraining)
 
 ---
 
-```{r 4, include = TRUE, warning = FALSE}
+```{r 4, message = FALSE, warning = FALSE, include = TRUE}
 # also “nrc”, “loughran”
 
 bing_sentiments  <- get_sentiments("bing")
@@ -125,16 +122,14 @@ head(afinn_sentiments)
 
 ---
 
-```{r 5, include = TRUE, warning = FALSE}
+```{r 5, message = FALSE, warning = FALSE, include = TRUE}
 bing_sentiments$score <- ifelse(bing_sentiments$sentiment=="positive", 1, -1)
 
 ```
 
 ---
 
----
-
-## Calculate sentiment score for each lyric
+# Sentiment score for each lyric
 
 ---
 
@@ -142,7 +137,7 @@ bing_sentiments$score <- ifelse(bing_sentiments$sentiment=="positive", 1, -1)
 
 ---
 
-```{r 6, include = TRUE}
+```{r 6, message = FALSE, warning = FALSE, include = TRUE}
 # get all the words in our dtm and put it in a dataframe
 words <- data.frame(word = colnames(dtm))
 head(words)
@@ -163,7 +158,7 @@ head(words)
 
 ---
 
-```{r 7, include = TRUE, warning = FALSE}
+```{r 7, message = FALSE, warning = FALSE, include = TRUE}
 
 # calculate documents scores with matrix algebra! 
 scores <- as.matrix(dtm) %*% words$score
@@ -176,7 +171,7 @@ scores <- as.matrix(dtm) %*% words$score
 
 ---
 
-```{r 8, include = TRUE, warning = FALSE}
+```{r 8, message = FALSE, warning = FALSE, include = TRUE}
 taylor_swift_lyrics$sentiment_bing <- scores
 head(taylor_swift_lyrics)
 
@@ -184,11 +179,11 @@ head(taylor_swift_lyrics)
 
 ---
 
-8. **Plot the bing sentiment scores for each lyric.**
+9. **Plot the bing sentiment scores for each lyric.**
 
 ---
 
-```{r 8+1, include = TRUE, warning = FALSE}
+```{r 9, message = FALSE, warning = FALSE, include = TRUE}
 taylor_swift_lyrics[1:60,] %>% ggplot() +
   geom_col(aes(Title, sentiment_bing), fill = "lightgreen", alpha=.75) +
   theme(legend.position = "none", 
@@ -215,11 +210,11 @@ taylor_swift_lyrics[61:132,] %>% ggplot() +
 
 ---
 
-9. **Using the code you wrote above, below we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+10. **Using the code you wrote above, below we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
 
 ---
 
-```{r 9, include = TRUE, warning = FALSE}
+```{r 10, message = FALSE, warning = FALSE, include = TRUE}
 sentiment_score <- function(texts, sentiment_dict){
   # preprocess texts
   docs <- Corpus(VectorSource(texts))
@@ -244,18 +239,16 @@ sentiment_score <- function(texts, sentiment_dict){
   scores <- as.matrix(dtm) %*% words$score
   
   return(scores)
-  
 }
-
 ```
 
-```{r 91, include = TRUE, warning = FALSE}
+```{r 10+1, message = FALSE, warning = FALSE, include = TRUE}
 colnames(afinn_sentiments)[2] <- "score"
 taylor_swift_lyrics$sentiment_afinn <- sentiment_score(taylor_swift_lyrics$Lyrics, afinn_sentiments)
 
 ```
 
-```{r}
+```{r 10+2, message = FALSE, warning = FALSE, include = TRUE}
 taylor_swift_lyrics[1:60,] %>% ggplot() +
   geom_col(aes(Title, sentiment_afinn), fill = "orange", alpha=.75) +
   theme(legend.position = "none", 
@@ -281,11 +274,11 @@ taylor_swift_lyrics[61:132,] %>% ggplot() +
 
 ---
 
-10. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is. You can also plot the sentiments for albums.**
+11. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is. You can also plot the sentiments for albums.**
 
 ---
 
-```{r 10, include = TRUE, warning = FALSE}
+```{r 11, message = FALSE, warning = FALSE, include = TRUE}
 # concatenate to make albums
 albums <- taylor_swift_lyrics %>% group_by(Album) %>%
   summarise(lyrics = paste0(Lyrics, collapse = ";"))
@@ -299,7 +292,6 @@ albums$sentiment_bing <- sentiment_score(albums$lyrics, bing_sentiments)
 
 # add sentiments
 albums$sentiment_afinn <- sentiment_score(albums$lyrics, afinn_sentiments)
-
 
 albums %>% ggplot() +
   geom_col(aes(Album, sentiment_bing), fill = "#edc948", alpha=.75) +
@@ -323,7 +315,6 @@ albums %>% ggplot() +
   coord_flip() +
   theme_minimal()
 
-
 ```
 
 ---
@@ -333,11 +324,11 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
-11. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
+12. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
 
 ---
 
-```{r 11, include = TRUE, warning = FALSE}
+```{r 12, message = FALSE, warning = FALSE, include = TRUE}
 
 computer_531 <- read.csv("computer_531.csv")
 
@@ -345,11 +336,11 @@ computer_531 <- read.csv("computer_531.csv")
 
 ---
 
-12. **Apply the `sentiment_score` function on the reviews in the dataframe with both bing and afinn dictionaries.**
+13. **Apply the `sentiment_score` function on the reviews in the dataframe with both bing and afinn dictionaries.**
 
 ---
 
-```{r 12, include = TRUE, warning = FALSE}
+```{r 13, message = FALSE, warning = FALSE, include = TRUE}
 computer_531$sentiment_bing  <- sentiment_score(computer_531$review, bing_sentiments)
 computer_531$sentiment_afinn <- sentiment_score(computer_531$review, afinn_sentiments)
 
@@ -357,14 +348,13 @@ head(computer_531[,c("review", "sentiment", "sentiment_bing", "sentiment_afinn")
 
 ```
 
+---
+
+14. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the bing dictionary.**
 
 ---
 
-13. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the bing dictionary.**
-
----
-
-```{r 13, include = TRUE}
+```{r 14, message = FALSE, warning = FALSE, include = TRUE}
 # converting numbers into neutral, positive and negative classes for the output of the bing dictionary
 computer_531 <- computer_531 %>%
   mutate(sentiment_bing1 = "neutral")
@@ -384,11 +374,11 @@ confusionMatrix(table(computer_531$sentiment, computer_531$sentiment_bing1, dnn=
 
 ---
 
-14. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the afinn dictionary.**
+15. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the afinn dictionary.**
 
 ---
 
-```{r 14, include = TRUE}
+```{r 15, message = FALSE, warning = FALSE, include = TRUE}
 # converting numbers into neutral, positive and negative classes for the output of the afinn dictionary
 computer_531 <- computer_531 %>%
   mutate(sentiment_afinn1 = "neutral")
@@ -405,14 +395,13 @@ confusionMatrix(table(computer_531$sentiment, computer_531$sentiment_afinn1, dnn
 
 ```
 
+---
+
+16. **From the `rpart` package, we want to build a tree on this dataset to predict sentiments. For this purpose, first prepare your data by doing preprocessing on reviews, converting to dtm and creating training and test sets.**
 
 ---
 
-15. **From the `rpart` package, we want to build a tree on this dataset to predict sentiments. For this purpose, first prepare your data by doing preprocessing on reviews, converting to dtm and creating training and test sets.**
-
----
-
-```{r 15, include = TRUE}
+```{r 16, message = FALSE, warning = FALSE, include = TRUE}
 
 set.seed(123)
 
@@ -446,7 +435,6 @@ dtm_test  <- DocumentTermMatrix(test2, list(dictionary=features))
 dtm_train <- as.data.frame(as.matrix(dtm_train))
 dtm_test  <- as.data.frame(as.matrix(dtm_test))
 
-
 dtm_train1 <- cbind(cat=factor(train1$sentiment), dtm_train)
 dtm_test1  <- cbind(cat=factor(test1$sentiment), dtm_test)
 dtm_train1 <- as.data.frame(dtm_train1)
@@ -456,12 +444,11 @@ dtm_test1  <- as.data.frame(dtm_test1)
 
 ---
 
-16. **Now build a tree with the default setting of the rpart function, and visualize the tree.**
+17. **Now build a tree with the default setting of the rpart function, and visualize the tree.**
 
 ---
 
-
-```{r 16, include = TRUE}
+```{r 17, message = FALSE, warning = FALSE, include = TRUE}
 # build a small tree for prediction
 fit_tree <- rpart(cat ~ ., data = dtm_train1, method = "class")
 rpart.plot(fit_tree)
@@ -470,11 +457,11 @@ rpart.plot(fit_tree)
 
 ---
 
-17. **Check the performamce of the tree on your training set.**
+18. **Check the performamce of the tree on your training set.**
 
 ---
 
-```{r 17, include = TRUE}
+```{r 18, message = FALSE, warning = FALSE, include = TRUE}
 # performance on train
 preds <- predict(fit_tree, type = c("class"))
 confusionMatrix(table(dtm_train1$cat, preds, dnn=c("Actual", "Predicted")))
@@ -483,18 +470,18 @@ confusionMatrix(table(dtm_train1$cat, preds, dnn=c("Actual", "Predicted")))
 
 ---
 
-18. **Check the performamce of the tree on the test set, and compare it with the training performance.**
+19. **Check the performamce of the tree on the test set, and compare it with the training performance.**
 
 ---
 
-```{r 18, include = TRUE}
+```{r 19, message = FALSE, warning = FALSE, include = TRUE}
 # performance on test
 preds <- predict(fit_tree, newdata = dtm_test1, type = c("class"))
 confusionMatrix(table(dtm_test1$cat, preds, dnn=c("Actual", "Predicted")))
 
 ```
 
-Here you found out that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better, but you will lose interpretability!
+Here you found that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better, but you will lose interpretability!
 
 ---
 
