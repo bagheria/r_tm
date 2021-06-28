@@ -1320,7 +1320,6 @@ window.initializeCodeFolding = function(show) {
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
     var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    if (showThis) div.collapse('show');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
@@ -1344,13 +1343,27 @@ window.initializeCodeFolding = function(show) {
 
     div.before(buttonRow);
 
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
     // update state of button on show/hide
-    div.on('hidden.bs.collapse', function () {
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
       showCodeText.text('Code');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
     });
     div.on('show.bs.collapse', function () {
       showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
     });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
   });
 
 }
@@ -2838,12 +2851,12 @@ div.tocify {
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row">
-<div class="col-sm-12 col-md-4 col-lg-3">
+<div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
 </div>
 
-<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -2871,20 +2884,19 @@ div.tocify {
 <p>In this practical we are going to use the following packages:</p>
 <pre class="r"><code>library(tm)
 library(tidytext)
-library(dplyr)</code></pre>
+library(dplyr)
+library(ggplot2)
+library(caret)
+library(rpart)
+library(rpart.plot)</code></pre>
 <hr />
 </div>
-<div id="dictionary-based-sentiment-analysis" class="section level1">
-<h1>Dictionary-based sentiment analysis</h1>
-<hr />
-<hr />
-<div id="read-data" class="section level2">
-<h2>Read data</h2>
+<div id="read-data" class="section level1">
+<h1>Read data</h1>
 <hr />
 <ol style="list-style-type: decimal">
-<li><strong>Read the “taylor_swift.csv” dataset from the data folder.</strong></li>
+<li><strong>In today’s practical, we want to use Taylor Swift song lyrics data from all her albums. Read the “taylor_swift.csv” dataset from the data folder.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="2" style="list-style-type: decimal">
 <li><strong>First we must preprocess the corpus. Create a document-term matrix from the <code>lyrics</code> column of the <code>ts</code> data frame. Complete the following preprocessing steps:</strong></li>
@@ -2896,96 +2908,108 @@ library(dplyr)</code></pre>
 <li>remove punctuation.</li>
 </ul>
 <hr />
-<hr />
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Inspect the dtm object and convert it to a dataframe.</strong></li>
 </ol>
 <hr />
 <hr />
 </div>
-<div id="sentiment-dictionaries" class="section level2">
-<h2>Sentiment dictionaries</h2>
+<div id="sentiment-dictionaries" class="section level1">
+<h1>Sentiment dictionaries</h1>
 <hr />
 <ol start="4" style="list-style-type: decimal">
-<li><strong>We’re going to use sentiment dictionaries from the <code>tidytext</code> package. Using the <code>get_sentiments</code> function, load the “bing” and “afinn” dictionaries and store them in two objects called <code>bing_sentiments</code> and <code>afinn_sentiments</code>. </strong></li>
+<li><strong>We’re going to use sentiment dictionaries from the <code>tidytext</code> package. Using the <code>get_sentiments</code> function, load the “bing” and “afinn” dictionaries and store them in two objects called <code>bing_sentiments</code> and <code>afinn_sentiments</code>. You might need to install the “textdata” package.</strong></li>
 </ol>
 <p>The tidytext package contains 4 general purpose lexicons in the sentiments dataset.</p>
-<p>AFINN - listing of english words rated for valence between -5 and +5 bing - listing of positive and negative sentiment nrc - list of English words and their associations with 8 emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and 2 sentiments (negative and positive); binary loughran - list of sentiment words for accounting and finance by category (Negative, Positive, Uncertainty, Litigious, Strong Modal, Weak Modal, Constraining)</p>
-<hr />
+<p>AFINN - listing of english words rated for valence between -5 and +5</p>
+<p>bing - listing of positive and negative sentiment</p>
+<p>nrc - list of English words and their associations with 8 emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) and 2 sentiments (negative and positive); binary</p>
+<p>loughran - list of sentiment words for accounting and finance by category (Negative, Positive, Uncertainty, Litigious, Strong Modal, Weak Modal, Constraining)</p>
 <hr />
 <ol start="5" style="list-style-type: decimal">
 <li><strong>The afinn_sentiments has the rating for valence between -5 and +5, while the bing_sentiments contains listing of positive and negative sentiment. Add a column to <code>bing_sentiments</code> called <code>score</code>. This column should hold a “1” for positive words and “-1” for negative words.</strong></li>
 </ol>
 <hr />
 <hr />
-<hr />
 </div>
-<div id="calculate-sentiment-score-for-each-lyric" class="section level2">
-<h2>Calculate sentiment score for each lyric</h2>
+<div id="sentiment-score-for-each-lyric" class="section level1">
+<h1>Sentiment score for each lyric</h1>
 <hr />
 <ol start="6" style="list-style-type: decimal">
 <li><strong>Create a dataframe that holds all the words in the dtm object along with their sentiment score.</strong></li>
 </ol>
 <hr />
-<hr />
 <ol start="7" style="list-style-type: decimal">
 <li><strong>To calculate a score for each lyric, multiply your dtm object by the scoring dataframe.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="8" style="list-style-type: decimal">
 <li><strong>Add the calculated scores for each lyric to the original <code>taylor_swift_lyrics</code> dataframe.</strong></li>
 </ol>
 <hr />
-<hr />
 <ol start="9" style="list-style-type: decimal">
-<li><strong>Using the code you wrote above, we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a data frame with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the <code>afinn</code> sentiment dictionary.</strong></li>
+<li><strong>Plot the bing sentiment scores for each lyric.</strong></li>
 </ol>
 <hr />
 <ol start="10" style="list-style-type: decimal">
-<li><strong>Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is.</strong></li>
+<li><strong>Using the code you wrote above, below we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the <code>afinn</code> sentiment dictionary.</strong></li>
 </ol>
 <hr />
+<ol start="11" style="list-style-type: decimal">
+<li><strong>Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is. You can also plot the sentiments for albums.</strong></li>
+</ol>
 <hr />
-</div>
 </div>
 <div id="sentiment-analysis-of-product-reviews" class="section level1">
 <h1>Sentiment analysis of product reviews</h1>
+<p>In this part of the practical, we will do some sentiment analysis on computer product reviews. For this purpose, we will use our processed data set from the first practical: the computer_531 dataset.</p>
 <hr />
-<ol start="11" style="list-style-type: decimal">
+<ol start="12" style="list-style-type: decimal">
 <li><strong>Load the final <code>computer_531</code> dataframe from the first practical and to read data from the ‘computer.txt’ file.</strong></li>
 </ol>
 <hr />
-<hr />
-<ol start="12" style="list-style-type: decimal">
-<li><strong>Apply the <code>sentiment_score</code> function on the reviews in the dataframe with both the bing and afinn dictionaries.</strong></li>
-</ol>
-<hr />
-<hr />
 <ol start="13" style="list-style-type: decimal">
-<li><strong>Create a confusion matrix. Accuracy, precision, recall and F1 measures.</strong></li>
+<li><strong>Apply the <code>sentiment_score</code> function on the reviews in the dataframe with both bing and afinn dictionaries.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="14" style="list-style-type: decimal">
-<li><strong>From the <code>neuralnet</code> package, we want to apply a multi-layer perceptron to this dataset and train a model for prediction of the sentiments.</strong></li>
+<li><strong>Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the bing dictionary.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="15" style="list-style-type: decimal">
-<li><strong>Compare nn1, bing and affine …</strong></li>
+<li><strong>Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the afinn dictionary.</strong></li>
 </ol>
-<hr />
 <hr />
 <ol start="16" style="list-style-type: decimal">
-<li><strong>Visualise the results</strong></li>
+<li><strong>From the <code>rpart</code> package, we want to build a tree on this dataset to predict sentiments. For this purpose, first prepare your data by doing preprocessing on reviews, converting to dtm and creating training and test sets.</strong></li>
 </ol>
 <hr />
+<ol start="17" style="list-style-type: decimal">
+<li><strong>Now build a tree with the default setting of the rpart function, and visualize the tree.</strong></li>
+</ol>
+<hr />
+<ol start="18" style="list-style-type: decimal">
+<li><strong>Check the performamce of the tree on your training set.</strong></li>
+</ol>
+<hr />
+<ol start="19" style="list-style-type: decimal">
+<li><strong>Check the performamce of the tree on the test set, and compare it with the training performance.</strong></li>
+</ol>
+<hr />
+<p>Here you found that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better, but you will lose interpretability!</p>
 <hr />
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <hr />
+<p>In this practical, we learned about:</p>
+<ul>
+<li>Sentiment analysis</li>
+<li>Dictionary-based methods</li>
+<li>Available sentiment dictionaries</li>
+<li>Learning sentiments</li>
+<li>Decision trees</li>
+</ul>
 <hr />
 <p>End of Practical</p>
 <hr />
