@@ -11,7 +11,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Practical_5.html
+    pandoc_args: --output=Impractical_5.html
 ---
 
 # Introduction
@@ -20,7 +20,7 @@ output:
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the fifth practical of the course "Introduction to Text Mining with R". In this practical, we will apply a clustering and a topic modeling approach on news articles and cluster them into different categories. 
+Welcome to the fifth practical of the course "Introduction to Text Mining with R". In this practical, we will apply a clustering method and a topic modeling approach on news articles and cluster them into different categories. 
 
 In this practical we are going to use the following packages:
 
@@ -28,22 +28,20 @@ In this practical we are going to use the following packages:
 library(tm)
 library(tidytext)
 library(dplyr)
-
+library(proxy)
+library(topicmodels)
+library(ggplot2)
+library(tidyr)
+library(dbscan)
 ```
 
 ---
 
-# 
+# Read data
 
 ---
 
----
-
-## Read data
-
----
-
-1. **The dataset that we are going to use is the BBC dataset from practical 3. The BBC dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
+1. **The dataset that we are going to use is the BBC dataset from practical 3. This dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
 
 ---
 
@@ -52,45 +50,83 @@ library(dplyr)
 - remove stop words
 - remove numbers
 - remove punctuation
-- use tfidf weighting
 - convert dtm to a dataframe
 
 ---
 
-3. **Now we can implement k-means clustering, starting out with three centers. What does the output look like?**
+# Clustering methods
 
 ---
 
-## Clustering methods
-## Choosing k
+3. **Use the dist() function from the proxy library and calculate a distance matrix for the dtm_cut object with cosine similarity method. We will use the distance matrix for specific clustering algorithms.**
 
 ---
 
-4. ** **
-
-We used k = 3 but how do we know that’s right? There are lots of complicated or “more art than science” ways of choosing k. One way is to look at the total within-cluster sum of squares and see if it stops dropping off so quickly at some value for k. We can get that from another verb from broom, glance(); let’s try lots of values for k and see what happens to the total sum of squares.
+4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for kmeans. What does the output look like? Also check the cluster centers.**
 
 ---
 
-5. **Fit k-means again with the optimal k.**
+5. **Apply a PCA with 2 components on the distance matrix, and then plot the output of kmeans clustering on using the PCA outputs.**
 
 ---
 
+6. **There are different ways of choosing k. Let's repeat steps 3 and 4 with 4, 5 and 6 cluster centers for k-means and compare the visualizations.**
 
 ---
 
-16. **Visualise the results**
+7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustring trees (dendrograms).**
 
 ---
 
-```{r 16, include = TRUE}
-
-```
-
+8. **Plot the output of clustering with PCA components where you cut the tree into 5 groups.**
 
 ---
 
+9. **From the library dbscan apply the dbscan algorithm on the distance matrix and plot the output with the PCA components. Compare the visualization with the output of previous methods.**
 
+---
+
+# Topic Modeling
+
+---
+
+Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a topic model. It treats each document as a mixture of topics, and each topic as a mixture of words. This allows documents to “overlap” each other in terms of content, rather than being separated into discrete groups, in a way that mirrors typical use of natural language.
+
+10. **Use the LDA function from the topicmodels package and train an LDA model with 5 topics with the Gibbs sampling method.**
+
+---
+
+11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilites for each term and topic.**
+
+---
+
+12. **Plot the top 20 terms within each topic. Try to label them and compare your labeling with the original categories in the dataset.**
+
+---
+
+13. **Use the code below to present and save the terms and topics in a wide format.**
+
+---
+
+14. **Use the log ratios to visualize the words with the greatest differences between topic 1 and other topics.**
+
+---
+
+15. **Besides estimating each topic as a mixture of words, LDA also models each document as a mixture of topics. We can examine the per-document-per-topic probabilities, called “gamma”, with the matrix = "gamma" argument to tidy(). Call this function for your LDA model and save the probabilities in a varibale named lda_documents.**
+
+---
+
+16. **Check the topic probabilities for some of the documents (for example documents 1, 1000, 2000, 2225). Also look at the contents of some them.**
+
+---
+
+17. **Visualise the topic probabilities for example documents using boxplots.**
+
+---
+
+# Alternative LDA implementations
+
+The LDA() function in the topicmodels package is only one implementation of the latent Dirichlet allocation algorithm. For example, the mallet package (Mimno 2013) implements a wrapper around the MALLET Java package for text classification tools, and the tidytext package provides tidiers for this model output as well. The textmineR package has extensive functionality for topic modeling. You can fit Latent Dirichlet Allocation (LDA), Correlated Topic Models (CTM), and Latent Semantic Analysis (LSA) from within textmineR (https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html). 
 
 ---
 
@@ -98,7 +134,14 @@ We used k = 3 but how do we know that’s right? There are lots of complicated o
 
 ---
 
+In this practical, we learned about:
 
+- Text clustering algorithms
+- Kmeans
+- Hclust
+- Dbscan
+- Topic modeling
+- LDA
 
 ---
 
