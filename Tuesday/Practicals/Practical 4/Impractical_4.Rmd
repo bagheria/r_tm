@@ -66,7 +66,7 @@ library(rpart.plot)
 
 The tidytext package contains 4 general purpose lexicons in the sentiments dataset.
 
-AFINN - listing of english words rated for valence between -5 and +5
+AFINN - listing of English words rated for valence between -5 and +5
 
 bing - listing of positive and negative sentiment
 
@@ -139,11 +139,11 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
-18. **Check the performamce of the tree on your training set.**
+18. **Check the performance of the tree on your training set.**
 
 ---
 
-19. **Check the performamce of the tree on the test set, and compare it with the training performance.**
+19. **Check the performance of the tree on the test set, and compare it with the training performance.**
 
 ---
 

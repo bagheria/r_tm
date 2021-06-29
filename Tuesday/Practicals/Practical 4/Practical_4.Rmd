@@ -193,7 +193,8 @@ taylor_swift_lyrics[1:60,] %>% ggplot() +
   ylab("Sentiment Score") +
   ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
   coord_flip() +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 6))
 
 taylor_swift_lyrics[61:132,] %>% ggplot() +
   geom_col(aes(Title, sentiment_bing), fill = "lightgreen", alpha=.75) +
@@ -204,7 +205,8 @@ taylor_swift_lyrics[61:132,] %>% ggplot() +
   ylab("Sentiment Score") +
   ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
   coord_flip() +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 6))
 
 ```
 
@@ -258,7 +260,8 @@ taylor_swift_lyrics[1:60,] %>% ggplot() +
   ylab("Sentiment Score") +
   ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
   coord_flip() +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 6))
 
 taylor_swift_lyrics[61:132,] %>% ggplot() +
   geom_col(aes(Title, sentiment_afinn), fill = "orange", alpha=.75) +
@@ -269,7 +272,8 @@ taylor_swift_lyrics[61:132,] %>% ggplot() +
   ylab("Sentiment Score") +
   ggtitle("Sentiment Analysis of Taylor Swift Lyrics") +
   coord_flip() +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 6))
 ```
 
 ---
@@ -457,7 +461,7 @@ rpart.plot(fit_tree)
 
 ---
 
-18. **Check the performamce of the tree on your training set.**
+18. **Check the performance of the tree on your training set.**
 
 ---
 
@@ -470,7 +474,7 @@ confusionMatrix(table(dtm_train1$cat, preds, dnn=c("Actual", "Predicted")))
 
 ---
 
-19. **Check the performamce of the tree on the test set, and compare it with the training performance.**
+19. **Check the performance of the tree on the test set, and compare it with the training performance.**
 
 ---
 
