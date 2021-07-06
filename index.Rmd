@@ -133,10 +133,10 @@ Rstudio is an Integrated Development Environment (IDE). It can be obtained as st
 Execute the following lines of code in the console window:
 
 ```{r eval=FALSE, echo = TRUE}
-install.packages(c("ggplot2", "tidyverse", "dplyr", "magrittr", "micemd", "jomo", "pan", 
-                 "lme4", "knitr", "rmarkdown", "plotly", "ggplot2", "shiny", 
-                 "devtools", "boot", "class", "car", "MASS", "ggplot2movies", 
-                 "ISLR", "DAAG", "mice"), 
+install.packages(c("ggplot2", "tidyverse", "dplyr", "magrittr", "xlsx", "wordcloud", "stringr", 
+                 "caret", "knitr", "rmarkdown", "plotly", "e1071", "SnowballC", 
+                 "devtools", "rpart", "proxy", "topicmodels", "tidyr", "dbscan", 
+                 "text2vec", "tidytext", "tensorflow", "keras"), 
                  dependencies = TRUE)
 ```
 
