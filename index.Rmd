@@ -213,7 +213,7 @@ Here you will find the materials for Monday:
     - [Lecture 2](Monday/Lectures/Lecture 2/Lecture_2.html)
     - [Impractical 2]()
     - [Practical 2]()
-    - [Data for practical 1](Monday/Practicals/Practical 2/data.zip)
+    - [Data for practical 2](Monday/Practicals/Practical 2/data.zip)
 
 ## Column 2
 
