@@ -210,9 +210,10 @@ Here you will find the materials for Monday:
     - [Data for practical 1](Monday/Practicals/Practical 1/data.zip)
 
 - Part 2: Text preprocessing
-    - [Lecture 2]()
+    - [Lecture 2](Monday/Lectures/Lecture 2/Lecture_2.html)
     - [Impractical 2]()
-    - [Practical 2]() 
+    - [Practical 2]()
+    - [Data for practical 1](Monday/Practicals/Practical 2/data.zip)
 
 ## Column 2
 
