@@ -266,7 +266,7 @@ Here you will find the materials for Wednesday:
     - [Practical 5](Wednesday/Practicals/Practical 5/Practical_5.html) 
 
 - Part 6: Word embedding
-    - [Lecture 6]()
+    - [Lecture 6](Wednesday/Lectures/Lecture 6/Lecture_6.pdf)
     - [Impractical 6](Wednesday/Practicals/Practical 6/Impractical_6.html)
     - [Practical 6](Wednesday/Practicals/Practical 6/Practical_6.html) 
 
