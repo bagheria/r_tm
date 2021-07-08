@@ -206,11 +206,7 @@ predict(fit, newdata = test_data)
 
 ---
 
-# Compare architectures
-
----
-
-## Feature selection and classification: Naïve Bayes versus SVM
+# Compare architectures: Naïve Bayes versus SVM
 
 The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
 It consists of 2225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
