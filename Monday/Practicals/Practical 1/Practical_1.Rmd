@@ -388,6 +388,7 @@ computer_531$review <- sub('(.*)(##?)', '', computer_531[,]$computer_data)
 ```
 
 The difference is that sub only replaces the first occurrence of the pattern specified, whereas gsub does it for all occurrences (that is, it replaces globally). sub and gsub perform replacement of the first and all matches respectively.
+
 ---
 
 21. **Now remove the sentiment scores from aspects. Add only the aspect to another column to `computer_531` and name it `aspects`.**
@@ -454,6 +455,10 @@ write_csv(computer_531, "computer_531.csv")
 # Summary
 
 ---
+
+- Text mining packages
+
+- Different text file formats
 
 The primary R functions for dealing with regular expressions are:
 
