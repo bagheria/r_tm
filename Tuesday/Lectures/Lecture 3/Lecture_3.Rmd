@@ -1,6 +1,6 @@
 ---
 title: "Feature Engineering and Text Classification"
-author: "Ayoub Bagheri, a.bagheri@uu.nl"
+author: "Ayoub Bagheri"
 output:
   ioslides_presentation:
     logo: logo.png
@@ -11,8 +11,6 @@ output:
 library(knitr)
 library(DiagrammeR)
 ```
-
-
 
 ## Lecture’s Plan
 
@@ -25,6 +23,77 @@ library(DiagrammeR)
 4. How to classify text data?
 
 5. How to evaluate a classifier?
+
+# Text Classification
+
+## Text classification
+
+- Supervised learning: Learning a function that maps an input to an output based on example input-output pairs.
+  
+  - infer a function from labeled training data
+  
+  - use the inferred function to label new instances
+
+- Human experts annotate a set of text data
+  
+  - Training set
+
+```{r, echo=FALSE, out.width="40%"}
+include_graphics("img/page 24.png")
+```
+
+## Applications
+
+- Assigning subject categories, topics, or genres
+
+- Spam detection
+
+- Authorship identification
+
+- Age/gender identification
+
+- Language Identification
+
+- Sentiment analysis
+
+- …
+
+## Text classification?
+
+- Which problem is not a text classification task? (less likely to be)
+
+  - Author's gender detection from text
+  
+  - Finding about the smoking conditions of patients from clinical letters
+
+  - Grouping news articles into political vs non-political news
+
+  - Classifying reviews into positive and negative sentiment
+
+<br>
+<br>
+Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5
+
+## Pipeline
+```{r, echo=FALSE}
+grViz("digraph {
+
+graph [layout = dot, rankdir = LR]
+
+node [shape = rectangle, style = filled, fillcolor = Linen]
+
+text [label = 'Text Collection', shape = folder, fillcolor = Beige]
+
+repre [label =  'Text \n Representation']
+class [label = 'Classification \n (Model Training)']
+pred [label= 'Prediction \n (Test Data)']
+
+# edge definitions with the node IDs
+text  -> repre -> class -> pred
+}")
+```
+
+# Text Representation
 
 ## How to represent a document
 
@@ -89,16 +158,6 @@ $$d = (w_1, ..., w_n)$$
 include_graphics("img/page 8.png")
 ```
 
-## What the VS model doesn’t say
-
-- How to define/select the “basic concept”
-
-  - Concepts are assumed to be <u>orthogonal</u>
-
-- How to assign weights
-  
-  - Weights indicate how well the concept characterizes the document
-
 ## Vector space model
 
 - Bag of Words
@@ -115,7 +174,7 @@ include_graphics("img/page 8.png")
   
   - Weights: number of occurrences of the terms in the document
 
-## Bag-of-Words representation
+## BOW representation
 
 - Term as the basis for vector space
 
@@ -150,23 +209,25 @@ include_graphics("img/page 14.png")
   
 ## Zipf’s law
 
-- The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on.
+<!-- - The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on. -->
 
-- In a clinical Dutch text dataset, if we know the most popular word’s frequency is 69,548, what is your best estimate of its second and third most popular word’s frequencies respectively? 
+- In a clinical text dataset, if we know the most popular word’s frequency is 69,542, what is your best estimate of its second and third most popular word’s frequencies respectively? 
 
-## BOW weights
+Zipf’s law tells us:
+
+- Head words take large portion of occurrences, but they are semantically meaningless
+E.g., the, a, an, we, do, to
+- Tail words take major portion of vocabulary, but they rarely occur in documents
+E.g., Pneumonoultramicroscopicsilicovolcanoconiosis (45 letters, a lung disease)
+- The rest is most representative
+
+## BOW weights: Binary
 
 - <b><span style="font-size:20px">Binary</span></b>
 
   - with 1 indicating that a term occurred in the document, and 0 indicating that it did not
 
-- <b><span style="font-size:20px">TF</span></b>
-
-  - indicating how many times a term occurred in a document
-
-- <b><span style="font-size:20px">TF-IDF</span></b>
-
-## Term frequency
+## BOW weights: Term frequency
 
 - Idea: a term is more important if it occurs more frequently in a document
 
@@ -176,29 +237,8 @@ include_graphics("img/page 14.png")
 
   - Raw TF: $tf(t,d) = c(t,d)$
 
-## Document frequency
-
-- Idea: a term is more discriminative if it occurs only in fewer documents
-
-```{r, echo=FALSE, out.width="60%", fig.align='center'}
-include_graphics("img/page 18.png")
-```
-
-## Inverse document frequency
-
-- Solution
-  
-  - Assign higher weights to rare terms	
-
-  - Formula
-    - $IDF(t) = 1 + log(\frac{N}{df(t)})$ <br>
-    where <span style="color:red">$log()$ is a non-linear scaling; $N$ is the total number of docs in collection; $df(t)$ is the number of docs containing term $t$</span>
-
-  - A corpus-specific property
-    
-    - Independent of a single document
-
-## TFiDF
+## BOW weights: TFiDF
+- Idea: a term is more discriminative if it occurs a lot but only in fewer documents
 
 Let $n_{d,t}$ denote the number of times the $t$-th term appears in the $d$-th document.
 
@@ -210,12 +250,6 @@ TF-IDF weight:
 
 $$w_{d,t} = TF_{d,t} \cdot IDF_t$$
 
-## Mentimeter
-
-- If we remove one document from the corpus, how would it affect the IDF of words in the vocabulary?
-
-- If we add one document from the corpus, how would it affect the IDF of words in the vocabulary?
-
 ## Similarity metric
 
 - Euclidean distance
@@ -225,128 +259,6 @@ $$w_{d,t} = TF_{d,t} \cdot IDF_t$$
   - Longer documents will be penalized by the extra words
 
   - We care more about how these two vectors are overlapped
-
-# Text Classification
-
-## Text classification
-
-- Supervised learning: Learning a function that maps an input to an output based on example input-output pairs.
-  
-  - infer a function from labeled training data
-  
-  - use the inferred function to label new instances
-
-- Human experts annotate a set of text data
-  
-  - Training set
-
-```{r, echo=FALSE, out.width="40%"}
-include_graphics("img/page 24.png")
-```
-
-## Applications of text classification
-
-- Automatically classify political news from sports news
-
-- Recognizing spam emails
-
-## Applications of text classification
-
-<div style="float:left; width:60%">
-\ \ \ \ \ \ \ \ \ \ \ \ \ <b>MEDLINE</b>
-   
-```{r, echo=FALSE, out.width="90%"}
-include_graphics("img/page 26.png")
-```
-</div>
-
-<div style="float:right; width: 40%">
-<b><center>MeSH Subject Category Hierarchy</center></b>
-    
-- Antogonists and Inhibitors
-    
-- Blood Supply
-    
-- Chemistry
-    
-- Drug Therapy
-    
-- Embryology
-    
-- Epidemiology
-
-- …
-</div>
-
-## Text Classification
-
-- Assigning subject categories, topics, or genres
-
-- Spam detection
-
-- Authorship identification
-
-- Age/gender identification
-
-- Language Identification
-
-- Sentiment analysis
-
-- …
-
-## Text classification?
-
-- Which problem is not a text classification task? (less likely to be)
-
-  - Author's gender detection from text
-  
-  - Finding about the smoking conditions of patients from clinical letters
-
-  - Grouping news articles into political vs non-political news
-
-  - Classifying reviews into positive and negative sentiment
-
-<br>
-<br>
-Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5
-
-## Pipeline
-```{r, echo=FALSE}
-grViz("digraph {
-
-graph [layout = dot, rankdir = LR]
-
-node [shape = rectangle, style = filled, fillcolor = Linen]
-
-text [label = 'Text Collection', shape = folder, fillcolor = Beige]
-
-repre [label =  'Text \n Representation']
-class [label = 'Classification \n (Model Training)']
-pred [label= 'Prediction \n (Test Data)']
-
-# edge definitions with the node IDs
-text  -> repre -> class -> pred
-}")
-```
-
-## Splitting data
-
-- Training set
-
-- Test set
-
-- Validation set (dev set)
-
-  - A validation dataset is a dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
-
-## Splitting data
-
-```{r, echo=FALSE, out.width="75%"}
-include_graphics("img/page 31.png")
-```
-
-<br>
-<p style="font-size:12px">https://scikit-learn.org/stable/modules/cross_validation.html</p>
 
 # Feature Selection
 
@@ -373,34 +285,11 @@ include_graphics("img/page 31.png")
 - Wrapper method
   
   - Find the best subset of features for a particular classification method
+  - Sequential forward selection or genetic search to speed up the search
 
 ```{r,echo=FALSE, out.width="70%", fig.align='center'}
 include_graphics("img/page 34.png")
 ```
-
-## Feature selection methods
-- Wrapper method
-  
-  - Search in the whole space of feature groups
-    
-    - Sequential forward selection or genetic search to speed up the search
-
-```{r,echo=FALSE, out.width="70%", fig.align='center'}
-include_graphics("img/page 35.png")
-```
-
-
-## Feature selection methods
-- Wrapper method
-
-  - Consider all possible dependencies among the features
-  
-  - Impractical for text categorization
-    - Cannot deal with large feature set
-    
-    - A NP-complete problem
-      
-      - No direct relation between feature subset selection and evaluation
 
 ## Feature selection methods
 
@@ -454,115 +343,9 @@ $$G(t) = \sum^k_{c=1}{p(c | t)^2}$$
 
 - If the global class distribution is skewed, the gini-index may not accurately reflect the discriminative power of the underlying attributes.
 
-- &#10132; normalized gini-index
-
-## Normalized Gini Index 
-- Let $p(c)$ represent the unconditional probability of class $c$. Then, we determine the normalized probability value $p'(c | t)$ as: 
-
-$$p'(c|t) \equiv \frac{p(c|t)/p(c)}{\sum_{i=1}^k{p(i|t)/p(i)}} $$
-
-- Then, the gini-index is computed in terms of these normalized probability values. 
-
-$$G(t) \equiv \sum^k_{c=1}{p'(c|t)^2}$$
-
-## Mutual Information
-
-- The pointwise mutual information $M_c(t)$ between the term $t$ and the class $c$ is defined on the basis of the level of co-occurrence between the class $c$ and term $t$. Let $p(c)$ be the unconditional probability of class $c$, and $p(c | t)$ be the probability of class $c$, given that the document contains the term $t$. 
-
-- Let $p(t)$ be the fraction of the documents containing the term $t$, i.e. the unconditional probability of term $t$. 
-
-- The expected co-occurrence of class $c$ and term $t$ on the basis of mutual independence is given by $p(c) \cdot p(t)$. The true co-occurrence is of course given by $p(c | t) \cdot p(t)$.
-
-## Mutual Information 
-
-In practice, the value of $p(c | t) \cdot p(t)$ may be much larger or smaller than $p(c) \cdot p(t)$, depending upon the level of correlation between the class $c$ and term $t$. The mutual information is defined in terms of the ratio between these two values.
-
-$$M_c(t) = log(\frac{p(c|t) \cdot p(t)}{p(c) \cdot p(t)}) = log(\frac{p(c|t)}{p(c)})$$
-Clearly, the term $t$ is positively correlated to the class $c$, when $M_c (t) > 0$, and the term $t$ is negatively correlated to class $c$, when $M_c (t) < 0$.
-
-## Mutual Information 
-
-Note that $M_c(t)$ is specific to a particular class $c$. We need to compute the overall mutual information as a function of the mutual information of the term $t$ with the different classes.
-
-$$M_{avg}(t) = \sum^k_{c=1}{p(c) \cdot M_c(t)}$$
-$$M_{max}(t) = \max_c{\{M_c(t)\}}$$
-The second measure is particularly useful, when it is more important to determine high levels of positive correlation of the term $t$ with any of the classes.
-
-## ${\chi}^2$-Statistic 
-
-The ${\chi^2}$-statistic is a different way to compute the lack of independence between the term $t$ and a particular class $c$. Let $n$ be the total number of documents, then:
-
-$${\chi}_c^2(t) = \frac{n \cdot p(t)^2 \cdot (p(c|t) - p(c))^2}{p(t) \cdot (1- p(t)) \cdot p(c) \cdot (1 - p(c))}$$
-
-As in the case of the mutual information, we can compute a global ${\chi^2}$ statistic from the class-specific values. One major advantage of the ${\chi^2}$-statistic is that it is a normalized value and we can test statistical significance using the ${\chi^2}$ distribution with one degree of freedom.
-
-## ${\chi}^2$-Statistic 
-
-- Test whether distributions of two categorical variables are independent of one another
-  - $H_0$: they are independent
-  - $H_1$: they are dependent 
-
-```{r, echo=FALSE, out.width="50%"}
-include_graphics("img/page 47_1.png")
-
-include_graphics("img/page 47_2.png")
-```
-
-## ${\chi}^2$-Statistic
-
-- Test whether distributions of two categorical variables are independent of one another
-  
-  - Degree of freedom = $(\#col-1) \times (\#row-1)$
-  
-  - Significance level: $\alpha$, i.e., $p\mbox{-}value<\alpha$ 
-  <br>
-<p><span style="color:red">&#8627;</span> Look into ${\chi}^2$ distribution table to find the threshold
-</p>
-
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 48.png")
-```
-
-## Feature scoring metrics
-
-- ${\chi}^2$ statistics
-
-  - Test whether distributions of two categorical variables are independent of one another
-    
-    - Degree of freedom = $(\#col-1) \times (\#row-1)$
-  
-    - Significance level: $\alpha$, i.e., $p\mbox{-}value<\alpha$ 
-
-    - For the features passing the threshold, rank them by descending order of ${\chi}^2$ values and choose the top $k$ features
-
-## Feature scoring metrics
-
-- ${\chi}^2$ statistics with multiple categories
-
-  - ${\chi}^2=\sum_c{p(c) {\chi}^2(c,t)}$
-    
-    - Expectation of ${\chi}^2$ over all the categories
-  <br>
-  <br>
-  - ${\chi}^2(t) = \underset{c}{max}\ {\chi}^2(c,t)$
-
-    - Strongest dependency between a category
-    
-## Other metrics
-
-- Many other metrics (Same trick as in $\chi^2$ statistics for multi-class cases)
-
-- Mutual information
-  
-  - Relatedness between term $t$ and class $c$
-  
-  $$PMI(t;c) = p(t,c)log(\frac{p(t,c)}{p(t)p(c)})$$
-
-  - Odds ratio
-
-    - Odds of term $t$ occurring with class $c$ normalized by that without $c$
-
-$$Odds(t;c) = \frac{p(t,c)}{1 - p(t,c)} \times \frac{1 - p(t,\bar{c})}{p(t,\bar{c})}$$
+- Normalized gini-index
+- Mutual Information
+- ${\chi}^2$-Statistic
 
 # Classification Algorithms
 
@@ -576,13 +359,15 @@ include_graphics("img/page 53.png")
 
 - Input:
  
-  - a document <span style="color:red">$d$</span>
+  - A training set of $m$ manually-labeled documents $(d_1,c_1),\cdots,(d_m,c_m)$
   
-  - a fixed set of classes  <span style="color:red">$C = \{c_1, c_2,…, c_J\}$</span>
+  - a fixed set of classes $C = \{c_1, c_2,…, c_J\}$
+  
+- Output:
 
-- Output: a predicted class <span style="color:red">$c \in C$</span>
-
-## Classification Methods: Hand-coded rules
+  - a learned classifier $y:d \rightarrow c$
+  
+## Hand-coded rules
 
 - Rules based on combinations of words or other features
 
@@ -592,32 +377,12 @@ include_graphics("img/page 53.png")
 
 - Data/Domain specifics
 
-## Classification Methods: Supervised Machine Learning
-
-- Input:
- 
-  - a document <span style="color:red">$d$</span>
-  
-  - a fixed set of classes  <span style="color:red">$C = \{c_1, c_2,…, c_J\}$</span>
-  
-  - A training set of <span style="color:red">$m$</span> hand-labeled documents <span style="color:red">$(d_1,c_1),\cdots,(d_m,c_m)$</span>
-
-- Output:
-
-  - a learned classifier <span style="color:red">$y:d \rightarrow c$</span>
-
-## Classification Methods Supervised Machine Learning
-- Any kind of classifier
-
-  - Naïve Bayes
-
-  - Logistic regression
-
-  - Support-vector machines
-  
-  - k-Nearest Neighbors
-  
-  - Neural Networks
+## Supervised Machine Learning
+- Logistic regression
+- K-nearest neighbors
+- Naïve Bayes
+- Support vector machines
+- Neural Networks
 
 ## Rocchio Classifier (Nearest Centroid)
 
@@ -774,7 +539,8 @@ $$
 
 ## Support Vector Machines 
 
-- The main principle of SVM is to determine separators in the search space which can best separate the different classes. Thus SVM tries to make a decision boundary in such a way that the separation between the two classes is as wide as possible.
+- The main principle of SVM is to determine separators in the search space which can best separate the different classes.
+- SVM tries to make a decision boundary in such a way that the separation between the two classes is as wide as possible.
 
 ```{r, echo=FALSE, out.width="50%", fig.align='right'}
 include_graphics("img/page 74.png")
@@ -784,7 +550,11 @@ include_graphics("img/page 74.png")
 
 ## Support Vector Machines 
 
-- We note that it is not necessary to use a linear function for the SVM classifier. Rather, with the kernel trick, SVM can construct a nonlinear decision surface in the original feature space by mapping the data instances non-linearly to a new space where the classes can be separated linearly with a hyperplane. However, in practice, linear SVM is used most often because of their simplicity and ease of interpretability
+- It is not necessary to use a linear function for the SVM classifier. 
+- With the kernel trick, SVM can construct a nonlinear decision surface in the original feature space by mapping the data instances non-linearly to a new space where the classes can be separated linearly with a hyperplane. 
+
+- In practice, linear SVM is used most often because of their simplicity and ease of interpretability.
+- SVM is quite robust to high dimensionality.
 
 ```{r, echo=FALSE, out.width="50%", fig.align='right'}
 include_graphics("img/page 75.png")
@@ -792,33 +562,49 @@ include_graphics("img/page 75.png")
 
 \newpage
 
-## Support Vector Machines 
+## Decision Tree 
 
-- As most of real world data are not fully linearly separable, we will allow some margin violation to occur. Margin violation means choosing an hyperplane, which can allow some data points to stay in either incorrect side of hyperplane and between margin and correct side of hyperplane. This type of classification is called soft margin classification.
+- A decision tree is a hierarchical decomposition of the (training) data space, in which a condition on the feature value is used in order to divide the data space hierarchically. 
 
-```{r, echo=FALSE, out.width="50%", fig.align='right'}
-include_graphics("img/page 76.png")
+- Top-down, by choosing a variable at each step that best splits the set of items. 
+- Different algorithms to measure the homogeneity of the target variable within the subsets.
+  - Gini impurity
+  - Information gain
+
+\newpage
+
+## Random Forest
+
+- Random forests are an ensemble learning method for classification, regression and other tasks that operates by constructing a multitude of decision trees at training time.
+- Fit multiple trees to bootstrapped samples of the data AND at each node select best predictor from only a random subset of predictors. Combine all trees to yield a consensus prediction
+
+
+```{r, echo=FALSE, out.width="55%", fig.align='center'}
+include_graphics("img/rf.png")
 ```
-
-\newpage
-
-## SVM
-- SVM is quite robust to high dimensionality. I It has been noted in that text data is ideally suited for SVM classification because of the sparse high-dimensional nature of text, in which few features are irrelevant, but they tend to be correlated with one another and generally organized into linearly separable categories. I The SVM classifier has also been shown to be useful in large scale scenarios in which a large amount of unlabeled data and a small amount of labeled data is available
-
-\newpage
-
-## Decision Tree 
-
-- A decision tree is a hierarchical decomposition of the (training) data space, in which a condition on the feature value is used in order to divide the data space hierarchically. Algorithms for constructing decision trees usually work top-down, by choosing a variable at each step that best splits the set of items. Different algorithms use different metrics for measuring “best”, such as Gini impurity or information gain. These measure the homogeneity of the target variable within the subsets.
-
-\newpage
-
-## Decision Tree 
-
-- The division of the data space is performed recursively in the decision tree, until the leaf nodes contain a certain minimum number of records, or some conditions on class purity. For a given test instance, we apply the sequence of conditions at the nodes, in order to traverse a path of the tree in top-down fashion and determine the relevant leaf node. The majority (weighted) class label in the leaf node is used for the purposes of classification. 
 
 
 # Evaluation | Binary Classification
+
+## Data Splitting
+
+- Training set
+
+- Test set
+
+- Validation set (dev set)
+
+  - A validation dataset is a dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
+
+## Cross Validation
+
+```{r, echo=FALSE, out.width="75%"}
+include_graphics("img/page 31.png")
+```
+
+<br>
+<p style="font-size:12px">https://scikit-learn.org/stable/modules/cross_validation.html</p>
+
 
 ## contingency table (confusion matrix)
 
@@ -967,9 +753,9 @@ include_graphics("img/page 92.png")
   
   - In sentences that contain title words
 
-# Summary
+# Terminology
 
-## Text mining and other terms {.smaller}
+## Some terminology {.smaller}
 - <p style="font-size:16px"><u><b>Corpus</b></u>: is a large and structured set of texts</p>
 - <p style="font-size:16px"><u><b>Stop words</b></u>:  words which are filtered out before or after processing of natural language data (text)</p>
 - <p style="font-size:16px"><u><b>Unstructured text</b></u>: information that either does not have a pre-defined data model or is not organized in a pre-defined manner.</p>
@@ -978,11 +764,12 @@ include_graphics("img/page 92.png")
 - <p style="font-size:16px"><u><b>Term document (or document term) matrix</b></u>:  is a mathematical matrix that describes the frequency of terms that occur in a collection of documents</p>
 - <p style="font-size:16px"><u><b>Supervised learning</b></u>: is the machine learning task of inferring a function from labeled training data</p>
 - <p style="font-size:16px"><u><b>Unsupervised learning</b></u>: find hidden structure in unlabeled data</p>
-- <p style="font-size:16px"><u><b>Stemming</b></u>: the process for reducing inflected (or sometimes derived) words to their word stem, base or root form—generally a written word form</p>
 
 \newpage
 
-## Summary: what did we learn?
+# Summary
+
+## Summary
 
 - Vector space model & BOW
 
