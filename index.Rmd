@@ -35,6 +35,7 @@ Instructors:
 * [José de Kruif](https://www.uu.nl/medewerkers/JdeKruif)\
 + [Dong Nguyen](https://dongnguyen.nl/)\
 - [Qixiang Fang](https://www.uu.nl/medewerkers/QFang)\
+- [Kevin Patyk](https://ayoubbagheri.nl/r_tm/)
 
 
 Study load: 1 ECTS
