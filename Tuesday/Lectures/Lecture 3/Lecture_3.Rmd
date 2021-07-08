@@ -741,7 +741,7 @@ $$
 - Calculate $P(c_j)$ terms
   - For each $c_j$ in $C$ do
   
-  docs $docs_j\leftarrow$ all docs with class = $c_j$
+  $docs_j\leftarrow$ all docs with class = $c_j$
   
   $$P(c_j) \leftarrow \frac{|docs_j|}{|total\ \#\ documents|}$$
 </div>
