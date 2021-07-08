@@ -82,11 +82,7 @@ Here, you see that the model perfectly predicts the category for our training da
 
 ---
 
-# Compare architectures
-
----
-
-## Feature selection and classification: Naïve Bayes versus SVM
+# Compare architectures: Naïve Bayes versus SVM
 
 ---
 
