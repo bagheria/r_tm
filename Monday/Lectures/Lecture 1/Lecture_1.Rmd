@@ -32,7 +32,7 @@ Some guidelines
 
 ## Lecturers and Assistants
 <div style="float:left; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="40%"}
+```{r, echo=FALSE, fig.align='center', out.width="35%"}
 include_graphics("img/page17Jose.png")
 ```
   <div class="centered">
@@ -41,7 +41,7 @@ include_graphics("img/page17Jose.png")
 </div>
 
 <div style="float:right; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="40%"}
+```{r, echo=FALSE, fig.align='center', out.width="35%"}
 include_graphics("img/page17dong.png")
 ```
   <div class="centered">
@@ -50,7 +50,7 @@ include_graphics("img/page17dong.png")
 </div>
 
 <div style="float:left; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="40%"}
+```{r, echo=FALSE, fig.align='center', out.width="35%"}
 include_graphics("img/Qixiang_Fang.png")
 ```
   <div class="centered">
@@ -60,7 +60,7 @@ include_graphics("img/Qixiang_Fang.png")
 
 <div style="float:right; width:50%">
 ```{r, echo=FALSE, fig.align='center', out.width="40%"}
-#include_graphics("img/Kevin_Patyk.png")
+include_graphics("img/Kevin_Patyk.png")
 ```
   <div class="centered">
   **Kevin Patyk**
