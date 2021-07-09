@@ -371,18 +371,20 @@ include_graphics("img/page 53.png")
 
 - Rules based on combinations of words or other features
 
-- Accuracy can be high: If rules carefully refined by expert
+- Rules carefully refined by expert
 
 - But building and maintaining these rules is expensive
 
 - Data/Domain specifics
+
+- Not recommended!
 
 ## Supervised Machine Learning
 - Logistic regression
 - K-nearest neighbors
 - Naïve Bayes
 - Support vector machines
-- Neural Networks
+- Neural networks
 
 ## Rocchio Classifier (Nearest Centroid)
 
@@ -400,65 +402,52 @@ $$\hat{c} = \arg \min_c ||\boldsymbol{\mu_c} - \mathbf{d}||$$
 
 ## K-Nearest Neighbor 
 
-- Given a test document d,. the KNN algorithm finds the k nearest neighbors of d among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. After sorting the score values, the algorithm assigns the candidate to the class with the highest score. 
+- Given a test document d,. the KNN algorithm finds the k nearest neighbors of d among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. 
 
-- The basic nearest neighbors classification uses uniform weights: that is, the value assigned to a query point is computed from a simple majority vote of the nearest neighbors. Under some circumstances, it is better to weight the neighbors such that nearer neighbors contribute more to the fit. 
+- After sorting the score values, the algorithm assigns the candidate to the class with the highest score. 
 
-```{r, echo=FALSE, out.width="40%", fig.align='right'}
+- The basic nearest neighbors classification uses uniform weights: that is, the value assigned to a query point is computed from a simple majority vote of the nearest neighbors. C
+
+- Can weight the neighbors such that nearer neighbors contribute more to the fit. 
+
+## K-Nearest Neighbor
+
+```{r, echo=FALSE, out.width="80%", fig.align='center'}
 include_graphics("img/page 60.png")
 ```
 
 ## Naïve Bayes
 
-- Simple (“naïve”) classification method based on Bayes rule
-
-- Relies on very simple representation of document
-
-  - Bag of words
-  
-## The bag of words representation
-
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 62.png")
 ```
 
-## Bayes’ Rule Applied to Documents and Classes
+## Bayes’ Rule 
 
-- For a document <span style="color:red">$d$</span> and a class <span style="color:red">$c$</span>
+- Applied to documents and classes
+
+- For a document $d$ and a class $c$
 
 $$P(c|d) = \frac{P(d|c)P(c)}{P(d)}$$
 
-## Naïve Bayes
-
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 64.png")
-```
-
-## Naïve Bayes
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 65.png")
-```
-
 ## Multinomial Naïve Bayes Independence Assumptions
-
-$$P(x_1, x_2, \ldots, x_n|c)$$
 
 - <b>Bag of Words assumption</b>: Assume position doesn’t matter
 
-- <b>Conditional Independence</b>: Assume the feature probabilities $P(x_i|c_j)$ are independent given the class $c$.
+- <b>Conditional Independence</b>: Assume the feature probabilities $P(w_i|c_j)$ are independent given the class $c$.
 
-$$P(x_1, \ldots, x_n|c) = P(x_1 | c) \cdot P(x_2|c) \cdot P(x_3|c) \cdot \ldots \cdot P(x_n|c)$$
+$$P(w_1, \ldots, w_n|c) = P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c)$$
 \newpage 
 
 ## Multinomial Naïve Bayes Classifier
 
-$$C_{MAP} = \underset{c \in C}{\operatorname{argmax}}P(x_1, x_2, \ldots,x_n|c)P(c)$$
+$$C_{MAP} = \underset{c \in C}{\operatorname{argmax}}P(w_1, w_2, \ldots,w_n|c)P(c)$$
 
-$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{x \in X}{P(x|c)}$$
-$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions}{P(x_i|c_i)}$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{w \in V}{P(w|c)}$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions}{P(w_i|c_i)}$$
 \newpage
 
-## Learning the Multinomial Naïve Bayes Model
+## Parameter estimation
 
 - First attempt: maximum likelihood estimates
 
@@ -466,28 +455,19 @@ $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions
 
 $$\hat{P}(c_j) = \frac{doccount(C = c_j)}{N_{doc}}$$
 $$\hat{P}(w_i|c_j) = \frac{count(w_i, c_j)}{\sum_{w \in V}count(w, c_j)}$$
-\newpage
 
-## Parameter estimation
-
-$$\hat{P}(w_i|c_j) = \frac{count(w_i, c_j)}{\sum_{w \in V}count(w, c_j)}$$
-<p style="color:purple">fraction of times word $w_i$ appears among all words in documents of topic $c_j$
-</p>
-
-- Create mega-document for topic $j$ by concatenating all docs in this topic
-
-  - Use frequency of $w$ in mega-document
+- fraction of times word $w_i$ appears among all words in documents of topic $c_j$
 
 \newpage
 
 ## Problem with Maximum Likelihood
 
-What if we have seen no training documents with the word <b>fantastic</b>  and classified in the topic <b>positive (thumbs-up)</b>?
+What if we have seen no training documents with the word <b>coffee</b>  and classified in the topic <b>positive (thumbs-up)</b>?
 
-$$\hat{P}(\mathrm{"fantastic"|positive}) = \frac{count(\mathrm{"fantastic", positive})}{\sum_{w \in V}{count(\mathrm{w,positive})}}$$
+$$\hat{P}(\mathrm{''coffee''|positive}) = \frac{count(\mathrm{''coffee'', positive})}{\sum_{w \in V}{count(\mathrm{w,positive})}}$$
 Zero probabilities cannot be conditioned away, no matter the other evidence!
 
-$$C_{MAP} = \underset{c}{\operatorname{argmax}}\hat{P}(c)\prod_i{\hat{P}(x_i|c)}$$
+$$C_{MAP} = \underset{c}{\operatorname{argmax}}\hat{P}(c)\prod_i{\hat{P}(w_i|c)}$$
 \newpage
 
 ## Laplace (add-1) smoothing for Naïve Bayes
@@ -500,7 +480,7 @@ $$
 \newpage
 
 ## Multinomial Naïve Bayes: Learning
-- <p style="color:purple">From training corpus, extract <em>Vocabulary</em></p>
+- From training corpus, extract <em>Vocabulary</em>
 
 <div style="float:left;width:50%">
 - Calculate $P(c_j)$ terms
@@ -512,32 +492,19 @@ $$
 </div>
   
 <div style="float:right;width:50%">
-- <p style="color:purple">Calculate $P(w_k|c_j)$ terms</p>
-  - <p style="color:purple">$Text_j \leftarrow$ single doc containing all $docs_j$</p>
+- Calculate $P(w_k|c_j)$ terms</p>
+  - $Text_j \leftarrow$ single doc containing all $docs_j$
   
-  - <p style="color:purple">For each word $w_k$ in <em>Vocabulary</em></p>
+  - For each word $w_k$ in <em>Vocabulary</em>
   
-    <span style="color:purple">$n_k \leftarrow$ # of occurrences of $w_k$ in $Text_j$</span>
+    $n_k \leftarrow$ # of occurrences of $w_k$ in $Text_j$
     
   $$P(w_k|c_j) \leftarrow \frac{n_k + \alpha}{n + \alpha|Vocabulary|}$$
 </div>
 
 \newpage
 
-## Laplace (add-1) smoothing: unknown words
-
-Add one extra word to the vocabulary, the “unknown word” $w_u$
-
-$$
-\begin{align}
-  \hat{P}(w_u|c) &= \frac{count(w_u,c)+1}{(\sum_{w \in V}{count(w,c)})+|V+1|} \\
-  &= \frac{1}{(\sum_{w \in V}{count(w,c)}) + |V+1|}
-\end{align}
-$$
-
-\newpage 
-
-## Support Vector Machines 
+## Support Vector Machine
 
 - The main principle of SVM is to determine separators in the search space which can best separate the different classes.
 - SVM tries to make a decision boundary in such a way that the separation between the two classes is as wide as possible.
@@ -548,7 +515,7 @@ include_graphics("img/page 74.png")
 
 \newpage
 
-## Support Vector Machines 
+## Support Vector Machine
 
 - It is not necessary to use a linear function for the SVM classifier. 
 - With the kernel trick, SVM can construct a nonlinear decision surface in the original feature space by mapping the data instances non-linearly to a new space where the classes can be separated linearly with a hyperplane. 
@@ -584,7 +551,7 @@ include_graphics("img/rf.png")
 ```
 
 
-# Evaluation | Binary Classification
+# Evaluation
 
 ## Data Splitting
 
@@ -606,7 +573,7 @@ include_graphics("img/page 31.png")
 <p style="font-size:12px">https://scikit-learn.org/stable/modules/cross_validation.html</p>
 
 
-## contingency table (confusion matrix)
+## Confusion matrix
 
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 81.png")
@@ -644,68 +611,56 @@ $$F = \frac{1}{\alpha\frac{1}{P}+(1-\alpha)\frac{1}{R}}=\frac{(\beta^2+1)PR}{\be
 The harmonic mean is a very conservative average; see 
 IIR § 8.3
 
-People usually use balanced F1 measure
+Balanced F1 measure
   -   i.e., with $\beta = 1$ (that is, $\alpha = 1/2$): $F = 2PR/(P+R)$
   
-\newpage
-
-## AUC score
-
-- AUC provides an aggregate measure of performance across all possible classification thresholds. 
-
-- One way of interpreting AUC is as the probability that a classifier will rank a randomly chosen positive instance higher than a randomly chosen negative one (assuming ‘positive’ ranks higher than ‘negative’). AUC measures how well predictions are ranked, rather than their absolute values. 
-
-- AUC ranges in value from 0 (100% wrong), to 0.5 (random classifier), to 1 (100% correct). So, for example, if you as a marketer want to find a list of users who will respond to a marketing campaign, AUC is a good metric to use since the predictions ranked by probability is the order in which you will create a list of users to send the marketing campaign.
-
 # The Real World
 
-## The Real World
-- Gee, I’m building a text classifier for real, now!
+## No training data? 
 
-- What should I do?
+- Manually written rules
 
-\newpage
+  - <p style="color:green">If (x or y) and not (w or z) then categorize as class1</p>
 
-## No training data? <br> Manually written rules
-<p style="color:green">If (wheat or grain) and not (whole or bread) then Categorize as grain</p>
+  - Need careful crafting
 
-- Need careful crafting 
+  - Low accuracy
 
-  - Human tuning on development data
-  
-  - Time-consuming: 2 days per class
+  - Domain-specific
+
+  - Time-consuming
+
+- Active learning
+
+- Unsupervised methods
 
 \newpage
 
 ## Very little data?
 
-- Use Naïve Bayes
+- Use Naïve Bayes, KNN, Rocchio
   
   - Naïve Bayes is a “high-bias” algorithm <span style="color:green; font-size:12px">(Ng and Jordan 2002 NIPS)</span>
 
 - Get more labeled data 
   
-  - Find clever ways to get humans to label data for you
+- Find ways to label data for you
 
-- Try semi-supervised training methods:
+- Try semi-supervised methods:
   
-  - Bootstrapping, EM over unlabeled documents, …
+  - e.g. active learning, bootstrapping
 
 \newpage
 
 ## A reasonable amount of data?
 
-- Perfect for all the clever classifiers
+- Perfect for all the complex classifiers
   
   - SVM
   
   - Regularized Logistic Regression
 
-- You can even use user-interpretable decision trees
-  
-  - Users like to hack
-  
-  - Management likes quick fixes
+  - Random forest
 
 \newpage
 
@@ -715,11 +670,10 @@ People usually use balanced F1 measure
 
 - At a cost:
 
-  - SVMs (train time) or kNN (test time) can be too slow
-
-  - Regularized logistic regression can be somewhat better
-
-- So Naïve Bayes can come back into its own again!
+  - SVMs (train time) or KNN (test time) can be too slow
+  - Regularized logistic regression
+  - Naïve Bayes again!
+  - Deep learning
 
 \newpage
 
@@ -747,9 +701,9 @@ include_graphics("img/page 92.png")
   - But stemming generally doesn’t help
 
 - Upweighting: Counting a word as if it occurred twice:
-  - title words 
+  - Title words
 
-  - first sentence of each paragraph (Murata, 1999)
+  - First sentence of each paragraph (Murata, 1999)
   
   - In sentences that contain title words
 
