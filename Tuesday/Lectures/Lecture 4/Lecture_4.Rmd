@@ -1,6 +1,6 @@
 ---
-title: "Sentiment analysis and <br> Multi-class classification"
-author: "Ayoub Bagheri, a.bagheri@uu.nl"
+title: "Sentiment Analysis and <br> Multi-class Classification"
+author: "Ayoub Bagheri"
 output:
   ioslides_presentation:
     logo: logo.png
