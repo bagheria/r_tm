@@ -14,19 +14,34 @@ library(kableExtra)
 
 ## Little prince example
 
-## Products
+<div style="float: left; width: 60%;">
+This is a nice book for both young and old. It gives beautiful life lessons in a fun way. Definitely worth the money!
 
-## Politics
+<span style="color:green">+ Educational</span>
 
-## Twitter
+<span style="color:green">+ Funny</span>
 
-## Healthcare
+<span style="color:green">+ Price</span>
+
+<hr align=left width="90%" color=#987cb9 size=3>
+
+Nice story for older children.
+
+<span style="color:green">+ Funny</span>
+
+<span style="color:red">- Readability</span>
+</div>
+
+<div style="float: right; width: 40%;">
+```{r, echo=FALSE}
+include_graphics("img/page3_littleprince.png")
+```
 
 ## Sentiment
 
 - Sentiment = 
   
-  - feelings – Attitudes – Emotions – Opinions
+  - Feelings, Attitudes, Emotions, Opinions
   
   - A thought, view, or attitude, especially one based mainly on emotion instead of reason
 
@@ -61,7 +76,7 @@ include_graphics("img/page 9.png")
 ## Sentiment Analysis
 - Sentiment Analysis
   
-  - use of natural language processing (NLP) and computational techniques to automate the extraction or classification of sentiment from typically unstructured text
+  - Use of natural language processing (NLP) and computational techniques to automate the extraction or classification of sentiment from typically unstructured text
 
 - Opinion mining
 
@@ -69,24 +84,24 @@ include_graphics("img/page 9.png")
 
 - Subjectivity analysis
 
-## Sentiment analysis | can be used everywhere!
+## Sentiment analysis | can be applied in every topic & domain!
 - <em>Book</em>: is this review positive or negative?
+
+- <em>Humanities</em>:sentiment analysis for German historic plays.
 
 - <em>Products</em>: what do people think about the new iPhone?
 
-- <em>Blog</em>:
+- <em>Blog</em>: how are people thinking about immigrants?
 
-- <em>Politics</em>: what do people think about this candidate or issue?
+- <em>Politics</em>: who is going to win the election?
 
-- <em>Twitter</em>:
+- <em>Twitter</em>: what is trend? 
 
-- <em>Movie</em>:  is this review positive or negative?
+- <em>Movie</em>:  is this review positive or negative (IMDB, Netflix)?
 
-- <em>Marketing</em>: how is consumer confidence? Consumer attitudes? Trend?
+- <em>Marketing</em>: how is consumer confidence? Consumer attitudes?
 
-- <em>Prediction</em>: predict election outcomes or market trends from sentiment
-
-- <em>Healthcare</em>:
+- <em>Healthcare</em>: are patients happy with the hospital environment?
 
 ## Two main types of opinions | (Jindal and Liu 2006; Liu, 2010)
 - <span style="color:red">Regular opinions</span>: Sentiment/opinion expressions on some target entities
@@ -95,15 +110,13 @@ include_graphics("img/page 9.png")
     
     - “The <span style="color:blue">touch screen<span> is really cool.”
   
-  - <span style="color:blue>Indirect opinions</span>: 
+  - <span style="color:blue">Indirect opinions</span>: 
     
     - “After taking <span style="color:blue">the drug</span>, my pain has gone.” 
 
 - <span style="color:red">Comparative opinions</span>: Comparison of more than one entity. 
 
   - E.g., “iPhone <span style="color:blue">is better than</span> Blackberry.”
-
-- We focus on regular opinions first, and just call them opinions. 
 
 ## Practical definition | (Hu and Liu 2004; Liu, 2010, 2012)
 - An opinion is a quintuple <br>
@@ -120,8 +133,11 @@ include_graphics("img/page 9.png")
   
   - <span style="color:brown; font-weight:bold; font-style:italic">time</span>: time when the opinion was expressed. 
   
-## Switch this with a review from bol
-- <b>Id: <span style="color:purple">Abc123</span> on <span style="color:purple">5-1-2008</span></b> "<em>I bought an <span style="color:red">iPhone</span> a few days ago. It is such a nice <span style="color:blue">phone</span>. The <span style="color:blue">touch screen</span> is really cool. The <span style="color:blue">voice quality</span> is great too. It is much better than my old <span style="color:red">Blackberry</span>, which was a terrible <span style="color:blue">phone</span> and so <span style="color:blue">difficult to type</span> with its tiny keys. However, <span style="color:brown">my mother</span> was mad with me as I did not tell her before I bought the <span style="color:blue">phone</span>. She also thought the phone was too <span style="color:blue">expensive</span></em>"
+## Example
+
+<span style="color:purple">Kindle Customer</span> Reviewed in the <span style="color:purple">United States</span> on <span style="color:purple">August 16, 2015</span>:
+
+This has been my <span style="color:green">favorite</span> <span style="color:blue">book</span> since I was 14 and had to read it in French as an assignment in school. I fell in <span style="color:green">love</span> with it and immediately bought the English translation by Katherine Woods, as I knew I would read it many times over the years and I knew my French was not likely to improve. Today I bought this <span style="color:blue">version</span> to have on my Kindle as I was thinking of giving my 40 year old paperback to my best friend. I could not be more <span style="color:green">disappointed</span>. The changes in this <span style="color:blue">translation</span> take so much away from the <span style="color:blue">book</span> that it almost changes who the Little Prince really is. The charm of the <span style="color:blue">book</span> is completely <span style="color:green">missing</span>. In one of my favorite parts of the book the fox talks to the Little Prince, sharing his <span style="color:green">invaluable</span> truth: "what is essential is invisible to the eye." Howard changes it to "Anything essential is invisible to the eyes", which changes the entire concept of what is said. "The eye" is every eye, everywhere. Making it plural takes away the meaning of what the fox is really saying. If you want to read this book, if you want to read it to your children, please take my advice and find the Katherine Woods translation, even if it means going to a used book store. I simply cannot understand what Howard was thinking in all of the changes he made to this <span style="color:green">wonderful</span> <span style="color:blue">story</span> that will stay with you for a lifetime, but only if you read the Woods translation which will open your eyes to the true meaning of the Little Prince. As the fox says: "Words are the source of misunderstandings" and Howardh has changed the words so much that indeed, in this version, words are very much the source of <span style="color:green">misunderstandings</span>.
 
 ## Sentiment Analysis
 - Simplest task:
@@ -134,7 +150,8 @@ include_graphics("img/page 9.png")
 
 - Advanced:
 
-  - Detect the target, source, or complex attitude types
+  - Detect the target, source, or complex opinion types
+  - Implicit opinions or aspects
 
 ## Simple task: Opinion summary 
 <div style="float:left;width:50%">
@@ -150,7 +167,7 @@ include_graphics("img/page 9.png")
 <p style="color:pink; padding-left: 2em; font-style:italic">The <span style="color:red">screen</span> is easily scratched. <br>
 I have a lot of difficulty in removing finger marks from the <span style="color:red">touch screen</span>. </p> 
 
-<p style="color:pink">... <br> <b>Aspect</b>:<b><span style="color:red">Aspect:</b> <br> ...</p>
+<p style="color:pink">... <br> <b>Aspect</b>:<b><span style="color:red"> Size</b> <br> ...</p>
 
 </div>
 <div style="float:right;width:50%">
@@ -195,7 +212,7 @@ include_graphics("img/page 17.png")
 
 - Supervised learning methods: to classify reviews into positive and negative. 
   - Machine learning
-    - Naïve Bayes, Maximum Entropy, Support Vector Machines (SVM)
+    - Naïve Bayes, Maximum Entropy, Support Vector Machine
 
   - Recent research
     - Deep learning
