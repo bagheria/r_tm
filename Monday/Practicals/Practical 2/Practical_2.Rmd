@@ -8,6 +8,7 @@ fontsize: 12pt
 urlcolor: blue
 output: 
   html_document:
+    code_folding: hide
     toc: true
     toc_depth: 1
     toc_float: true
