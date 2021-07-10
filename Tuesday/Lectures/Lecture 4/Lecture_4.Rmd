@@ -256,7 +256,7 @@ include_graphics("img/page 17.png")
 <span style="font-size:16px;color:darkgreen">Pennebaker, J.W., Booth, R.J., & Francis, M.E. (2007). Linguistic Inquiry and Word Count: LIWC 2007. Austin, TX</span>
 
 ## MPQA Subjectivity Cues Lexicon
-- Home page: http://www.cs.pitt.edu/mpqa/subj_lexicon.html
+- Home page: https://mpqa.cs.pitt.edu/lexicons/subj_lexicon/
 
 - 6885 words from 8221 lemmas
   - 2718 positive
@@ -362,7 +362,7 @@ include_graphics("img/page 31.png")
 - Adjectives conjoined by “but” do not
   -  <span style="color:blue">fair <b>but</b> brutal</span>
 
-## Hatzivassiloglou & McKeown 1997 <br> Step 1
+## Step 1
 - Label <b>seed set</b> of 1336 adjectives <span style="color:lightgray;font-size:16px">(all >20 in 21 million word WSJ corpus)</span>
   - 657 positive
     - adequate central clever famous intelligent remarkable reputed sensitive slender thriving…
@@ -370,19 +370,19 @@ include_graphics("img/page 31.png")
   - 679 negative
     - contagious drunken ignorant lanky listless primitive strident troublesome unresolved unsuspecting…
 
-## Hatzivassiloglou & McKeown 1997 <br> Step 2
+## Step 2
 - Expand seed set to conjoined adjectives
 ```{r,echo=FALSE, out.width="100%"}
 include_graphics("img/page 35.png")
 ```
 
-## Hatzivassiloglou & McKeown 1997 <br> Step 3
+## Step 3
 - Supervised classifier assigns “polarity similarity” to each word pair, resulting in graph:
 ```{r,echo=FALSE, out.width="100%"}
 include_graphics("img/page 36.png")
 ```
 
-## Hatzivassiloglou & McKeown 1997 <br>Step 4
+## Step 4
 - Clustering for partitioning the graph into two
 ```{r,echo=FALSE, out.width="100%"}
 include_graphics("img/page 37.png")
@@ -451,19 +451,19 @@ $$PMI(word_1,woprd_2)=log_2{\frac{hits(word_1 \: \mathrm{NEAR} \: word_2)}{hits(
 
 $$
 \begin{align}
-\mathrm{Polarity}(phrase) = \mathrm{PMI}(pharse, \mathrm{"excellent"}) - \mathrm{PMI}(pharse, \mathrm{"poor"}) \\
+\mathrm{Polarity}(phrase) = \mathrm{PMI}(pharse, \mathrm{''excellent''}) - \mathrm{PMI}(pharse, \mathrm{''poor''}) \\
 \\
-= log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{"excellent"})}{hits(phrase)hits(\mathrm{"excellent"})}} - log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{"poor"})}{hits(phrase)hits(\mathrm{"poor"})}} \\
+= log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''})}{hits(phrase)hits(\mathrm{''excellent''})}} - log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''})}{hits(phrase)hits(\mathrm{''poor''})}} \\
 \\
-= log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{"excellent"})}{hits(phrase)hits(\mathrm{"excellent"})}} {\frac{hits(phrase)hits(\mathrm{"poor"})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{"poor"})}} \\
+= log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''})}{hits(phrase)hits(\mathrm{''excellent''})}} {\frac{hits(phrase)hits(\mathrm{''poor''})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''})}} \\
 \\
-= log_2{(\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{"excellent"}) hits(\mathrm{"poor"})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{"poor"}) hits(\mathrm{"excellent"})})}
+= log_2{(\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''}) hits(\mathrm{''poor''})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''}) hits(\mathrm{''excellent''})})}
 \end{align}
 $$
 
 \newpage
 
-## Phrases from a thumbs-up review
+## Phrases from a thumbs-up (positive) review
 ```{r, echo=FALSE}
 phrase <- c("online service", "online experience","direct deposit","local branch","…","low fees", "true service", "other bank","inconveniently located", "Average")
 pos <- c(rep("JJ NN", 4), "", "JJ NNS", rep("JJ NN",3), "")
@@ -478,7 +478,7 @@ data.frame(Phrase = phrase,
   row_spec(10, italic = T)
 ```
 
-## Phrases from a thumbs-down review
+## Phrases from a thumbs-down (negative) review
 ```{r, echo=FALSE}
 phrase <- c("direct deposits","online web", "very handy", "…", "virtual monopoly", "lesser evil", "other problems", "low funds", "unethical practices","Average")
 pos <- c("JJ NNS", "JJ NN", "RB JJ", "", "JJ NN", "RBR JJ", rep("JJ NNS", 3), "")
@@ -516,6 +516,27 @@ M. Hu and B. Liu. Mining and summarizing customer reviews. In Proceedings of KDD
   - Negative Set: Add synonyms of negative words (“awful”)  and antonyms of positive words (”evil”)
 - Repeat, following chains of synonyms
 - Filter
+
+## In R
+
+Many packages and lexicons:
+
+```{r}
+library(wordnet)
+# download the wordnet dictionary from 
+# https://wordnet.princeton.edu/download/current-version
+setDict("C:/Program Files (x86)/WordNet/2.1/dict")
+Sys.setenv(WNHOME = "C:/Program Files (x86)/WordNet/2.1")
+synonyms("fill","VERB")
+
+library(tidytext)
+afinn_sentiments    <- get_sentiments("afinn")
+nrc_sentiments      <- get_sentiments("nrc")
+loughran_sentiments <- get_sentiments("loughran")
+bing_sentiments     <- get_sentiments("bing")
+
+```
+
 
 ## Summary on Learning Lexicons
 - Advantages:
@@ -560,17 +581,6 @@ M. Hu and B. Liu. Mining and summarizing customer reviews. In Proceedings of KDD
   - <span style="color:blue">Negations</span>
   - <span style="color:blue">Syntactic dependency</span>
 
-## Approaches
-- Machine learning
-  - Naïve Bayes <span style="color:#CE8BF3">(Assume pairwise independent features)</span>
-  
-  - Maximum Entropy Classifier <span style="color:#CE8BF3">(Assume pairwise independent features)</span>
-  
-  - SVM
-  
-  - Markov Blanket Classifier
-    - Accounts for conditional feature dependencies
-    - Allowed reduction of discriminating features from thousands of words to about 20 (movie review domain)
 
 ## Sentiment Classification in Movie Reviews
 <center><p style="font-size:14px">Bo Pang, Lillian Lee, and Shivakumar Vaithyanathan.  2002.  Thumbs up? Sentiment Classification using Machine Learning Techniques. EMNLP-2002, 79—86. <br> Bo Pang and Lillian Lee.  2004.  A Sentimental Education: Sentiment Analysis Using Subjectivity Summarization Based on Minimum Cuts.  ACL, 271-278</p></center>
@@ -582,14 +592,13 @@ M. Hu and B. Liu. Mining and summarizing customer reviews. In Proceedings of KDD
 - Data: <em>Polarity Data 2.0</em>: 
   - http://www.cs.cornell.edu/people/pabo/movie-review-data
 
-## Baseline Algorithm (adapted from Pang and Lee)
+## Baseline Algorithm
 - Tokenization
 
 - Feature Extraction
 
 - Classification using different classifiers
   - Naïve Bayes
-  - MaxEnt
   - SVM
 
 ## Sentiment Tokenization Issues
@@ -642,11 +651,6 @@ Add NOT_ to every word between negation and following punctuation:
 include_graphics("img/page 60.png")
 ```
 
-## Reminder: Naïve Bayes
-$$C_{NB} = \underset{c_j \in C}{\operatorname{argmax}}P(c_j) \prod_{i \in positions}{P(w_i|c_i)} $$
-
-$$\hat{P}(w|c) = \frac{count(w,c) + 1}{count(c) + |V|}$$
-
 ## Cross-Validation
 <div style="float:left; width:50%">
 - Break up data into 10 folds
@@ -668,13 +672,13 @@ include_graphics("img/page 62.png")
 </div>
 
 ## Supervised Sentiment Analysis
-- Negation is important
-
-- Using all words (in naïve bayes) works well for some tasks
+- Using all words works well for some tasks
 
 - Finding subsets of words may help in other tasks
   - Hand-built polarity lexicons
   - Use seeds and semi-supervised learning to induce lexicons
+  
+- Negation is important
 
 # Other challenges in SA
 
@@ -687,30 +691,46 @@ include_graphics("img/page 62.png")
   - <span style="font-size:18px">“This car is so <span style="color:blue">expensive</span>.”</span> 
   - <span style="font-size:18px">“This phone will not easily fit <span style="color:blue">in a pocket</span>.”</span> 
   - <span style="font-size:18px">“Included <span style="color:blue">16MB</span> is stingy.” </span> 
-- Some work has been done <span style="font-size:18px">(Su et al. 2009; Hai et al 2011)</span> 
 
 ## Explicit Opinions | Bagheri et al. 2013
+An implicit aspect should satisfy the following conditions:
+
+- The related aspect word does not occur in the review sentence explicitly.
+
+- The aspect can be discovered by its surrounding words (e.g. opinion words) in the review sentence.
+
+<div style="float:right; width:50%">
+```{r, echo=FALSE,out.width="100%"}
+include_graphics("img/implicit.png")
+```
+</div>
+
+<div style="float:right; width:50%">
+```{r, echo=FALSE,out.width="100%"}
+include_graphics("img/implicit2.png")
+```
+</div>
 
 ## Some interesting sentences 
-- “<span style="color:red">Trying out Chrome because Firefox keeps crashing</span>.”
+- <span style="color:red">Trying out Chrome because Firefox keeps crashing</span>.
   
   - Firefox - negative; no opinion about chrome. 
   
   - <span style="color:blue">We need to segment the sentence into clauses</span> to decide that “crashing” only applies to Firefox(?). 
 
 - But how about these
-  - “<span style="color:red">I changed to Audi because BMW is so expensive</span>.”
+  - <span style="color:red">I changed to Audi because BMW is so expensive</span>.
   
-  - “<span style="color:red">I did not buy BWM because of the high price</span>.”
+  - <span style="color:red">I did not buy BMW because of the high price</span>.
   
-  - “<span style="color:red">I am so happy that my iPhone is nothing like my old ugly Droid</span>.”
+  - <span style="color:red">I am so happy that my iPhone is nothing like my old ugly Droid</span>.
 
 ## Some interesting sentences (contd)
 - These two sentences are from paint reviews.
   
-  - “<span style="color:blue">For paintX, one coat can cover the wood color</span>.”
+  - <span style="color:blue">For paintX, one coat can cover the wood color</span>.
   
-  - “<span style="color:blue">For paintY, we need three coats to cover the wood color </span>
+  - <span style="color:blue">For paintY, we need three coats to cover the wood color </span>
   
   - We know that paintX is good and paintY is not, but how, by a system.
 
@@ -723,28 +743,34 @@ include_graphics("img/page 62.png")
 ## Some interesting sentences (contd)
 - Conditional sentences are hard to deal with (Narayanan et al. 2009)
   
-  - “<span style="color:red">If I can find a good camera, I will buy it</span>.” 
+  - <span style="color:red">If I can find a good camera, I will buy it</span>.
   
   - But conditional sentences can have opinions
   
-    - “<span style="color:red">If you are looking for a good phone, buy Nokia</span>”
+    - <span style="color:red">If you are looking for a good phone, buy Nokia</span>
 
 - Questions are also hard to handle
   
-  - “<span style="color:red">Are there any great perks for employees</span>?”
+  - <span style="color:red">Are there any great perks for employees</span>?
   
-  - “<span style="color:red">Any idea how to fix this lousy Sony camera</span>?”
+  - <span style="color:red">Any idea how to fix this lousy Sony camera</span>?
 
 ## Some interesting sentences (contd)
 - Sarcastic sentences
   
-  - “<span style="color:red">What a great car, it stopped working in the second day</span>.”
+  - <span style="color:red">What a great car, it stopped working in the second day</span>.
 
 - Sarcastic sentences are common in political blogs, comments and discussions. 
   
   - They make political opinions difficult to handle
 
 # Multiclass and Multilabel Classification
+
+## Classification
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 78.png")
+```
 
 ## Multi-class classification
 - Sentiment: Positive, Negative, Neutral
@@ -764,11 +790,6 @@ include_graphics("img/page 73.png")
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 74.png")
 ```
-
-## One-vs-all
-- While some classification algorithms naturally permit the use of more than two classes and/or labels, others are by nature binary algorithms; these can, however, be turned into multinomial classifiers by a variety of strategies. 
-
-- A common strategy is one-vs-all, which involves training a single classifier per class, with the samples of that class as positive samples and all other samples as negatives. 
 
 ## One-vs-all
 - Train a logistic regression classifier $h_\theta^{(i)}(x)$ for each class $i$ to predict the probability that $y=i$
@@ -808,23 +829,16 @@ $$\hat{y} = P(Y = y|X = x)$$
 
 \newpage
 
-## Classification
-- Multiclass classification is the task of classifying instances into one of three or more classes. Classifying instances into one of two classes is called binary classification. Multiclass classification should not be confused with multi-label classification, where multiple labels are to be predicted for each instance.
-
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 78.png")
-```
-
-## Multi-label classification
-- In multiclass, one-vs-all requires the base classifiers to produce a real-valued score for its decision, rather than just a class label. Then, the final label is the one corresponding to the class with the highest score. 
-
-- In multilabel, this strategy predicts all labels for this sample for which the respective classifiers predict a positive result. 
 
 # Summary
 
-## Summary: what did we learn?
-- Sentiment Analysis
+## Summary
+- Sentiment analysis
+ - Lexicon-based methods
+ - Learning-based methods
+ - Challenges
 
-- Multiclass and Multi-label classification
+- Multiclass classification
+- Multi-label classification
 
 # Practical 4
