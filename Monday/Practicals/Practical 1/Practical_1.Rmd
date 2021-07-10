@@ -1,5 +1,7 @@
 ---
-title: "Processing Textual Data in R"
+title: "Practical 1: Processing Textual Data in R"
+author: "Ayoub Bagheri"
+date: "Introduction to Text Mining with R"
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
