@@ -289,7 +289,7 @@ rm(list = ls()[grep("^fre", ls())])
 
 ---
 
-15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your search.**
+15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action" or "action", "Comedy" or "comedy", and "Drama" or "drama". (each genre separately)**
 
 ---
 
@@ -308,7 +308,7 @@ tibble(genres, nr_genres)
 
 ---
 
-16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
+16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Comedy". Hint: Set the `value` in the `grep` function equal to `TRUE`**
 
 ---
 
@@ -365,10 +365,10 @@ str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
 ---
 
 ```{r 19, include = TRUE}
+# str_extract(computer_531[1:20,], "[^##]*")
+str_extract(computer_531[1:20,], "[^#]*")
 
-str_extract(computer_531[1:20,], "[^##]*")
-
-# gsub("[^##]*", "\\1", computer_531[1:20,])
+# gsub("[^#]*", "\\1", computer_531[1:20,])
 gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
 
 ```
