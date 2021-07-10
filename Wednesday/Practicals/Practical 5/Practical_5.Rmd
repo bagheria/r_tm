@@ -1,5 +1,7 @@
 ---
-title: "Text Clustering and Topic Modeling"
+title: "Practical 5: Text Clustering and Topic Modeling"
+author: "Ayoub Bagheri"
+date: "Introduction to Text Mining with R"
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
