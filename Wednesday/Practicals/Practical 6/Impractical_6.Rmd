@@ -1,5 +1,7 @@
 ---
-title: "Word embedding approaches"
+title: "Impractical 6: Word embedding approaches"
+author: "Ayoub Bagheri"
+date: "Introduction to Text Mining with R"
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
