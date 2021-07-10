@@ -1,24 +1,25 @@
 ---
-title: "Impractical Processing Textual Data in R, Preprocessing texts"
+title: "Impractical 2: Processing Textual Data in R"
 author: "José de Kruif"
-date: "12/07/2021"
+date: "Introduction to Text Mining with R"
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
 output: 
   html_document:
     html_document:
+    code_folding: hide
     toc: true
     toc_depth: 1
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Impracticalpreprocessingtexts.html
+    pandoc_args: --output=Impractical_2.html
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-setwd("C:/Noodfolder/Lesmap")
+#setwd("C:/Noodfolder/Lesmap")
 ```
 
 # Introduction
