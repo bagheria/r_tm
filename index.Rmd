@@ -72,7 +72,7 @@ Participants are requested to bring their own laptop for the lab meetings.
 Participants will receive a certificate at the end of the course.
 
 ### Additional references
-1- Jurafsky, D., Martin, J.H. (2020). Speech and language processing, third edition. Find online chapters [here](https://web.stanford.edu/~jurafsky/slp3/)
+1- Jurafsky, D., Martin, J.H. (2021). Speech and language processing, third edition. Find online chapters [here](https://web.stanford.edu/~jurafsky/slp3/)
 
 
 2- Eisenstein, J. (2018). Natural Language Processing. Find online chapters [here](https://github.com/jacobeisenstein/gt-nlp-class/blob/master/notes/eisenstein-nlp-notes.pdf)
@@ -212,8 +212,8 @@ Here you will find the materials for Monday:
 
 - Part 2: Text preprocessing
     - [Lecture 2](Monday/Lectures/Lecture 2/Lecture_2.html)
-    - [Impractical 2]()
-    - [Practical 2]()
+    - [Impractical 2](Monday/Practicals/Impractical 2/Practical_2.html)
+    - [Practical 2](Monday/Practicals/Practical 2/Practical_2.html)
     - [Data for practical 2](Monday/Practicals/Practical 2/data.zip)
 
 ## Column 2
