@@ -1,0 +1,323 @@
+---
+title: "Impractical Processing Textual Data in R, Preprocessing texts"
+author: "José de Kruif"
+date: "12/07/2021"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    html_document:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Impracticalpreprocessingtexts.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Noodfolder/Lesmap")
+```
+
+# Introduction
+
+Welcome to the second practical of the course "Introduction to Text Mining with R". 
+
+In this practical, we will work with text data, cleaning tools and try some visualizations.
+
+
+As always we start with the packages we are going to use. Be sure to run these lines in your session to load the proper packages before you continue. If there are packages that you have not yet installed, first install them with `install.packages().
+
+```{r load_packages, message = FALSE, warning = FALSE, include = TRUE}
+library (cld2)         # for language detection
+library (corpus)       # for text analysis with support for  internationa text
+library(dplyr)         # for data manipulation
+library(entity)        # for 
+library(gridExtra)     # for working with grids to obtain nice layouts
+library (hunspell)     # for high-performance stemming
+library (knitr)        # for manipulating the output of this markdown document
+library (NLP)          # for basic methods for Natural Language Processing.
+library(plyr)          # for data manipulation
+library(magrittr)      # for pipes (%>%)
+library (NLP)          # for named entity recognition
+library (openNLP)      # for named entity recognition
+library(qdap)          # for using parsing tools to prepare transcript data
+library (RColorBrewer) # for extra color schemes for maps
+library (rJava)        # for using openNLP
+library (markdown)     # for formatting documents like this one
+library (RWeka)        # for data pre-processing 
+library (SnowballC)    # for Porter's stemming algorithm
+library (stringr)      # for working with strings
+library (textstem)     # for stemming and Lemmatizing text
+library(tidyverse)     # for tidy data and pipes
+library (tm)           # for text mining
+library (udpipe)       # for natural language processing and annotation
+library(wordcloud)     # for creating pretty word clouds
+
+```
+
+Before starting the exercises, you need to set your working directory to your Practicals folder. To this end, you can either create a project in RStudio and move the Rmd and data files to the project folder, or you can use the following line instead of creating a new project:
+
+
+**Do not forget to adjust your working directory to the right folder.**
+
+#setwd("(https://ayoubbagheri.nl/r_tm/Monday/Practicals/Practical%202")
+
+
+```{r message = FALSE, warning = FALSE, include = TRUE}
+# setwd("drivename:/folder1/folder2/r_tm/monday/Practicals/")
+
+```
+
+
+# Reading  data: CSV files
+
+--- 
+You are going to use CSV sets that has been saved in advance. The files are named:Diana.csv and Michael.csv. They are located at "(https://ayoubbagheri.nl/r_tm/Monday/Practicals/Practical%202"/data.sets)
+
+
+1. **Use the `read.csv function to fetch the Diana.csv file and do the same for the Michael.csv file.**
+
+
+The datasets are already located in the practical folder. You can also find them online from [here](https://www.cs.uic.edu/~liub/FBS/ @@HIER NOG URL INVULLEN VOOR TEXT CLEANING.
+
+Now you can inspect the metadata and the texts to get an idea of what the files are like:
+
+--- 
+The text in the content column of the second row in the Diana file has suffered from the OCR. Many characters are distorted. Store part of this text in the variable example. Example <- 
+
+Title: Timetable of events
+Publication date: 01-09-1997
+
+```{r 3, echo=FALSE, include = TRUE}
+Example <- "Saturday, 3-OOpm BST:  aoifg  TfieJPriricess'and DodrFayed arrive at lie BoUrget  -,  .',iv airport, Paris, ori a private jet after a weeK's . holiday cruis-: ing in the Mediterranean. They had cut short the holiday to escape the Italian paparazzi  ' , ^ .,'.,,-. 5.30pm': . ,'  ,'The French paparazzi team about the celebrated couple's arrival in Paris.-They begin gathering outside the Ritz and - stake outthe .Fayed flat off the Champs Â£iysees. - k- - 8.30pm ; '-' ;o * ' - . ,'  } : , ' : '- -. ^ ^. ' --'  - . Photographers spot the couple shopping on the Champs Elysees.. .- - -V . .:, -. - ,  .'ir ' . V - - ~ V    13.. 00pm; . . . , i__ The couple arrive at the hotel for dinner where a group of 40 photographers has assembled. ' Sunday 00.15am: . . 
+They attempt to leave, undetected by going out,of the hotel through a rear entrance in.Rue Camtbon which is not used by hotel guests. They clamber into the back of a_waiting . - dark blue Mercedes 600SEL A second car, which acts as.a * n: ^^^^ iW?tti}^ il i<^ -mba& ^w,m&'ix&i ^r ^&y^ Â£1^Ji - .west'at nigh-speed'dn the expressway,alongside the River    ^Selne. They are in 'the rear of the car. A chauffeur and ; .; : v Bntish-bornRitz-securityguardareinttie'front . . - .' 00.20am: _ ___ : They are pursued by up to seven photographers on motorcycles and in'cars as they head, at reported speeds - of up to 120mph, en route fora private townhouse in western Paris where they plan to spend the night before ,, - returning to Britain later in .the day, 00.25am; -    The-Mercedes enters a tunnel alongside the River Seine * - under the Place del'Alma ; in Paris 's eighth district. The car , goes out of control and collides with a wail. Dodi Fayed and .- . the driver are   killed instantly . 00.27am: _ Witness telephones the police with news of the crash. 00.35am: ~ The, French emergency services arrive at the accident scene where Mr Fayed ispronounced dead. Doctors attempt to . revive the Princess. : n. 00.40am: , ' __ : < i-The police inform the British Embassy that the Princess has been-involved in a crash. . * .    00:45am:. The news is broken to the Prince of Wales in a telephone  call from a British diplomat in Paris. The Prince is holidaying with the Royal Family at Balmoral. 00.50am: Mohamed Al Fayed, the owner of Harrods, is telephoned at his country estate to be told his son has been involved in a serious crash. 1.10am: - Mr Al Fayed takes a second call from the British ' diplomat at the hospital." 
+```
+
+
+# Tokenize Example Text 
+
+--- 
+
+The distorted characters generate a lot of tokens that merely contain rubbish. Garbage in = Garbage out. For instance, tokenization will result in too many items. Therefore it is better to clean the text and remove the noise. 
+
+
+---
+
+2. **Inspect the tokens of Example, How many tokens does Example contain before the text is cleaned? Hint: use ntoken**
+
+---
+
+3. **To view part of the tokens, print part of the variable TEXTtokens. Hint: TEXTtokens is a list. Store it into a string (hint: use unlist and as.String and substr**
+
+---
+
+# Clean Example Text 
+Try cleaning the Example text a bit to reduce the number of tokens. Store the results in a new variable, e.g. Example2
+
+4. **All words in lower case (hint: tolower)**
+
+---
+
+5. **Remove numbers (hint:removeNumbers)**
+
+---
+
+6. **Remove double spaces (hint: str_replace_all)**
+
+---
+
+7. **Remove punctuation (removePunctuation)**
+
+---
+
+You might not be happy with the result. The list of tokens still contains noise. Try to get rid of more distorted characters. 
+
+8. **Remove the noise (hint store undesired strings in a variable first)**
+
+---`
+
+
+9. **Inspect the results by tokenizing the new variable, Example2. How many tokens does Example2 contain now that the text is cleaned?**
+
+---
+
+
+#  Stemming AND Lemmatization:
+
+Stemming: SnowballC library uses Porter's word stemming algorithm that collapses words to a common root. 
+
+10. **It supports many languages. Ask Snowball for an overview: (hint:getStemLanguages)**
+
+---
+
+11. **Test the results of stemming on  the example terms: shoes, writing, stupefied and September (wordStem)**
+
+---
+
+**Store some text of the Diana file to Examplestem**
+```{r 14, echo = FALSE, include = TRUE}
+Examplestem <- "The paparazzi who allegedly chased Diana, Princess of Wales and Dodi Fayed would be likely to escape charges in this country because of the difficulties of proving that they caused the couple s death, leading lawyers said yesterday Robert Roscoe chairman of the Law Society criminal law committee said Manslaughter would be a very difficult charge to make stick."
+```
+
+
+12. **Stem the Examplestem variable (Examplestem), use Porter's word stemming algorithm that lives in the SnowballC package. Tokenize the stemmed text. Do you like the results?**
+
+---
+
+
+13.**Lemmatize the Examplestem variable, use the text stem package. Compare the results of stem text package with the results of Porter's algorithm**
+
+---
+
+14. **A word cloud might be a nice illustration. Tokenize the Stemmed text, the Lemmatized text and make a word cloud for each text. Format of wordcloud code: wordcloud(data, scale = c(2,0.5), min.freq = 1 , colors = "red" (or colors = "blue"))**
+
+---
+
+# Clean Text Field in Data Frame
+
+Text cleaning and stemming are quite advantageous when applied to series of texts like those in the files Diana and Michael. There are two dataframes: Diana, containing articles taken from The Times on the death of princess Diana and a dataframe containing articles on the death of Michael Jackson. 
+
+
+15. **Store the texts in the content field of both dataframes in a Variable:** 
+
+---
+
+
+16. **Lowercase all words** 
+
+---
+
+17.**Remove numbers, double spaces and punctuation**
+
+---
+
+18. **Store cleaned up text in a new column that will be added to the dataframe**
+
+---
+
+
+# Remove stopwords 
+
+19. **Remove all too common words and store the results to the dataframe**
+
+The default source is the Snowball() stopwords collection but other() sources are also available.
+
+
+20. **Now, you can use the Stopwords variable to remove words that occur often but that you do not need in results"**
+
+---
+
+21. **Store clean text in new field and view results**
+
+---
+
+# Visualize Results
+
+22. **Inspect the word cloud of the original text field and the cloud for the new cleansed field for the dataframe Diana. Tip: store fancy colors e.g. a brewer.pal palette, in variable. Format of wordcloud code: wordcloud(data, scale = c(7,0.13), min.freq = "your choice", colors = "your variable") **
+
+---
+
+
+23. **Inspect the word cloud of the original text field and the cloud for the new cleansed field for the data frame Michael **
+
+---
+
+24. **Try to make a Top 20 Words of the Diana and Michael content and the clean content, use the freq_terms algorithm of the qdap package. Store each of your top20's in a variable. Plot the top20's. Hint: use freq_terms(package qdap), and use plot (baseR) **
+
+---
+
+**Voluntary for enthousiasts: Generate the top 20 graphs for the two kinds of content in both data frames. The theme for the graphs has already been defined and store it in the My_Theme variable**
+```{r 28, echo = FALSE, oud.with = "100%"}
+
+My_Theme = theme(
+  axis.title.x = element_text(size = 12),
+  axis.text.x = element_text(size = 10),
+  axis.title.y = element_text(size =12),
+  axis.text.y = element_text(size = 10))
+  
+```
+
+---
+
+**Voluntary for enthousiasts: GridExtra helps to arrange all 4 graphs in 1 screen, which makes it much easier to compare the results**
+
+```{r 29, echo=FALSE}
+#grid.arrange(Diana20cont, Diana20clean, Michael20cont, Michael20clean, nrow = 2, ncol = 2)
+```
+
+---
+
+#Language Detection
+
+25. **Several packages for language detection are available. We will use Google's Compact Language Detector package "cld2". The dataframe containing GR reviews in different languages is available. First: Store the file Clddemo2.csv in the variable "Langtexts". NB! This csv file uses ";" as a separator for the columns. Format: read.csv("filename", sep = ";"). Store the code for the detected language in the column langcont in the dataframe .**
+
+```{r 30, echo = FALSE, include = TRUE}
+Langtexts <- read.csv("Clddemo2.csv", sep = ";")
+View(Langtexts)
+```
+
+26. **The table command generates an overview of the languages which are present in your data frame**
+
+---
+
+# POStagging
+
+27. **POS = Part Of Speech. Each word is marked up to its corresponding part of speech. Add Part Of Speech tags to Example2, store the result in a variable and print the result. Hint: pos()**
+
+---
+
+#For POStagging thePackage UDPipe is also available:
+
+28. **Voluntary. For the enthusiasts: First UDPipe needs a model for the language of the text. Download this model **
+
+```{r 33, echo=FALSE, include = TRUE}
+ud_model <- udpipe_download_model(language = "english")
+
+```
+---
+
+29. **Voluntary for enthousiasts:The clean content field of the Diana dataframe can be tagged for its parts-of-speech. Store the results in a data frame**
+
+```{r 34, echo=FALSE, include = TRUE}
+ud_english <- udpipe_load_model(ud_model$file_model)
+```
+
+
+30.**Voluntary for enthousiasts: This plot has some results**
+
+---
+
+
+#  Part of Speech: Nouns and Adjectives
+
+31.**Voluntary for enthousiasts: Try to visualize which nouns are frequent in the articles on Diana**
+
+---
+
+
+32. **Voluntary for enthousiasts:Compare the adjectives used in the news on the Diana-accident to the adjectives used in the news on the death of Michael Jackson. First investigate which adjectives are frequent in the Diana dataframe**
+
+---
+
+
+33. **Voluntary for enthousiasts:Tag the articles on Michael Jackson and count the adjectives the same way**
+
+---
+
+34. **Voluntary for enthousiasts:Tag the adjectives used in the Michael Jackson articles**
+
+---
+
+
+
+
+
+
+
+
+
+
+
