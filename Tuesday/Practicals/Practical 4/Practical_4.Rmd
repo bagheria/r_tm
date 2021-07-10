@@ -1,5 +1,7 @@
 ---
-title: "Sentiment analysis"
+title: "Practical 4: Sentiment analysis"
+author: "Ayoub Bagheri"
+date: "Introduction to Text Mining with R"
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
