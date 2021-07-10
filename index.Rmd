@@ -170,9 +170,9 @@ The following is the minimum of what you should know about `R` before starting w
 - Understand what the following statements do (tip: you may run it in `R` line by line)
 
 ```r
-y <- "Let him go!"
-x <- "Bismillah!"
-z <- paste(x, "No, we will not let you go.", y)
+y <- "What?"
+x <- "R!"
+z <- paste(x, "No, text mining is the best.", y)
 rep(z, 3)
 1:10
 sample(1:20, 4)
