@@ -1,6 +1,6 @@
 ---
 title: "Text Clustering"
-author: "Ayoub Bagheri, a.bagheri@uu.nl"
+author: "Ayoub Bagheri"
 output:
   ioslides_presentation:
     logo: logo.png
@@ -34,6 +34,8 @@ include_graphics("img/page 4.png")
 ```
 
 ## Clustering
+- Clustering: the process of grouping a set of objects into clusters of similar objects
+
 - Discover “natural structure” of data
   
   - What is the criterion? 
@@ -45,17 +47,16 @@ include_graphics("img/page 5.png")
 ```
 
 ## Clustering
-- Clustering - the process of grouping a set of objects into clusters of similar objects
   
-  - Basic criteria
-  
-    - high intra-cluster similarity
-  
-    - low inter-cluster similarity
-  
-  - No (little) supervision signal about the underlying clustering structure
-  
-  - Need similarity/distance as guidance to form clusters
+- Basic criteria
+
+  - high intra-cluster similarity
+
+  - low inter-cluster similarity
+
+- No (little) supervision signal about the underlying clustering structure
+
+- Need similarity/distance as guidance to form clusters
 
 ## Applications of text clustering
 <div style="float:left; width:50%">
@@ -63,7 +64,7 @@ include_graphics("img/page 5.png")
   
   - Automatically identify hierarchical/topical relation among documents
 </div>
-<div style="float:right; width:50%">
+<div style="float:right; width:60%">
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 7.png")
 ```
@@ -130,12 +131,12 @@ include_graphics("img/page 9.png")
 ```{r, echo=FALSE, out.width="70%", fig.align='right'}
 include_graphics("img/page 13.png")
 ```
-</div>
-<div style="float:right; width:30%">
-<br> <br> <br> <br> 
-<p style="color:red">&larr; Can be efficiently solved by dynamic programming
-</p>
-</div>
+<!-- </div> -->
+<!-- <div style="float:right; width:30%"> -->
+<!-- <br> <br> <br> <br>  -->
+<!-- <p style="color:red">&larr; Can be efficiently solved by dynamic programming -->
+<!-- </p> -->
+<!-- </div> -->
 
 ## Typical distance metric
 - Edit distance
@@ -206,9 +207,9 @@ include_graphics("img/page 13.png")
   
   - You can only do that with a soft clustering approach.
 
-# Partitioning clustering
+# Partitional clustering
 
-## Partitioning Algorithms
+## Partitional clustering algorithms
 - Partitioning method: Construct a partition of <span style="color:lightgreen">$n$</span> documents into a set of <span style="color:lightgreen">$K$</span> clusters
 - Given: a set of documents and the number <span style="color:lightgreen">$K$</span> 
 - Find: a partition of <span style="color:lightgreen">$K$</span> clusters that optimizes the chosen partitioning criterion
@@ -277,7 +278,7 @@ $$\vec \mu(c)=\frac{1}{|c|}\sum_{\vec a \in c}{\vec x}$$
 list.files(path='img/', pattern = 'page 26', full.names = TRUE) %>% 
         image_read() %>% # reads each path file
         image_join() %>% # joins image
-        image_animate(fps=1) %>% # animates, can opt for number of loops
+        image_animate(fps=.25) %>% # animates, can opt for number of loops
         image_write("img/kmeans.gif") # write to current dir
 
 include_graphics("img/kmeans.gif")
@@ -292,56 +293,49 @@ include_graphics("img/kmeans.gif")
 
   - Centroid positions don’t change.
 
-## Convergence
-- Why should the <em>K</em>-means algorithm ever reach a <em>fixed point</em>?
+<!-- ## Convergence -->
+<!-- - Why should the <em>K</em>-means algorithm ever reach a <em>fixed point</em>? -->
 
-  - A state in which clusters don’t change.
+<!--   - A state in which clusters don’t change. -->
 
-- <em>K</em>-means is a special case of a general procedure known as the <em>Expectation Maximization (EM) algorithm</em>.
+<!-- - <em>K</em>-means is a special case of a general procedure known as the <em>Expectation Maximization (EM) algorithm</em>. -->
 
-  - EM is known to converge.
+<!--   - EM is known to converge. -->
 
-  - Number of iterations could be large.
-    
-    - But in practice usually isn’t
+<!--   - Number of iterations could be large. -->
 
-## Seed Choice
-- Results can vary based on random seed selection.
+<!--     - But in practice usually isn’t -->
 
-- Some seeds can result in poor convergence rate, or convergence to sub-optimal clusterings.
-  
-  - Select good seeds using a heuristic (e.g., doc least similar to any existing mean)
-  
-  - <span style="color:blue">Try out multiple starting points</em>
-  
-  - Initialize with the results of another method.
+<!-- ## Seed Choice -->
+<!-- - Results can vary based on random seed selection. -->
 
-## <em>K</em>-means issues, variations, etc.
-- Recomputing the centroid after every assignment (rather than after all points are re-assigned) can improve speed of convergence of <em>K</em>-means
+<!-- - Some seeds can result in poor convergence rate, or convergence to sub-optimal clusterings. -->
 
-- Assumes clusters are spherical in vector space
-  
-  - Sensitive to coordinate changes, weighting etc. 
+<!--   - Select good seeds using a heuristic (e.g., doc least similar to any existing mean) -->
 
-- Disjoint and exhaustive
-  
-  - Doesn’t have a notion of “outliers” by default
-  
-  - But can add outlier filtering
+<!--   - <span style="color:blue">Try out multiple starting points</em> -->
+
+<!--   - Initialize with the results of another method. -->
+
+<!-- ## <em>K</em>-means issues, variations, etc. -->
+<!-- - Recomputing the centroid after every assignment (rather than after all points are re-assigned) can improve speed of convergence of <em>K</em>-means -->
+
+<!-- - Assumes clusters are spherical in vector space -->
+
+<!--   - Sensitive to coordinate changes, weighting etc.  -->
+
+<!-- - Disjoint and exhaustive -->
+
+<!--   - Doesn’t have a notion of “outliers” by default -->
+
+<!--   - But can add outlier filtering -->
 
 # Hierarchical clustering
 
-## Hierarchical Clustering
-- Build a tree-based hierarchical taxonomy (<em>dendrogram</em>) from a set of documents.
-
-```{r, out.width="100%"}
-include_graphics("img/page 32.png")
-```
-
-- One approach: recursive application of a partitional clustering algorithm.incl
-
 ## Dendrogram: Hierarchical Clustering
 <div style="float:left;width:50%">
+- Build a tree-based hierarchical taxonomy (<em>dendrogram</em>) from a set of documents.
+
 - Clustering obtained by cutting the dendrogram at a desired level: each <b>connected</b> component forms a cluster.
 </div>
 <div style="float:right;width:50%">
@@ -383,10 +377,10 @@ include_graphics("img/page 35.png")
 - The history of merging forms a binary tree or hierarchy.
 
 ## Closest pair of clusters
-- Many variants to defining closest pair of clusters
+- Many variants to defining closest pair of clusters (linkage methods):
   
   - <b>Single-link</b>
-    - Similarity of the <em>most</em> cosine-similar (single-link)
+    - Similarity of the <em>most</em> cosine-similar
 
   - <b>Complete-link</b>
     - Similarity of the “furthest” points, the <em>least</em> cosine-similar
@@ -396,6 +390,10 @@ include_graphics("img/page 35.png")
 
   - <b>Average-link</b>
     - Average cosine between pairs of elements
+    
+  - <b>Ward's linkage</b>
+    - Ward's minimum variance method, much in common with analysis of variance (ANOVA)
+    - The distance between two clusters is computed as the increase in the "error sum of squares" (ESS) after fusing two clusters into a single cluster.
 
 ## Single Link Agglomerative Clustering
 - Use maximum similarity of pairs:
@@ -444,7 +442,7 @@ include_graphics("img/page 41.png")
 
 </div>
 
-## Topic models (lda or gensim) | Reality: Documents observed, infer  topics
+## Topic models | Reality: Documents observed, infer  topics
 ```{r,out.width="80%"}
 include_graphics("img/page 42.png")
 ```
@@ -461,7 +459,7 @@ include_graphics("img/page 42.png")
 include_graphics("img/page 44.png")
 ```
 
-## Intro to Latent Dirichlet Allocation (LDA)
+## Latent Dirichlet Allocation
 ```{r}
 question <- c("What is Latent Dirichlet Allocation (LDA)?", "What is used for?", "How is it related to text mining and other machine learning techniques?")
 
@@ -479,7 +477,7 @@ lda %>%
   column_spec(1, width = "18em")
 ```
 
-## LDA Graphical Model
+## Graphical Model
 ```{r, out.width="100%"}
 include_graphics("img/page 46.png")
 ```
