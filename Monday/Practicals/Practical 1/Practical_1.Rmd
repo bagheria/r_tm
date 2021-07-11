@@ -34,11 +34,11 @@ library(plyr)      # for data manipulation
 library(magrittr)  # for pipes
 library(tidyverse) # for tidy data and pipes
 library(ggplot2)   # for visualization
-library(xlsx)      # for working with excel files
+#library(xlsx)      # for working with excel files
+library(readxl)
 library(qdap)      # provides parsing tools for preparing transcript data
 library(wordcloud) # to create pretty word clouds
 library(stringr)
-
 ```
 
 Before starting the exercises, you need to set your working directory to your Practicals folder (or create a project folder). To this end, you can either create a project in RStudio and move the Rmd and data files to the project folder, or you can use the following line instead of creating a new project:
@@ -61,7 +61,8 @@ Before starting the exercises, you need to set your working directory to your Pr
 The dataset is already located in the practical folder. You can also find it online from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#datasets)
 
 ```{r 1, include = TRUE}
-blog_gender_data <- read.xlsx("blog-gender-dataset.xlsx", 1)
+blog_gender_data <- read_excel("blog-gender-dataset.xlsx", 1) %>% 
+  select(blog, gender)
 
 ```
 
@@ -79,6 +80,7 @@ To learn more about the application of a function or feature in R, you can use o
 ```
 
 ```{r 2, include = TRUE}
+set.seed(123)
 blog_gender_1000 <- sample_n(blog_gender_data, 1000)
 
 ```
@@ -106,7 +108,7 @@ tail(blog_gender_1000)
 The `%$%` pipe *exposes* the listed dimensions of a dataset, such that we can refer to them directly.
 
 ```{r 4, include = TRUE, warning = FALSE}
-
+set.seed(123)
 blog_gender_1000 %$% wordcloud(blog, min.freq = 20, max.words = 50, random.order = FALSE,
                                colors = brewer.pal(8, "Dark2"))
 
@@ -127,7 +129,7 @@ IMDB dataset contains 50K movie reviews for natural language processing or Text 
 
 ```{r 5, include = TRUE, warning = FALSE}
 
-imdb_data <- read.csv("IMDB Dataset.csv")
+imdb_data <- read_csv("IMDB Dataset.csv")
 
 ```
 
@@ -138,8 +140,8 @@ imdb_data <- read.csv("IMDB Dataset.csv")
 ---
 
 ```{r 6, include = TRUE}
-head(blog_gender_1000)
-tail(blog_gender_1000)
+head(imdb_data)
+tail(imdb_data)
 
 ```
 
@@ -151,6 +153,7 @@ tail(blog_gender_1000)
 
 
 ```{r 7, include = TRUE, warning = FALSE}
+set.seed(123)
 imdb_500 <- ddply(imdb_data, "sentiment", .fun = function(x) {sample_n(x, size = 250)})
 
 ```
@@ -162,12 +165,13 @@ imdb_500 <- ddply(imdb_data, "sentiment", .fun = function(x) {sample_n(x, size =
 ---
 
 ```{r 8, include = TRUE, warning = FALSE}
+set.seed(123)
 imdb_500 %>% 
   filter(sentiment == "positive") %$% 
   wordcloud(review, min.freq = 20, 
                        max.words = 50, random.order = FALSE, 
                        colors = brewer.pal(8, "Dark2"))
-
+set.seed(123)
 imdb_500 %>% 
   filter(sentiment == "negative") %$% 
   wordcloud(review, min.freq = 20, 
@@ -365,10 +369,11 @@ str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
 ---
 
 ```{r 19, include = TRUE}
-# str_extract(computer_531[1:20,], "[^##]*")
-str_extract(computer_531[1:20,], "[^#]*")
 
-# gsub("[^#]*", "\\1", computer_531[1:20,])
+str_extract(computer_531[1:20,], "[^##]*")
+
+# gsub("[^##]*", "\\1", computer_531[1:20,])
+
 gsub("(.?)(##.*)", "\\1", computer_531[1:20,])
 
 ```
@@ -398,7 +403,6 @@ The difference is that sub only replaces the first occurrence of the pattern spe
 ---
 
 ```{r 21, include = TRUE}
-
 computer_531$aspects <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment)
 head(computer_531)
 
