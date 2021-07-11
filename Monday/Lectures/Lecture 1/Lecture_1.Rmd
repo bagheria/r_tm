@@ -189,7 +189,7 @@ include_graphics("img/page5_person3.png")
 
 - Can you guess what are the challenges Garry, Larry, and Harry encounter in doing their job, when working with text data?
 
-  - Go to <a href="www.menti.com">www.menti.com</a> and use the code 22 07 62 0
+  - Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
 
 # Challenges with text data
 
@@ -263,7 +263,7 @@ include_graphics("img/page 12.png")
 
 <span style="color:green">(You can choose multiple answers)</span>
 
-Go to <a href="www.menti.com">www.menti.com</a> and use the code 22 07 62 0
+Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
 
 ## Text mining definition
 - “the discovery by computer of <span style="color:blue">new</span>, <span style="color:blue">previously unknown</span> information, by <span style="color:blue">automatically extracting</span> information from <span style="color:blue">different</span> written resources” Hearst (1999)
@@ -471,20 +471,7 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 <!-- <br> -->
 <!-- Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5 -->
 
-# Regular expressions
-
-## Regular Expressions
-<br>
-<br>
-<div style="margin: auto 3em; text-align: justify; width: 80%">
-<font size="+2">In <span style="text-decoration:underline">computing</span>, a regular expression, also referred to as "regex" or "regexp", provides a concise and flexible means for matching strings of <span style="text-decoration:underline">text</span>, such as particular characters, words, or patterns of characters. A regular expression is written in a formal language <span style="text-decoration:underline">that can be interpreted</span> by a regular expression processor.</font>
-
-<br>
-<br>
-<br>
-<br>
-<font size="-1">http://en.wikipedia.org/wiki/Regular_expression</font>
-</div>
+# Regular Expressions
 
 ## Regular Expressions
 
@@ -504,71 +491,193 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 <font size="-1">http://en.wikipedia.org/wiki/Regular_expression</font>
 </div>
 
+## Regular Expressions
+<br>
+<br>
+<div style="margin: auto 3em; text-align: justify; width: 80%">
+<font size="+2">In <span style="text-decoration:underline">computing</span>, a regular expression, also referred to as "regex" or "regexp", provides a concise and flexible means for matching strings of <span style="text-decoration:underline">text</span>, such as particular characters, words, or patterns of characters. A regular expression is written in a formal language <span style="text-decoration:underline">that can be interpreted</span> by a regular expression processor.</font>
+
+<br>
+<br>
+<br>
+<br>
+<font size="-1">http://en.wikipedia.org/wiki/Regular_expression</font>
+</div>
+
+
+## In R
+
+The primary R functions for dealing with regular expressions are:
+
+- `grep()`, `grepl()`: Search for matches of a regular expression/pattern in a character vector
+
+- `regexpr()`, `gregexpr()`: Search a character vector for regular expression matches and return the indices where the match begins; useful in conjunction with `regmatches()`
+
+- `sub()`, `gsub()`: Search a character vector for regular expression matches and replace that match with another string
+
+- The `stringr` package provides a series of functions implementing much of the regular expression functionality in R but with a more consistent and rationalized interface.
+
+
 ## Understanding Regular Expressions
   - Very powerful and quite cryptic
 
   - Fun once you understand them
   
-  - Regular expressions are a language unto themselves
-
-  - A language of "marker characters" - programming with characters
+  - Regular expressions are a programming language with characters
   
-  - It is kind of an "old school" language - compact
+  - It is kind of an "old school" language
 
 ## Regular expressions
 - A formal language for specifying text strings
 - How can we search for any of these?
   
-  - woodchuck
+  - netherland
   
-  - woodchucks
+  - netherlands
   
-  - Woodchuck
+  - Netherland
   
-  - Woodchucks
+  - Netherlands
 
-## Regular Expressions: Disjunctions
-- Letters inside square brackets []
-```{r, echo=FALSE, out.width="80%"}
-include_graphics("img/page 49_1.png")
-```
-
-
-- Ranges <span style="color:red">[A-Z]</span>
+## Some simple regex searches
 ```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 49.png")
+include_graphics("img/RE1.png")
 ```
 
-## Regular Expressions: Negation in Disjunction
-- Negations <span style="color:red">[^Ss]</span>
-
-  - Carat means negation only when first in []
+## Disjunction
+The use of the brackets [] to specify a disjunction of characters:
 
 ```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 50.png")
+include_graphics("img/RE2.png")
 ```
 
-## Regular Expressions: More Disjunction
-
-- Woodchucks is another name for groundhog!
-- The pipe | for disjunction
+The pipe sympol **|** is also for disjunction:
 
 ```{r, echo=FALSE, out.width="80%"}
-include_graphics("img/page 51.png")
+include_graphics("img/RE12.png")
 ```
 
-## Regular Expressions: <span style="color:red">?    *  +  .</span>
 
-```{r, echo=FALSE, out.width="80%", fig.align="center"}
-include_graphics("img/page 52.png")
+## Brackets and dash
+The use of the brackets [] plus the dash - to specify a range:
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE3.png")
 ```
 
-## Regular Expressions: Anchors  <span style="color:red">^   $</span>
-```{r, echo=FALSE, out.width="80%", fig.align="center"}
-include_graphics("img/page 53.png")
+
+## Negation
+The caret ^ for negation or just to mean ^:
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE4.png")
 ```
 
-## Example 
+## Question and period marks
+The question mark ? marks optionality of the previous expression:
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE5.png")
+
+```
+
+
+The use of the period . to specify any character:
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE6.png")
+
+```
+
+<!-- ## Regular Expressions: <span style="color:red">?    *  +  .</span> -->
+
+<!-- ```{r, echo=FALSE, out.width="80%", fig.align="center"} -->
+<!-- include_graphics("img/page 52.png") -->
+<!-- ``` -->
+
+## Anchors
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE7.png")
+```
+
+## Operator precedence hierarchy
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE8.png")
+```
+
+## Operator precedence hierarchy
+
+Aliases for common sets of characters:
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE9.png")
+```
+
+The backslash for escaping!
+
+## Operators for counting
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE10.png")
+```
+
+- Patterns are **greedy**: In these cases regular expressions always match the largest string they can, expanding to cover as much of a string as they can.
+
+- Enforce non-greedy matching, using another meaning of the ? qualifier. 
+
+  - The operator *? is a Kleene star that matches as little text as possible. 
+  - The operator +? is a Kleene plus that matches as little text as possible.
+
+## Other
+
+Some characters that need to be backslashed:
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE11.png")
+```
+
+
+
+<!-- ## Regular Expressions: Disjunctions -->
+<!-- - Letters inside square brackets [] -->
+<!-- ```{r, echo=FALSE, out.width="80%"} -->
+<!-- include_graphics("img/page 49_1.png") -->
+<!-- ``` -->
+
+
+<!-- - Ranges <span style="color:red">[A-Z]</span> -->
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 49.png") -->
+<!-- ``` -->
+
+<!-- ## Regular Expressions: Negation in Disjunction -->
+<!-- - Negations <span style="color:red">[^Ss]</span> -->
+
+<!--   - Carat means negation only when first in [] -->
+
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 50.png") -->
+<!-- ``` -->
+
+<!-- ## Regular Expressions: More Disjunction -->
+
+<!-- - Woodchucks is another name for groundhog! -->
+<!-- - The pipe | for disjunction -->
+
+<!-- ```{r, echo=FALSE, out.width="80%"} -->
+<!-- include_graphics("img/page 51.png") -->
+<!-- ``` -->
+
+
+
+<!-- ## Regular Expressions: Anchors  <span style="color:red">^   $</span> -->
+<!-- ```{r, echo=FALSE, out.width="80%", fig.align="center"} -->
+<!-- include_graphics("img/page 53.png") -->
+<!-- ``` -->
+
+## Example
 
 - Find me all instances of the word “the” in a text.
 
@@ -581,16 +690,31 @@ include_graphics("img/page 53.png")
 <span style="color:green">[tT]he</span>
 <br>
 <br>
-<p style="text-align:center;">Incorrectly returns other or theology</p>
+<p style="text-align:center;">Incorrectly returns words such as <span style="color:red">other</span> or <span style="color:red">Netherlands</span></p>
 <br>
 <br>
 <span style="color:blue">[^a-zA-Z]</span><span style="color:red">[tT]</span>he<span style="color:blue">[^a-zA-Z]</span>
+
+Still not compeletly correct! What is missing? 
+<!-- (^|[^a-zA-Z])[tT]he($|[^a-zA-Z]) -->
+
+## Example
+```{r}
+txt <- "The other the Netherlands will then be without the"
+r   <- gregexpr("[^a-zA-Z][tT]he[^a-zA-Z]", txt)
+print(regmatches(txt, r))
+
+r   <- gregexpr("(^|[^a-zA-Z])[tT]he($|[^a-zA-Z])", txt)
+print(regmatches(txt, r))
+
+```
+
 
 ## Errors
 
 - The process we just went through was based on <span style="color:darkred">fixing two kinds of errors</span>
 
-  - Matching strings that we should not have matched (<span style="color:darkred">the</span>re, <span style="color:darkred">the</span>n, o<span style="color:darkred">the</span>r)
+  - Matching strings that we should not have matched (**the**re, Ne**the**rlands)
   
     - <span style="color:darkred">False positives (Type I)</span>
   
@@ -602,42 +726,96 @@ include_graphics("img/page 53.png")
 
 - In NLP we are always dealing with these kinds of errors.
 
-- Reducing the error rate for an application often involves two antagonistic efforts: 
+- Reducing the error rate for an application often involves: 
 
-  - <span style="color:darkgreen">Increasing accuracy or precision</span> (minimizing false positives)
+  - <span style="color:darkgreen">Increasing precision</span> (minimizing false positives)
 
-  - <span style="color:darkgreen">Increasing coverage or recall</span> (minimizing false negatives).
+  - <span style="color:darkgreen">Increasing recall</span> (minimizing false negatives).
+  
+## Quiz 1
 
-## Regular Expression Quick Guide
+Given the text "this Summer   School is utrecht summerschool", which RE finds all the summer school mentions?
 
-```{r, echo=FALSE}
-# sign <- c("^", "$", ".", "\\s", "\\S", "*", "*?", "+", "+?", "[aeiou]", "[^XYZ]", "[a-z0-9]", "(",")")
-# func <- c("Matches the beginning of a line",
-#           "Matches the end of the line",
-#           "Matches any character",
-#           "Matches whitespace",
-#           "Matches any non-whitespace character",
-#           "Repeats a character zero or more times",
-#           "Repeats a character zero or more times (non-greedy)",
-#           "Repeats a chracter one or more times",
-#           "Repeats a character one or more times (non-greedy)",
-#           "Matches a single character in the listed set",
-#           "Matches a single character not in the listed set",
-#           "The set of characters can include a range",
-#           "Indicates where string extraction is to start",
-#           "Indicates where string extraction is to end")
-# data <- data.frame(sign = sign, func = func)
-# colnames(data) <- c("","")
-# data %>% 
-#   kbl %>% 
-#   kable_styling(fixed_thead = T) %>%
-#   kable_paper("hover", full_width=F) %>%
-#   column_spec(1, width = "5cm") %>% 
-#   column_spec(2, width = "12cm")
+- (^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])
+- (^|[^a-zA-Z])[sS]ummer\\s[sS]chool($|[^a-zA-Z])
+- (^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])
+- [^a-zA-Z][sS]ummer\\s[sS]chool($|[^a-zA-Z])
 
-include_graphics("img/quick_guide.png")
+Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
+
+
+## Solution
+
+```{r}
+txt <- "this Summer   School is utrecht summerschool"
+r <- gregexpr("(^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])", txt)
+#r <- gregexpr("(^|[^a-zA-Z])[sS]ummer\\s*[sS]chool($|[^a-zA-Z])", txt)
+
+print(regmatches(txt, r))
 
 ```
+
+ <!-- four \ for backslash: \\\\ -->
+
+
+## Quiz 2
+
+Suppose we want to build an application to help a user buy a car from pdf (text) catalogues. The user looks for any car cheaper than $10,000.00. Which RE will help us to do this?
+
+Assume we are using the following data:
+txt <- c("Price of Tesla S is $8599.99.", 
+         "Audi Q4 is $7000.", 
+         "BMW X5 costs $900") 
+
+- (ˆ|\\W)\\$[0-9]{0,4}(\\.[0-9][0-9])*
+- (ˆ|\\W)\\$[0-9]{0,3}(\\.[0-9][0-9])+
+- (ˆ|\\W)\\$[0-9]{0,4}(\\.[0-9][0-9])?
+- (ˆ|\\W)\\$[0-9][0-9][0-9][0-9](\\.[0-9][0-9])*
+
+Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
+
+
+## Solution
+
+```{r}
+txt <- c("Price of Tesla S is $8599.99.", 
+         "Audi Q4 is $7000.", 
+         "BMW X5 costs $900") 
+r <- gregexpr("(ˆ|\\W)\\$[0-9]{0,4}(\\.[0-9][0-9])?", txt)
+print(regmatches(txt, r))
+
+```
+
+<!-- ## Regular Expression Quick Guide -->
+
+<!-- ```{r, echo=FALSE} -->
+<!-- # sign <- c("^", "$", ".", "\\s", "\\S", "*", "*?", "+", "+?", "[aeiou]", "[^XYZ]", "[a-z0-9]", "(",")") -->
+<!-- # func <- c("Matches the beginning of a line", -->
+<!-- #           "Matches the end of the line", -->
+<!-- #           "Matches any character", -->
+<!-- #           "Matches whitespace", -->
+<!-- #           "Matches any non-whitespace character", -->
+<!-- #           "Repeats a character zero or more times", -->
+<!-- #           "Repeats a character zero or more times (non-greedy)", -->
+<!-- #           "Repeats a chracter one or more times", -->
+<!-- #           "Repeats a character one or more times (non-greedy)", -->
+<!-- #           "Matches a single character in the listed set", -->
+<!-- #           "Matches a single character not in the listed set", -->
+<!-- #           "The set of characters can include a range", -->
+<!-- #           "Indicates where string extraction is to start", -->
+<!-- #           "Indicates where string extraction is to end") -->
+<!-- # data <- data.frame(sign = sign, func = func) -->
+<!-- # colnames(data) <- c("","") -->
+<!-- # data %>%  -->
+<!-- #   kbl %>%  -->
+<!-- #   kable_styling(fixed_thead = T) %>% -->
+<!-- #   kable_paper("hover", full_width=F) %>% -->
+<!-- #   column_spec(1, width = "5cm") %>%  -->
+<!-- #   column_spec(2, width = "12cm") -->
+
+<!-- include_graphics("img/quick_guide.png") -->
+
+<!-- ``` -->
 
 ##
 ```{r, echo=FALSE, out.width="100%"}
