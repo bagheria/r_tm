@@ -601,13 +601,7 @@ include_graphics("img/RE6.png")
 include_graphics("img/RE7.png")
 ```
 
-## Operator precedence hierarchy
-
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/RE8.png")
-```
-
-## Operator precedence hierarchy
+## Common sets
 
 Aliases for common sets of characters:
 
@@ -638,7 +632,11 @@ Some characters that need to be backslashed:
 include_graphics("img/RE11.png")
 ```
 
+## Operator precedence hierarchy
 
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/RE8.png")
+```
 
 <!-- ## Regular Expressions: Disjunctions -->
 <!-- - Letters inside square brackets [] -->
@@ -679,7 +677,7 @@ include_graphics("img/RE11.png")
 
 ## Example
 
-- Find me all instances of the word “the” in a text.
+- Find all instances of the word “the” in a text.
 
 <span style="color:purple">the</span>
 <br>
