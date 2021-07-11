@@ -370,7 +370,7 @@ str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
 
 ```{r 19, include = TRUE}
 
-str_extract(computer_531[1:20,], "[^##]*")
+str_extract(computer_531[1:20,], "[^#]*")
 
 # gsub("[^##]*", "\\1", computer_531[1:20,])
 
