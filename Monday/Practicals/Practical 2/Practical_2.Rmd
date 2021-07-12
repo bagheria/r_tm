@@ -299,7 +299,7 @@ View(Diana)
 
 **22. Inspect the word cloud of the original text field and the cloud for the new cleansed field for the dataframe Diana. Tip: store fancy colors in variable. Format of wordcloud code: wordcloud(data, scale = c(7,0.13), min.freq = "your choice", colors = "your variable") **
 
-```{r 25, echo=FALSE, warning = FALSE, include = TRUE}
+```{r 25, warning = FALSE, include = TRUE}
 pal <- brewer.pal(n = 8, name = "Dark2")
 wordcloud(Diana$content, scale = c(7,0.13), min.freq = 40, colors = pal)
 wordcloud(Diana$clean_content, scale = c(7,0.13), min.freq = 40, colors = pal)
@@ -307,14 +307,14 @@ wordcloud(Diana$clean_content, scale = c(7,0.13), min.freq = 40, colors = pal)
 
 
 **23. Inspect the word cloud of the original text field and the cloud for the new cleansed field for the data frame Michael **
-```{r 26, echo=FALSE, warning = FALSE, include = TRUE}
+```{r 26,  warning = FALSE, include = TRUE}
 wordcloud(Diana$content, scale = c(7,.13), min.freq = 50, colors = pal)
 wordcloud(Michael$clean_content, scale = c(7,.13), min.freq = 50, colors = pal)
 ```
 
 **24. Try to make a Top 20 Words of the Diana and Michael content and the clean content, use the freq_terms algorithm of the qdap package. Store each of your top20's in a variable. Plot the top20's. Hint: use freq_terms(package qdap), and use plot (baseR) **
 
-```{r 27, echo = FALSE, include = TRUE}
+```{r 27, include = TRUE}
 Dianatop20 <- freq_terms(Diana$content, top = 20, at.least = 3)
 Dianatop20clean <- freq_terms(Diana$clean_content, top = 20, at.least = 3)
 Michaeltop20 <- freq_terms(Michael$content, top = 20, at.least = 3)
