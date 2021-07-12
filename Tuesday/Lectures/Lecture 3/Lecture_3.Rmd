@@ -142,13 +142,13 @@ text  -> repre -> class -> pred
 
 $$d = (w_1, ..., w_n)$$
 
-\newpage
+<!-- \newpage -->
 
-## Vector space model
+<!-- ## Vector space model -->
 
-- The Corpus represents a collection of documents (the dataset)
+<!-- - The Corpus represents a collection of documents (the dataset) -->
 
-- The Vocabulary is the set of all unique terms in the corpus
+<!-- - The Vocabulary is the set of all unique terms in the corpus -->
 
 ## An illustration of VS model 
 
@@ -188,24 +188,24 @@ include_graphics("img/page 8.png")
 include_graphics("img/page 12.png")
 ```
 
-## Zipf’s law | A statistical property of language
+<!-- ## Zipf’s law | A statistical property of language -->
 
-- Zipf’s law
+<!-- - Zipf’s law -->
 
-  - Frequency of any word is inversely proportional to its rank in the frequency table
-  - Formally
-    - $f(k;s,N)=\frac{1/k^S}{\sum^N_{n=1}{1/n^S}}$ <br>
-    where $k$ is rank of the word; $N$ is the vocabulary size; $s$ is language-specific parameter
-  - Simply: $f(l;s,N)\propto1/k^S$
+<!--   - Frequency of any word is inversely proportional to its rank in the frequency table -->
+<!--   - Formally -->
+<!--     - $f(k;s,N)=\frac{1/k^S}{\sum^N_{n=1}{1/n^S}}$ <br> -->
+<!--     where $k$ is rank of the word; $N$ is the vocabulary size; $s$ is language-specific parameter -->
+<!--   - Simply: $f(l;s,N)\propto1/k^S$ -->
 
-## Zipf’s law
+<!-- ## Zipf’s law -->
 
-```{r, echo=FALSE, out.width="60%"}
-include_graphics("img/page 14.png")
-```
+<!-- ```{r, echo=FALSE, out.width="60%"} -->
+<!-- include_graphics("img/page 14.png") -->
+<!-- ``` -->
 
-<br>
-<p style="float: right;font-size:12px">Source:https://en.wikipedia.org/wiki/Zipf's_law</p>
+<!-- <br> -->
+<!-- <p style="float: right;font-size:12px">Source:https://en.wikipedia.org/wiki/Zipf's_law</p> -->
   
 <!-- ## Zipf’s law -->
 
@@ -307,32 +307,39 @@ inspect(dtm)
 
 ## Feature selection methods
 
-- Wrapper method
-  
+- Wrapper methods
   - Find the best subset of features for a particular classification method
   - Sequential forward selection or genetic search to speed up the search
 
-```{r,echo=FALSE, out.width="70%", fig.align='center'}
-include_graphics("img/page 34.png")
-```
-
-## Feature selection methods
-
-- Filter method
- 
+- Filter methods
   - Evaluate the features <u>independently</u> from the classifier and other features
- 
-    - No indication of a classifier’s performance on the selected features
- 
-    - No dependency among the features
- 
-  - Feasible for very large feature set
-    
-    - Usually used as a preprocessing step
+  - Feasible for very large feature se
+  - Usually used as a preprocessing step
+  
+- Embedded methods
+ - e.g. Regularized regression, Regularized SVM
 
-```{r,echo=FALSE, out.width="90%", fig.align='center'}
-include_graphics("img/page 37.png")
-```
+<!-- ```{r,echo=FALSE, out.width="70%", fig.align='center'} -->
+<!-- include_graphics("img/page 34.png") -->
+<!-- ``` -->
+
+<!-- ## Feature selection methods -->
+
+<!-- - Filter method -->
+
+<!--   - Evaluate the features <u>independently</u> from the classifier and other features -->
+
+<!--     - No indication of a classifier’s performance on the selected features -->
+
+<!--     - No dependency among the features -->
+
+<!--   - Feasible for very large feature set -->
+
+<!--     - Usually used as a preprocessing step -->
+
+<!-- ```{r,echo=FALSE, out.width="90%", fig.align='center'} -->
+<!-- include_graphics("img/page 37.png") -->
+<!-- ``` -->
 
 ## Document frequency
 
@@ -368,9 +375,10 @@ $$G(t) = \sum^k_{c=1}{p(c | t)^2}$$
 
 - If the global class distribution is skewed, the gini-index may not accurately reflect the discriminative power of the underlying attributes.
 
-- Normalized gini-index
-- Mutual Information
-- ${\chi}^2$-Statistic
+- Other methods
+  - Normalized gini-index
+  - Mutual Information
+  - ${\chi}^2$-Statistic
 
 # Classification Algorithms
 
@@ -529,6 +537,27 @@ $$
 
 \newpage
 
+## Decision Tree 
+
+- A decision tree is a hierarchical decomposition of the (training) data space, in which a condition on the feature value is used in order to divide the data space hierarchically. 
+
+- Top-down, by choosing a variable at each step that best splits the set of items. 
+- Different algorithms to measure the homogeneity of the target variable within the subsets.
+  - Gini impurity
+  - Information gain
+
+\newpage
+
+## Random Forest
+
+- Random forests are an ensemble learning method for classification, regression and other tasks that operates by constructing a multitude of decision trees at training time.
+- Fit multiple trees to bootstrapped samples of the data AND at each node select best predictor from only a random subset of predictors. Combine all trees to yield a consensus prediction
+
+
+```{r, echo=FALSE, out.width="55%", fig.align='center'}
+include_graphics("img/rf.png")
+```
+
 ## Support Vector Machine
 
 - The main principle of SVM is to determine separators in the search space which can best separate the different classes.
@@ -554,39 +583,16 @@ include_graphics("img/page 75.png")
 
 \newpage
 
-## Decision Tree 
-
-- A decision tree is a hierarchical decomposition of the (training) data space, in which a condition on the feature value is used in order to divide the data space hierarchically. 
-
-- Top-down, by choosing a variable at each step that best splits the set of items. 
-- Different algorithms to measure the homogeneity of the target variable within the subsets.
-  - Gini impurity
-  - Information gain
-
-\newpage
-
-## Random Forest
-
-- Random forests are an ensemble learning method for classification, regression and other tasks that operates by constructing a multitude of decision trees at training time.
-- Fit multiple trees to bootstrapped samples of the data AND at each node select best predictor from only a random subset of predictors. Combine all trees to yield a consensus prediction
-
-
-```{r, echo=FALSE, out.width="55%", fig.align='center'}
-include_graphics("img/rf.png")
-```
-
 
 # Evaluation
 
 ## Data Splitting
 
 - Training set
-
+  - Validation set (dev set)
+    - A validation dataset is a dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
+    
 - Test set
-
-- Validation set (dev set)
-
-  - A validation dataset is a dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
 
 ## Cross Validation
 
@@ -633,8 +639,7 @@ A combined measure that assesses the P/R tradeoff is F measure (weighted harmoni
 
 $$F = \frac{1}{\alpha\frac{1}{P}+(1-\alpha)\frac{1}{R}}=\frac{(\beta^2+1)PR}{\beta^2P + R}$$
 
-The harmonic mean is a very conservative average; see 
-IIR § 8.3
+The harmonic mean is a very conservative average;
 
 Balanced F1 measure
   -   i.e., with $\beta = 1$ (that is, $\alpha = 1/2$): $F = 2PR/(P+R)$
@@ -709,10 +714,12 @@ Balanced F1 measure
   - Classifier may not matter
 </div>
 <div style="float:right; width:50%">
-```{r,echo=FALSE, out.width="80%"}
+```{r,echo=FALSE, out.width="100%"}
 include_graphics("img/page 92.png")
 ```
 </div>
+
+https://aclanthology.org/P01-1005.pdf
 
 \newpage
 
@@ -731,6 +738,8 @@ include_graphics("img/page 92.png")
   - First sentence of each paragraph (Murata, 1999)
   
   - In sentences that contain title words
+  
+- Hyperparameter optimization
 
 # Terminology
 
