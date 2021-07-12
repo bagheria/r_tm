@@ -798,33 +798,33 @@ $$\max_i{h_\theta^{(i)}(x)}$$
 
 \newpage
 
-##
-<div style="float:left;width:50%">
-<center><b>Generative Approach</b></center>
-<br><br>
-Ex: <span style="color:green">Naïve Bayes</span>
+<!-- ## -->
+<!-- <div style="float:left;width:50%"> -->
+<!-- <center><b>Generative Approach</b></center> -->
+<!-- <br><br> -->
+<!-- Ex: <span style="color:green">Naïve Bayes</span> -->
 
-Estimate $P(Y)$ and $P(X|Y)$
+<!-- Estimate $P(Y)$ and $P(X|Y)$ -->
 
-<br> <br> <br>
-Prediction
+<!-- <br> <br> <br> -->
+<!-- Prediction -->
 
-$$\hat{y} = \underset{y}{\operatorname{argmax}}P(Y = y)P(X = x|Y = y)$$
-</div>
-<div style="float:right;width:50%">
-<center><b>Discriminative Approach</b></center>
-<br><br>
-Ex: <span style="color:green">Logistic regression</span>
+<!-- $$\hat{y} = \underset{y}{\operatorname{argmax}}P(Y = y)P(X = x|Y = y)$$ -->
+<!-- </div> -->
+<!-- <div style="float:right;width:50%"> -->
+<!-- <center><b>Discriminative Approach</b></center> -->
+<!-- <br><br> -->
+<!-- Ex: <span style="color:green">Logistic regression</span> -->
 
-Estimate $P(Y|X)$ directly <br>
-(Or a discriminant function: e.g., SVM)
-<br> <br> <br> <br>
-Prediction
+<!-- Estimate $P(Y|X)$ directly <br> -->
+<!-- (Or a discriminant function: e.g., SVM) -->
+<!-- <br> <br> <br> <br> -->
+<!-- Prediction -->
 
-$$\hat{y} = P(Y = y|X = x)$$
-</div>
+<!-- $$\hat{y} = P(Y = y|X = x)$$ -->
+<!-- </div> -->
 
-\newpage
+<!-- \newpage -->
 
 
 # Summary
