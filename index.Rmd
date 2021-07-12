@@ -238,14 +238,17 @@ Here you will find the materials for Tuesday:
 
 - Part 3: Text classification
     - [Lecture 3](Tuesday/Lectures/Lecture 3/Lecture_3.html)
+    - [Lecture 3 Handout](Tuesday/Lectures/Lecture 3/Lecture_3_Handout.pdf)
     - [Impractical 3](Tuesday/Practicals/Practical 3/Impractical_3.html)
-    - [Practical 3](Tuesday/Practicals/Practical 3/Practical_3.html) 
+    - [Practical 3](Tuesday/Practicals/Practical 3/Practical_3.html)
+    - [Data for practical 3](Tuesday/Practicals/Practical 3/news_dataset.zip)
 
 - Part 4: Sentiment analysis
     - [Lecture 4](Tuesday/Lectures/Lecture 4/Lecture_4.html)
+    - [Lecture 4 Handout](Tuesday/Lectures/Lecture 4/Lecture_4_Handout.pdf)
     - [Impractical 4](Tuesday/Practicals/Practical 4/Impractical_4.html)
-    - [Practical 4](Tuesday/Practicals/Practical 4/Practical_4.html) 
-
+    - [Practical 4](Tuesday/Practicals/Practical 4/Practical_4.html)
+    - [Data for practical 4](Tuesday/Practicals/Practical 4/data.zip)
 
 ## Column 2
 
