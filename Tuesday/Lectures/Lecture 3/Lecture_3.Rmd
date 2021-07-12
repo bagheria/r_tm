@@ -42,21 +42,21 @@ library(DiagrammeR)
 include_graphics("img/page 24.png")
 ```
 
-## Applications
+<!-- ## Applications -->
 
-- Assigning subject categories, topics, or genres
+<!-- - Assigning subject categories, topics, or genres -->
 
-- Spam detection
+<!-- - Spam detection -->
 
-- Authorship identification
+<!-- - Authorship identification -->
 
-- Age/gender identification
+<!-- - Age/gender identification -->
 
-- Language Identification
+<!-- - Language Identification -->
 
-- Sentiment analysis
+<!-- - Sentiment analysis -->
 
-- …
+<!-- - … -->
 
 ## Text classification?
 
@@ -64,15 +64,15 @@ include_graphics("img/page 24.png")
 
   - Author's gender detection from text
   
-  - Finding about the smoking conditions of patients from clinical letters
+  - Finding about the smoking conditions (yes/no) of patients from clinical letters
 
-  - Grouping news articles into political vs non-political news
+  - Grouping similar news articles
 
   - Classifying reviews into positive and negative sentiment
 
 <br>
 <br>
-Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5
+Go to <a href="www.menti.com">www.menti.com</a> and use the code 9594 3321
 
 ## Pipeline
 ```{r, echo=FALSE}
@@ -207,19 +207,19 @@ include_graphics("img/page 14.png")
 <br>
 <p style="float: right;font-size:12px">Source:https://en.wikipedia.org/wiki/Zipf's_law</p>
   
-## Zipf’s law
+<!-- ## Zipf’s law -->
 
-<!-- - The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on. -->
+<!-- <!-- - The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on. --> -->
 
-- In a clinical text dataset, if we know the most popular word’s frequency is 69,542, what is your best estimate of its second and third most popular word’s frequencies respectively? 
+<!-- - In a clinical text dataset, if we know the most popular word’s frequency is 69,542, what is your best estimate of its second and third most popular word’s frequencies respectively?  -->
 
-Zipf’s law tells us:
+<!-- Zipf’s law tells us: -->
 
-- Head words take large portion of occurrences, but they are semantically meaningless
-E.g., the, a, an, we, do, to
-- Tail words take major portion of vocabulary, but they rarely occur in documents
-E.g., Pneumonoultramicroscopicsilicovolcanoconiosis (45 letters, a lung disease)
-- The rest is most representative
+<!-- - Head words take large portion of occurrences, but they are semantically meaningless -->
+<!-- E.g., the, a, an, we, do, to -->
+<!-- - Tail words take major portion of vocabulary, but they rarely occur in documents -->
+<!-- E.g., Pneumonoultramicroscopicsilicovolcanoconiosis (45 letters, a lung disease) -->
+<!-- - The rest is most representative -->
 
 ## BOW weights: Binary
 
@@ -250,15 +250,40 @@ TF-IDF weight:
 
 $$w_{d,t} = TF_{d,t} \cdot IDF_t$$
 
-## Similarity metric
+<!-- ## Similarity metric -->
 
-- Euclidean distance
-  
-  - $dist(d_i, d_j) = \sqrt{\sum_{t\in V}{[tf(t,d_i)idf(t) - tf(t, d_j)idf(t)]^2}}$
+<!-- - Euclidean distance -->
 
-  - Longer documents will be penalized by the extra words
+<!--   - $dist(d_i, d_j) = \sqrt{\sum_{t\in V}{[tf(t,d_i)idf(t) - tf(t, d_j)idf(t)]^2}}$ -->
 
-  - We care more about how these two vectors are overlapped
+<!--   - Longer documents will be penalized by the extra words -->
+
+<!--   - We care more about how these two vectors are overlapped -->
+
+## In R
+
+```{r}
+library(tm)
+data <- c('Text mining is one of the Utrecht summer school courses.', 
+          'There are other data science courses in Utrecht summer school')
+
+# convert data to vector space model
+corpus <- VCorpus(VectorSource(data))
+
+# create a dtm object
+dtm <- DocumentTermMatrix(corpus, 
+                          list(removePunctuation = TRUE, 
+                               stopwords = TRUE, 
+                               stemming = TRUE, 
+                               removeNumbers = TRUE))
+```
+
+
+## In R
+```{r}
+inspect(dtm)
+```
+
 
 # Feature Selection
 
