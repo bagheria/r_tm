@@ -75,6 +75,7 @@ Before starting the exercises, you need to set your working directory to your Pr
 # Reading  data: CSV files
 
 --- 
+
 You are going to use CSV sets that has been saved in advance. The files are named:Diana.csv and Michael.csv. They are located at "(https://ayoubbagheri.nl/r_tm/Monday/Practicals/Practical%202"/data.sets)
 
 
@@ -91,11 +92,12 @@ The datasets are already located in the practical folder. You can also find them
 Now you can inspect the metadata and the texts to get an idea of what the files are like:
 
 ```{r 2, message = FALSE, warning = FALSE, include = TRUE}
-View(Diana)
-View(Michael)
+# View(Diana)
+# View(Michael)
 ```
 
---- 
+---
+
 The text in the content column of the second row in the Diana file has suffered from the OCR. Many characters are distorted. Store part of this text in the variable example. Example <- 
 
 Title: Timetable of events
