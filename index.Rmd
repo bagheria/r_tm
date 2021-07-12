@@ -215,6 +215,7 @@ Here you will find the materials for Monday:
     - [Impractical 2](Monday/Practicals/Practical 2/Impractical_2.html)
     - [Practical 2](Monday/Practicals/Practical 2/Practical_2.html)
     - [Data for practical 2](Monday/Practicals/Practical 2/data.zip)
+    - [Data (lecture and practical)](Monday/Practicals/Practical 2/Data (lecture and practical).zip)
 
 ## Column 2
 
