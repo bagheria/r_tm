@@ -269,13 +269,16 @@ Here you will find the materials for Wednesday:
 
 - Part 5: Text clustering
     - [Lecture 5](Wednesday/Lectures/Lecture 5/Lecture_5.html)
+    - [Lecture 5 Handout](Wednesday/Lectures/Lecture 5/Lecture_5_Handout.pdf)
     - [Impractical 5](Wednesday/Practicals/Practical 5/Impractical_5.html)
-    - [Practical 5](Wednesday/Practicals/Practical 5/Practical_5.html) 
+    - [Practical 5](Wednesday/Practicals/Practical 5/Practical_5.html)
+    - [Data for practical 5](Wednesday/Practicals/Practical 5/data.zip)
 
 - Part 6: Word embedding
     - [Lecture 6](Wednesday/Lectures/Lecture 6/Lecture_6.pdf)
     - [Impractical 6](Wednesday/Practicals/Practical 6/Impractical_6.html)
-    - [Practical 6](Wednesday/Practicals/Practical 6/Practical_6.html) 
+    - [Practical 6](Wednesday/Practicals/Practical 6/Practical_6.html)
+    - [Data for practical 6](Wednesday/Practicals/Practical 6/data.zip)
 
 
 ## Column 2
