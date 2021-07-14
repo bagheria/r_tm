@@ -46,6 +46,17 @@ include_graphics("img/page 4.png")
 include_graphics("img/page 5.png")
 ```
 
+## Question
+
+Which one is not a text clustering task?
+
+- Grouping Trump's tweets and finding the main topics
+- Finding similar patterns (demands) in customer reviews
+- Grouping scientific articles
+- Detection of heart failure (0 or 1) using discharge summaries
+
+Please go to <a href="www.menti.com">www.menti.com</a> and use the code 9594 3321
+
 ## Clustering
   
 - Basic criteria
