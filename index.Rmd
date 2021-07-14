@@ -214,6 +214,7 @@ Here you will find the materials for Monday:
 
 - Part 2: Text preprocessing
     - [Lecture 2](Monday/Lectures/Lecture 2/Lecture_2.html)
+    - [Lecture 2 Handout](Monday/Lectures/Lecture 2/Lecture_2_Handout.pdf)
     - [Impractical 2](Monday/Practicals/Practical 2/Impractical_2.html)
     - [Practical 2](Monday/Practicals/Practical 2/Practical_2.html)
     - [Data for practical 2](Monday/Practicals/Practical 2/data.zip)
@@ -290,4 +291,6 @@ Here you will find the materials for Wednesday:
 - Chapters 1, 3, 4, 5 of ref 3
 
 # Archive
-After the summer course, all of the course materials will be availabe here in a compact file for download.
+All of the course materials are availabe in a compact file for download:
+
+[Download the Materials](materials/Intro to TM with R_Materials.zip)
