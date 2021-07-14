@@ -294,3 +294,7 @@ Here you will find the materials for Wednesday:
 All of the course materials are availabe in a compact file for download:
 
 [Download the Materials](materials/Intro to TM with R_Materials.zip)
+
+Special thanks to [Zhenwei Yang](https://www.linkedin.com/in/zhenweiyang/?originalSubdomain=nl), my master student who is now a PhD candidate, for helping me with the materials.
+
+I wish all the participants success with their Text Mining projects!
