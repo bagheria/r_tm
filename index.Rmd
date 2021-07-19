@@ -255,7 +255,7 @@ Here you will find the materials for Tuesday:
 
 ### Additional references
 
-- Chapters 4 and 5 of Ref 1
+- Chapters 4, 5, 20 of Ref 1
 - Chapters 2, 3, 4 of Ref 2
 - Chapter 2 of Ref 3
 
