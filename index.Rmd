@@ -18,10 +18,10 @@ This dashboard covers the course materials for the course [S41: Data Science: In
 <!-- </center> -->
 
 ---
-ADD COURSE INFO
-Instructor: FILL   
-Study load: FILL   
-Assessment: FILL   
+<!-- ADD COURSE INFO -->
+<!-- Instructor: FILL    -->
+<!-- Study load: FILL    -->
+<!-- Assessment: FILL    -->
 
 
 ---
@@ -32,15 +32,14 @@ Course director: [Ayoub Bagheri](https://ayoubbagheri.nl/)
 Instructors:
 
 * [Ayoub Bagheri](https://ayoubbagheri.nl/)\
-* [José de Kruif](https://www.uu.nl/medewerkers/JdeKruif)\
-+ [Dong Nguyen](https://dongnguyen.nl/)\
 - [Qixiang Fang](https://www.uu.nl/medewerkers/QFang)\
-- [Kevin Patyk](https://ayoubbagheri.nl/r_tm/)
+- [Daniel Anadria](https://www.researchgate.net/profile/Daniel-Anadria-2)
+* [Mees van Stiphout](https://www.linkedin.com/in/mees-van-stiphout-688b84138/?originalSubdomain=nl)\
++ [Pablo Mosteiro Romero](https://www.uu.nl/medewerkers/PJMosteiroRomero)\
 
+Study load: 1.5 ECTS
 
-Study load: 1 ECTS
-
-Location: [Marinus Ruppert building 033](https://www.uu.nl/en/marinus-ruppert-building)
+Location: [Koningsberger Building, lecture hall Pangea](https://www.uu.nl/en/victor-j-koningsberger-building)
 
 ---
 
@@ -237,7 +236,7 @@ We adapt the course as we go. To ensure that you work with the latest iteration 
 
 Here you will find the materials for Tuesday:
 
-- Part 3: Text classification
+- Part 3: Text representation & classification
     - [Lecture 3](Tuesday/Lectures/Lecture 3/Lecture_3.html)
     - [Lecture 3 Handout](Tuesday/Lectures/Lecture 3/Lecture_3_Handout.pdf)
     - [Impractical 3](Tuesday/Practicals/Practical 3/Impractical_3.html)
@@ -268,18 +267,19 @@ We adapt the course as we go. To ensure that you work with the latest iteration 
 
 Here you will find the materials for Wednesday:
 
-- Part 5: Text clustering
-    - [Lecture 5](Wednesday/Lectures/Lecture 5/Lecture_5.html)
-    - [Lecture 5 Handout](Wednesday/Lectures/Lecture 5/Lecture_5_Handout.pdf)
-    - [Impractical 5](Wednesday/Practicals/Practical 5/Impractical_5.html)
-    - [Practical 5](Wednesday/Practicals/Practical 5/Practical_5.html)
-    - [Data for practical 5](Wednesday/Practicals/Practical 5/data.zip)
-
-- Part 6: Word embedding
-    - [Lecture 6](Wednesday/Lectures/Lecture 6/Lecture_6.pdf)
-    - [Impractical 6](Wednesday/Practicals/Practical 6/Impractical_6.html)
-    - [Practical 6](Wednesday/Practicals/Practical 6/Practical_6.html)
-    - [Data for practical 6](Wednesday/Practicals/Practical 6/data.zip)
+- Part 5: Feature selection in text
+    - [Lecture 5](Wednesday/Lectures/Lecture 5/Lecture_50.html)
+    - [Lecture 5 Handout]()
+    - [Impractical 5]()
+    - [Practical 5]()
+    - [Data for practical 5]()
+    
+- Part 6: Text clustering & topic modeling
+    - [Lecture 6](Wednesday/Lectures/Lecture 5/Lecture_5.html)
+    - [Lecture 6 Handout](Wednesday/Lectures/Lecture 5/Lecture_5_Handout.pdf)
+    - [Impractical 6](Wednesday/Practicals/Practical 5/Impractical_5.html)
+    - [Practical 6](Wednesday/Practicals/Practical 5/Practical_5.html)
+    - [Data for practical 6](Wednesday/Practicals/Practical 5/data.zip)
 
 
 ## Column 2
@@ -290,11 +290,42 @@ Here you will find the materials for Wednesday:
 - Chapters 5 and 14 of Ref 2
 - Chapter 6 of Ref 3
 
+
+# Thursday
+## Column 1
+
+### Materials
+
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advice all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+
+Here you will find the materials for Thursday:
+
+- Part 7: Word embedding
+    - [Lecture 7](Wednesday/Lectures/Lecture 6/Lecture_6.pdf)
+    - [Impractical 7](Wednesday/Practicals/Practical 6/Impractical_6.html)
+    - [Practical 7](Wednesday/Practicals/Practical 6/Practical_6.html)
+    - [Data for practical 7](Wednesday/Practicals/Practical 6/data.zip)
+
+- Part 8: Neural networks and text mining applications
+    - [Lecture 8](Tuesday/Lectures/Lecture 4/Lecture_4.html)
+    - [Lecture 8 Handout](Tuesday/Lectures/Lecture 4/Lecture_4_Handout.pdf)
+    - [Impractical 8](Tuesday/Practicals/Practical 4/Impractical_4.html)
+    - [Practical 8](Tuesday/Practicals/Practical 4/Practical_4.html)
+    - [Data for practical 8](Tuesday/Practicals/Practical 4/data.zip)
+
+## Column 2
+
+### Additional references
+
+- Chapters 4, 5, 20 of Ref 1
+- Chapters 2, 3, 4 of Ref 2
+- Chapter 2 of Ref 3
+
 # Archive
-All of the course materials are availabe in a compact file for download:
+On the last day of the course, all the materials will be available in a compact file for download:
 
-[Download the Materials](materials/Intro to TM with R_Materials.zip)
+[Download the Materials]()
 
-Special thanks to [Zhenwei Yang](https://www.linkedin.com/in/zhenweiyang/?originalSubdomain=nl), my master student who is now a PhD candidate, for helping me out with the materials.
+<!-- Special thanks to [Zhenwei Yang](https://www.linkedin.com/in/zhenweiyang/?originalSubdomain=nl), my master student who is now a PhD candidate, for helping me out with the materials. -->
 
-I wish all the participants success with their Text Mining projects!
+We wish all the participants success with their Text Mining projects!
