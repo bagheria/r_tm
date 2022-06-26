@@ -423,7 +423,7 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 
 ---
 
-22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
+22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero. Save the resulting object as a csv. file and name it `computer_531.csv`**
 
 ---
 
