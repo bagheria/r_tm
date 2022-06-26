@@ -50,7 +50,14 @@ library(dbscan)
 ```{r 1, message = FALSE, warning = FALSE, include = TRUE}
 load("data/news_dataset.rda")
 head(df_final)
-
+# Note that the next chunk (when using `DocumentTermMatrix`) will not work
+# returns error invalid multibyte string 1512
+# Two possible solutions: 
+# 1) Omission of the whole observation
+# df_final <- df_final[-1512,]
+# 2) Omission of the string "\xa315.8m" from that specifc text
+df_final[1512,][2] <- gsub("\xa315.8m", "", df_final[1512,][2])
+# I prefer the second solution
 ```
 
 ---
@@ -74,11 +81,11 @@ dtm <- DocumentTermMatrix(docs,
                           removePunctuation = TRUE,
                           stopwords = TRUE
                          ))
-# We remove A LOT of features. R is natively very weak with high dimensional matrix
+# We remove A LOT of features. R is natively very weak with high dimensional data
 dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
-# with sparse = 0.93 the dtm will end up with 359 terms; you can change this number to based on your available memory
+# with sparse = 0.93 the dtm will end up with 359 terms; you can adjust this number based on your available memory
 
-# dtm <- as.matrix(dtm) # if you have a supercomputer you can continute with this obejct, otherwise use the dtm_cut
+# dtm <- as.matrix(dtm) # if you have a supercomputer you can continue with this object, otherwise use the dtm_cut
 dtm_cut <- as.matrix(dtm_cut)
 # you can also check the wordclouds for dtm_cut
 #library(wordcloud)
@@ -105,7 +112,7 @@ dist_matrix <- dist(dtm_cut, method = "cosine")
 
 ---
 
-4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for kmeans. What does the output look like? Also check the cluster centers.**
+4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for `kmeans`. What does the output look like? Also check the cluster centers.**
 
 ---
 
@@ -178,7 +185,7 @@ plot(points,
 
 ---
 
-7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustring trees (dendrograms).**
+7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustering trees (dendrograms).**
 
 ---
 
@@ -257,7 +264,7 @@ dtm <- DocumentTermMatrix(docs,
                           removePunctuation = TRUE,
                           stopwords = TRUE
                          ))
-# We remove A LOT of features. R is natively very weak with high dimensional matrix
+# We remove A LOT of features. R is natively very weak with high dimensional data
 dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
 
 # A LDA topic model with 5 topics; if it takes a lot of time for you to run this change k to 2
@@ -268,7 +275,7 @@ out_lda
 
 ---
 
-11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilites for each term and topic.**
+11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilities for each term and topic.**
 
 ---
 
