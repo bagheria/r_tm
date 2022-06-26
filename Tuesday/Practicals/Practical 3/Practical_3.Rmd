@@ -32,7 +32,7 @@ library(tidyverse)
 library(tm)
 library(dplyr)
 library(e1071)
-# install.packages(SnowballC)
+# install.packages("SnowballC")
 
 ```
 
@@ -156,7 +156,7 @@ predict(fit, newdata = test_data)
 
 ---
 
-7. **Now we want to use a tfidf weighting for creating our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tfidf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.**
+7. **Now we want to use a tf-idf weighting to create our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tf-idf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.**
 
 ---
 
@@ -210,7 +210,7 @@ predict(fit, newdata = test_data)
 
 # Compare architectures: Naïve Bayes versus SVM
 
-The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
+The data set used in this part of the practical is the BBC News data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
 It consists of 2225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
 
 - Business
@@ -246,7 +246,7 @@ table(df_final$Category)
 
 ---
 
-10. **Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, and whitespaces.**
+10. **Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, whitespaces and clean any other data issues.**
 
 ---
 
@@ -255,8 +255,17 @@ table(df_final$Category)
 set.seed(123)
 
 corpus <- Corpus(VectorSource(df_final$Content))
+
 # standardize to lowercase
-corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, content_transformer(tolower)) 
+# returns error invalid multibyte string 1512
+# Two possible solutions: 
+# 1) Omission of the whole observation
+# df_final <- df_final[-1512,]
+# 2) Omission of the string "\xa315.8m" from that specifc text
+# df_final[1512,][2] <- gsub("\xa315.8m", "", df_final[1512,][2])
+# then rerun from line 255.
+
 # remove tm stopwords
 corpus <- tm_map(corpus, removeWords, stopwords())
 # standardize whitespaces
@@ -319,10 +328,8 @@ str(dtm_test)
 ```{r 13, include = TRUE, warning = FALSE}
 
 freq <- colSums(dtm_train)
-head(freq, 10)
 
-```
-```{r}
+head(freq, 10)
 tail(freq,10)
 
 ```
@@ -358,7 +365,7 @@ ggplot(hfp_df, aes(reorder(names, high_freq), high_freq)) +
 
 ---
 
-15. **Use the cbind function to add the categories to the train_dtm data and name the column y.**
+15. **Use the cbind function to add the categories to the dtm_train data and name the column y.**
 
 ---
 
