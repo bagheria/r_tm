@@ -1,8 +1,9 @@
 ---
 title: "Introduction"
-author: Ayoub Bagheri
-subtitle: "Introduction to Text Mining with R"
+author: "Ayoub Bagheri"
+subtitle: Introduction to Text Mining with R
 output:
+  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
@@ -14,58 +15,83 @@ library(knitr)
 library(kableExtra)
 ```
 
-## Very useful
+## 
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="100%"}
+include_graphics("img/ex1.jpg")
+```
+</div>
+
+
+## 
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="100%"}
+include_graphics("img/ex2.jpg")
+```
+</div>
+
+
+##
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="100%"}
+include_graphics("img/ex3.jpg")
+```
+</div>
+
+# Course Logistics
+
+## Course materials
 
 You can access the course materials quickly from
 
 https://ayoubbagheri.nl/r_tm/
 
-Some guidelines
+<!-- Some guidelines -->
 
-1- Please keep your microphone off
+<!-- 1- Please keep your microphone off -->
 
-2- If you have a question, raise your hand or type your question in the chat
+<!-- 2- If you have a question, raise your hand or type your question in the chat -->
 
-3- You may always interrupt me
+<!-- 3- You may always interrupt me -->
 
-4- We will introduce frequent question breaks
+<!-- 4- We will introduce frequent question breaks -->
 
-## Lecturers and Assistants
-<div style="float:left; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="35%"}
-include_graphics("img/page17Jose.png")
-```
-  <div class="centered">
-  **José de Kruif**
-  </div>
-</div>
-
-<div style="float:right; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="35%"}
-include_graphics("img/page17dong.png")
-```
-  <div class="centered">
-  **Dong Nguyen**
-  </div>
-</div>
+## Teachers
 
 <div style="float:left; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="35%"}
+```{r, echo=FALSE, fig.align='center', out.width="30%"}
 include_graphics("img/Qixiang_Fang.png")
 ```
   <div class="centered">
-  **Qixiang Fang**
+  **Qixiang**
+  </div>
+  
+  <br/>
+```{r, echo=FALSE, fig.align='center', out.width="30%"}
+include_graphics("img/Mees van Stiphout.jpg")
+```
+  <div class="centered">
+  **Mees**
   </div>
 </div>
 
+
 <div style="float:right; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="40%"}
-include_graphics("img/Kevin_Patyk.png")
+```{r, echo=FALSE, fig.align='center', out.width="30%"}
+include_graphics("img/Daniel_Anadria.jpg")
 ```
   <div class="centered">
-  **Kevin Patyk**
+  **Daniel**
+  </div>
+  <br/>
+```{r, echo=FALSE, fig.align='center', out.width="30%"}
+include_graphics("img/Pablo Mosteiro Romero.jpg")
+```
+  <div class="centered">
+  **Pablo**
   </div>
 </div>
+
 
 ## Program {.smaller}
 ```{r, echo = FALSE}
@@ -73,8 +99,9 @@ time <- c("9:00 - 10:30", "", "10:45 – 11:45", "11:45 – 12:30", "", "13:45 �
 monday <- c("Lecture 1", "Break", "Practical 1", "Discussion 1", "Lunch", "Lecture 2", "Break", "Practical 2", "Discussion 2")
 tuesday <- c("Lecture 3", "Break", "Practical 3", "Discussion 3", "Lunch", "Lecture 4", "Break", "Practical 4", "Discussion 4")
 wednesday <- c("Lecture 5", "Break", "Practical 5", "Discussion 5", "Lunch", "Lecture 6", "Break", "Practical 6", "Discussion 6")
+thursday <- c("Lecture 7", "Break", "Practical 7", "Discussion 7", "Lunch", "Lecture 8", "Break", "Practical 8", "Discussion 8")
 
-program <- data.frame(Time = time, Monday = monday, Tuesday = tuesday, Wednesday = wednesday)
+program <- data.frame(Time = time, Monday = monday, Tuesday = tuesday, Wednesday = wednesday, Thursday = thursday)
 
 program %>% 
   kbl() %>% 
@@ -94,7 +121,7 @@ program %>%
   - on a variety of applications 
   - in many domains.
 
-# What is text mining?
+# What is Text Mining?
 
 ## Text mining in an example 
 
@@ -187,96 +214,42 @@ include_graphics("img/page5_person3.png")
 
 ## Challenges?
 
-- Can you guess what are the challenges Garry, Larry, and Harry encounter in doing their job, when working with text data?
+- What are the challenges they encounter in working with text?
 
-  - Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
 
-# Challenges with text data
+<!-- # Challenges with Text Data -->
 
-## Challenges with text data
+<!-- ## Challenges with text data -->
 
-- Huge amount of data
+<!-- - Huge amount of data -->
 
-- High dimensional but sparse
+<!-- - High dimensional but sparse -->
 
-  - all possible word and phrase types in the language!!
+<!--   - all possible word and phrase types in the language!! -->
 
-## Challenges with text data
-<div style="float: left; width: 60%">
-- Ambiguity
-</div>
+<!-- ## Challenges with text data -->
+<!-- <div style="float: left; width: 60%"> -->
+<!-- - Ambiguity -->
+<!-- </div> -->
 
-<div style="float: left; width: 40%">
-```{r, echo=FALSE, out.width="70%"}
-include_graphics("img/page 8.png")
-```
-</div>
+<!-- <div style="float: left; width: 40%"> -->
+<!-- ```{r, echo=FALSE, out.width="70%"} -->
+<!-- include_graphics("img/page 8.png") -->
+<!-- ``` -->
+<!-- </div> -->
 
-## Challenges with text data
-- Noisy data
-  
-  - Examples: Abbreviations, spelling errors, short text
+<!-- ## Challenges with text data -->
+<!-- - Noisy data -->
 
-- Complex relationships between words
-  
-  - “Hema merges with Intertoys”
-  
-  - “Intertoys is bought by Hema”
+<!--   - Examples: Abbreviations, spelling errors, short text -->
 
-## Example {.smaller}
-<div style="float: left; width: 20%">
-```{r, echo=FALSE}
-include_graphics("img/page2_example.png")
-```
+<!-- - Complex relationships between words -->
 
-```{r,echo = FALSE, out.width="90%"}
-include_graphics("img/page 11.png")
-```
-</div>
+<!--   - “Hema merges with Intertoys” -->
 
-<div style="float: right; width: 80%">
-  - During one of the coffee moments at the company, **Garry** was talking about their situation at the dep of Customer relationship management.
+<!--   - “Intertoys is bought by Hema” -->
 
-  - When **Carrie**, her colleague from the **Data Science department**, hears the situation, she offers Garry to use Text Mining!!
 
-  - She says: “<span style="color:blue">Text mining is your friend; it can help you to make the process way faster than Excel by filtering words and recommending labels.</span>”
-
-  - She continues : “Text mining is a subfield of AI and NLP and is related to data science, data mining and machine learning.”
-
-  - After consulting with Larry and Harry, they decide to give text mining a try!
-</div>
-
-## Example
-```{r, echo=FALSE, out.width="90%", fig.align='center'}
-include_graphics("img/page 12.png")
-```
-
-## Text mining definition?
-
-- Which can be a part of Text Mining definition?
-  - The discovery by computer of new, previously unknown information from textual data
-  - Automatically extracting information from text
-  - Text mining is about looking for patterns in text
-  - Text mining describes a set of techniques that model and structure the information content of textual sources
-
-<br>
-
-<span style="color:green">(You can choose multiple answers)</span>
-
-Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
-
-## Text mining definition
-- “the discovery by computer of <span style="color:blue">new</span>, <span style="color:blue">previously unknown</span> information, by <span style="color:blue">automatically extracting</span> information from <span style="color:blue">different</span> written resources” Hearst (1999)
-
-- Text mining is about looking for <span style="color:red">patterns in text</span>, in a similar way that <span style="color:red">data mining</span> can be loosely described as looking for patterns in data.
-
-- Text mining describes a set of <span style="color:green">linguistic</span>, <span style="color:green">statistical</span>, and <span style="color:green">machine learning</span> techniques that model and structure the information content of textual sources. (Wikipedia)
-
-## Another TM definition
-
-```{r, echo=FALSE, out.width="90%", fig.align='center'}
-include_graphics("img/page 22.png")
-```
 
 ## Language is hard
 
@@ -288,6 +261,35 @@ include_graphics("img/page 22.png")
 - Figurative language ("He has a heart of stone")
 - Negation ("not good" vs. "good"), spelling variations, jargon, abbreviations
 - All the above are different over languages, 99\% of work is on English!
+
+
+<!-- ## Text mining definition? -->
+
+<!-- - Which can be a part of Text Mining definition? -->
+<!--   - The discovery by computer of new, previously unknown information from textual data -->
+<!--   - Automatically extracting information from text -->
+<!--   - Text mining is about looking for patterns in text -->
+<!--   - Text mining describes a set of techniques that model and structure the information content of textual sources -->
+
+<!-- <br> -->
+
+<!-- <span style="color:green">(You can choose multiple answers)</span> -->
+
+<!-- Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321 -->
+
+## Text mining
+- “the discovery by computer of <span style="color:blue">new</span>, <span style="color:blue">previously unknown</span> information, by <span style="color:blue">automatically extracting</span> information from <span style="color:blue">different</span> written resources” Hearst (1999)
+
+- Text mining is about looking for <span style="color:red">patterns in text</span>, in a similar way that <span style="color:red">data mining</span> can be loosely described as looking for patterns in data.
+
+- Text mining describes a set of <span style="color:green">linguistic</span>, <span style="color:green">statistical</span>, and <span style="color:green">machine learning</span> techniques that model and structure the information content of textual sources. (Wikipedia)
+
+<!-- ## Another TM definition -->
+
+<!-- ```{r, echo=FALSE, out.width="90%", fig.align='center'} -->
+<!-- include_graphics("img/page 22.png") -->
+<!-- ``` -->
+
 
 ## Language is hard
 
@@ -312,27 +314,27 @@ https://dh2017.adho.org/abstracts/079/079.pdf
 include_graphics("img/page 26.png")
 ```
 
-## Which ICD-10 codes should I give this doctor's note?
-<div style="font-size:4pt; border:1px solid;">
+<!-- ## Which ICD-10 codes should I give this doctor's note? -->
+<!-- <div style="font-size:4pt; border:1px solid;"> -->
 
-Bovengenoemde patiënt was opgenomen op <DATUM-1> op de <PERSOON-1> voor het specialisme **Cardiologie.** 
+<!-- Bovengenoemde patiënt was opgenomen op <DATUM-1> op de <PERSOON-1> voor het specialisme **Cardiologie.**  -->
 
-**Cardiovasculaire risicofactoren**: Roken(-) Diabetes(-) Hypertensie(?) Hypercholesterolemie (?)
+<!-- **Cardiovasculaire risicofactoren**: Roken(-) Diabetes(-) Hypertensie(?) Hypercholesterolemie (?) -->
 
-**Anamnese**. Om 18.30 pijn op de borst met uitstraling naar de linkerarm, zweten, misselijk. Ambulance gebeld en bij aansluiten monitor beeld van acuut onderwandinfarct.
-AMBU overdracht:.500mg aspegic iv, ticagrelor 180mg oraal, heparine, zofran eenmalig, 3x NTG spray. HD stabiel gebleven. . .Medicatie bij presentatie.Geen..
+<!-- **Anamnese**. Om 18.30 pijn op de borst met uitstraling naar de linkerarm, zweten, misselijk. Ambulance gebeld en bij aansluiten monitor beeld van acuut onderwandinfarct. -->
+<!-- AMBU overdracht:.500mg aspegic iv, ticagrelor 180mg oraal, heparine, zofran eenmalig, 3x NTG spray. HD stabiel gebleven. . .Medicatie bij presentatie.Geen.. -->
 
-**Lichamelijk onderzoek**. Grauw, vegetatief, Halsvenen niet gestuwd. Cor s1 s2 geen souffles.Pulm schoon. Extr warm en slank .
+<!-- **Lichamelijk onderzoek**. Grauw, vegetatief, Halsvenen niet gestuwd. Cor s1 s2 geen souffles.Pulm schoon. Extr warm en slank . -->
 
-**Aanvullend onderzoek**. AMBU ECG: Sinusritme, STEMI inferior III)II C/vermoedelijk RCA.
-Coronair angiografie. (...) .Conclusie angio: 1-vatslijden..PCI 
+<!-- **Aanvullend onderzoek**. AMBU ECG: Sinusritme, STEMI inferior III)II C/vermoedelijk RCA. -->
+<!-- Coronair angiografie. (...) .Conclusie angio: 1-vatslijden..PCI  -->
 
-**Conclusie en beleid**
-Bovengenoemde <LEEFTIJD-1> jarige man, blanco cardiale voorgeschiedenis, werd gepresenteerd vanwege een  STEMI inferior waarvoor een spoed PCI werd verricht van de mid-RCA. Er bestaan geen relevante nevenletsels. Hij kon na de procedure worden overgeplaatst naar de CCU van het <INSTELLING-2>. ..Dank voor de snelle overname. ..Medicatie bij overplaatsing. Acetylsalicylzuur dispertablet 80mg ; oraal; 1 x per dag 80 milligram ; <DATUM-1> .Ticagrelor tablet 90mg ; oraal; 2 x per dag 90 milligram ; <DATUM-1> .Metoprolol tablet   50mg ; oraal; 2 x per dag 25 milligram ; <DATUM-1> .Atorvastatine tablet 40mg (als ca-zout-3-water) ; oraal; 1 x per dag 40 milligram ; <DATUM-1> 
-**Samenvatting**
-Hoofddiagnose: STEMI inferior wv PCI RCA. Geen nevenletsels. Nevendiagnoses: geen.
-Complicaties: geen Ontslag naar: CCU <INSTELLING-2>.
-</div>
+<!-- **Conclusie en beleid** -->
+<!-- Bovengenoemde <LEEFTIJD-1> jarige man, blanco cardiale voorgeschiedenis, werd gepresenteerd vanwege een  STEMI inferior waarvoor een spoed PCI werd verricht van de mid-RCA. Er bestaan geen relevante nevenletsels. Hij kon na de procedure worden overgeplaatst naar de CCU van het <INSTELLING-2>. ..Dank voor de snelle overname. ..Medicatie bij overplaatsing. Acetylsalicylzuur dispertablet 80mg ; oraal; 1 x per dag 80 milligram ; <DATUM-1> .Ticagrelor tablet 90mg ; oraal; 2 x per dag 90 milligram ; <DATUM-1> .Metoprolol tablet   50mg ; oraal; 2 x per dag 25 milligram ; <DATUM-1> .Atorvastatine tablet 40mg (als ca-zout-3-water) ; oraal; 1 x per dag 40 milligram ; <DATUM-1>  -->
+<!-- **Samenvatting** -->
+<!-- Hoofddiagnose: STEMI inferior wv PCI RCA. Geen nevenletsels. Nevendiagnoses: geen. -->
+<!-- Complicaties: geen Ontslag naar: CCU <INSTELLING-2>. -->
+<!-- </div> -->
 
 ## Which ICD-10 codes should I give this doctor's note?
 <img src="img/bagheri-coefficients-horizontal.png" height="370"/>
@@ -473,7 +475,7 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 
 # Regular Expressions
 
-## Regular Expressions
+## Regular expressions
 
 <br>
 <br>
@@ -491,7 +493,7 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 <font size="-1">http://en.wikipedia.org/wiki/Regular_expression</font>
 </div>
 
-## Regular Expressions
+## Regular expressions
 <br>
 <br>
 <div style="margin: auto 3em; text-align: justify; width: 80%">
@@ -730,7 +732,7 @@ print(regmatches(txt, r))
 
   - <span style="color:darkgreen">Increasing recall</span> (minimizing false negatives).
   
-## Quiz 1
+## Question
 
 Given the text "this Summer   School is utrecht summerschool", which RE finds all the summer school mentions?
 
@@ -756,7 +758,7 @@ print(regmatches(txt, r))
  <!-- four \ for backslash: \\\\ -->
 
 
-## Quiz 2
+## Question
 
 Suppose we want to build an application to help a user buy a car from pdf (text) catalogues. The user looks for any car cheaper than $10,000.00. Which RE will help us to do this?
 
@@ -770,7 +772,7 @@ txt <- c("Price of Tesla S is $8599.99.",
 - (ˆ|\\W)\\$[0-9]{0,4}(\\.[0-9][0-9])?
 - (ˆ|\\W)\\$[0-9][0-9][0-9][0-9](\\.[0-9][0-9])*
 
-Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
+<!-- Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321 -->
 
 
 ## Solution
@@ -830,9 +832,45 @@ include_graphics("img/page 57.png")
 - The basic problem of text mining is that text is not a neat data set
 - One solution: text pre-processing
 
-## Practical 1
-In a few moments:
+## Next: Text preprocessing
+- is an approach for cleaning and noise removal of text data.
+- brings your text into a form that is analyzable for your task.
+- transforms text into a more digestible form so that machine learning algorithms can perform better.
 
-- You will be automatically added to a practical session.
-- There will be a practical instructor present.
-- At the end of the practical, you will be automatically returned to the main meeting.
+# Practical 1
+
+
+<!-- ## Practical 1 -->
+<!-- In a few moments: -->
+
+<!-- - You will be automatically added to a practical session. -->
+<!-- - There will be a practical instructor present. -->
+<!-- - At the end of the practical, you will be automatically returned to the main meeting. -->
+
+## Are you curious about the end of the Example? {.smaller}
+<div style="float: left; width: 20%">
+```{r, echo=FALSE}
+include_graphics("img/page2_example.png")
+```
+
+```{r,echo = FALSE, out.width="90%"}
+include_graphics("img/page 11.png")
+```
+</div>
+
+<div style="float: right; width: 80%">
+  - During one of the coffee moments at the company, **Garry** was talking about their situation at the dep of Customer relationship management.
+
+  - When **Carrie**, her colleague from the **Data Science department**, hears the situation, she offers Garry to use Text Mining!!
+
+  - She says: “<span style="color:blue">Text mining is your friend; it can help you to make the process way faster than Excel by filtering words and recommending labels.</span>”
+
+  - She continues : “Text mining is a subfield of AI and NLP and is related to data science, data mining and machine learning.”
+
+  - After consulting with Larry and Harry, they decide to give text mining a try!
+</div>
+
+## End
+```{r, echo=FALSE, out.width="90%", fig.align='center'}
+include_graphics("img/page 12.png")
+```
