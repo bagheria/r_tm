@@ -205,16 +205,16 @@ Here you will find the materials for Monday:
 
 - Part 1: Introduction
     - [Lecture 1](Monday/Lectures/Lecture 1/Lecture_1.html)
-    - [Lecture 1 Handout](Monday/Lectures/Lecture 1/Lecture_1_handout.pdf)
-    - [Impractical 1](Monday/Practicals/Practical 1/Impractical_1.html)
+    <!-- - [Lecture 1 Handout](Monday/Lectures/Lecture 1/Lecture_1_handout.pdf) -->
+    <!-- - [Impractical 1](Monday/Practicals/Practical 1/Impractical_1.html) -->
     - [Practical 1](Monday/Practicals/Practical 1/Practical_1.html)
     - [Data for practical 1](Monday/Practicals/Practical 1/data.zip)
     
 
 - Part 2: Text preprocessing
     - [Lecture 2](Monday/Lectures/Lecture 2/Lecture_2.html)
-    - [Lecture 2 Handout](Monday/Lectures/Lecture 2/Lecture_2_Handout.pdf)
-    - [Impractical 2](Monday/Practicals/Practical 2/Impractical_2.html)
+    <!-- - [Lecture 2 Handout](Monday/Lectures/Lecture 2/Lecture_2_Handout.pdf) -->
+    <!-- - [Impractical 2](Monday/Practicals/Practical 2/Impractical_2.html) -->
     - [Practical 2](Monday/Practicals/Practical 2/Practical_2.html)
     - [Data for practical 2](Monday/Practicals/Practical 2/data.zip)
     - [Data (lecture and practical)](Monday/Practicals/Practical 2/Data (lecture and practical).zip)
