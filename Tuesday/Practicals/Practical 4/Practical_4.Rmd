@@ -97,7 +97,7 @@ dtm <- as.data.frame(as.matrix(dtm))
 
 The tidytext package contains 4 general purpose lexicons in the sentiments dataset.
 
-AFINN - listing of english words rated for valence between -5 and +5
+afinn - listing of English words rated for valence between -5 and +5
 
 bing - listing of positive and negative sentiment
 
@@ -214,7 +214,7 @@ taylor_swift_lyrics[61:132,] %>% ggplot() +
 
 ---
 
-10. **Using the code you wrote above, below we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+10. **Using the code you wrote above, below we create a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
 
 ---
 
@@ -330,13 +330,13 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
-12. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
+12. **Load the `computer_531` dataframe you created at the very end of the first practical**
 
 ---
 
 ```{r 12, message = FALSE, warning = FALSE, include = TRUE}
 
-computer_531 <- read.csv("computer_531.csv")
+computer_531 <- read.csv("../../../Monday/Practicals/Practical 1/computer_531.csv")
 
 ```
 

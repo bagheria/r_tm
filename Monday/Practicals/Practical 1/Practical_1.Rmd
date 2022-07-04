@@ -34,11 +34,12 @@ library(plyr)      # for data manipulation
 library(magrittr)  # for pipes
 library(tidyverse) # for tidy data and pipes
 library(ggplot2)   # for visualization
-#library(xlsx)      # for working with excel files
-library(readxl)
+#library(xlsx)      
+#library(readxl)    
+library(openxlsx)  # for working with excel files
 library(qdap)      # provides parsing tools for preparing transcript data
 library(wordcloud) # to create pretty word clouds
-library(stringr)
+library(stringr)   # for working with regular expressions
 ```
 
 Before starting the exercises, you need to set your working directory to your Practicals folder (or create a project folder). To this end, you can either create a project in RStudio and move the Rmd and data files to the project folder, or you can use the following line instead of creating a new project:
@@ -54,21 +55,21 @@ Before starting the exercises, you need to set your working directory to your Pr
 
 --- 
 
-1. **Use the `read.xlsx` function from the `xlsx` package to read the `blog-gender-dataset.xlsx` file:**
+1. **Use the `read.xlsx` function from the `openxlsx` package to read the `blog-gender-dataset.xlsx` file. Alternatively, you can use the `read.xlsx` function from the `xlsx` package or the `read_excel` function from the `readxl` package.**
 
 ---
 
 The dataset is already located in the practical folder. You can also find it online from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#datasets)
 
 ```{r 1, include = TRUE}
-blog_gender_data <- read_excel("blog-gender-dataset.xlsx", 1) %>% 
-  select(blog, gender)
+blog_gender_data <- read.xlsx("blog-gender-dataset.xlsx", 1)%>% 
+    select(blog, gender)
 
 ```
 
 ---
 
-2. **Randomly sample 1000 of the blogs into a new variable and name it `blog_gender_1000`. Hint: use the `sample_n` function.**
+2. **Randomly sample 1000 of the blogs into a new variable and name it `blog_gender_1000`. Hint: use the `sample_n` function. Convert the object to a tibble.**
 
 ---
 
@@ -82,7 +83,8 @@ To learn more about the application of a function or feature in R, you can use o
 ```{r 2, include = TRUE}
 set.seed(123)
 blog_gender_1000 <- sample_n(blog_gender_data, 1000)
-
+#blog_gender_1000 <- slice_sample(blog_gender_data, n = 1000) #same as the line above
+blog_gender_1000 <- as_tibble(blog_gender_1000)
 ```
 
 ---
@@ -92,7 +94,7 @@ blog_gender_1000 <- sample_n(blog_gender_data, 1000)
 ---
 
 ```{r 3, include = TRUE}
-head(blog_gender_1000)
+head(blog_gender_1000)    
 tail(blog_gender_1000)
 # View(blog_gender_1000)
 
@@ -109,7 +111,7 @@ The `%$%` pipe *exposes* the listed dimensions of a dataset, such that we can re
 
 ```{r 4, include = TRUE, warning = FALSE}
 set.seed(123)
-blog_gender_1000 %$% wordcloud(blog, min.freq = 20, max.words = 50, random.order = FALSE,
+blog_gender_1000 %$% wordcloud(blog, min.freq = 10, max.words = 50, random.order = FALSE,
                                colors = brewer.pal(8, "Dark2"))
 
 ```
@@ -121,16 +123,15 @@ blog_gender_1000 %$% wordcloud(blog, min.freq = 20, max.words = 50, random.order
 
 ---
 
-5. **Use the `read.csv` function to read the `IMDB Dataset.csv` file:**
+5. **Use the `read.csv` function to read the `IMDB Dataset.csv` file. Convert the object into a tibble.**
 
 ---
 
 IMDB dataset contains 50K movie reviews for natural language processing or Text analytics. You can also access the dataset from the [Kaggle website](https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews).
 
 ```{r 5, include = TRUE, warning = FALSE}
-
 imdb_data <- read_csv("IMDB Dataset.csv")
-
+imdb_data <- as_tibble(imdb_data)
 ```
 
 ---
@@ -155,12 +156,12 @@ tail(imdb_data)
 ```{r 7, include = TRUE, warning = FALSE}
 set.seed(123)
 imdb_500 <- ddply(imdb_data, "sentiment", .fun = function(x) {sample_n(x, size = 250)})
-
+#imdb_500 <- ddply(imdb_data, "sentiment", .fun = function(x) {slice_sample(x, n = 250)})
 ```
 
 ---
 
-8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
+8. **Plot the word clouds of positive and negative reviews in your sample separately and compare the visualizations.**
 
 ---
 
@@ -244,7 +245,7 @@ computer_data <- readLines("computer.txt")
 
 ---
 
-12. **Convert the data to a dataframe.**
+12. **Convert the data to a dataframe and name it `computer_531`.**
 
 ---
 
@@ -254,7 +255,7 @@ computer_531 <- data.frame(computer_data)
 ```
 
 
-As you may have noticed, here, we worked only with dataframes. In addition to dataframes we will also use `VCorpus` data type. 
+As you may have noticed, here, we worked only with tibbles and dataframes. In addition to these, we will also use `VCorpus` data type. 
 
 ---
 
@@ -282,6 +283,7 @@ tail(computer_531)
 # using regular expressions
 rm(list = ls()[grep("data", ls())])
 rm(list = ls()[grep("^fre", ls())])
+gc() # "garbage collector" to free up memory of removed variables
 
 # or
 # rm(blog_gender_data, computer_data, frequent_terms_pos, frequent_terms_neg, imdb_data)
@@ -312,7 +314,7 @@ tibble(genres, nr_genres)
 
 ---
 
-16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Comedy". Hint: Set the `value` in the `grep` function equal to `TRUE`**
+16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Comedy". Hint: Set the `value` argument in the `grep` function equal to `TRUE`**
 
 ---
 
@@ -324,7 +326,7 @@ grep("Comedy", imdb_500$review, value = TRUE)
 ```
 
 
-`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
+`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for more complicated regular expression.
 
 ---
 
@@ -350,7 +352,7 @@ str_extract(blog_gender_1000[1:20,]$blog, '\\b[A-Z]+\\b')
 
 ---
 
-18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there are more than one match. Use either of these functions to check if there is fully capitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
+18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there is more than one match. Use either of these functions to check if there are fully capitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
 
 ---
 
@@ -421,7 +423,7 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 
 ---
 
-22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
+22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero. Save the resulting object as a csv. file and name it `computer_531.csv`**
 
 ---
 
