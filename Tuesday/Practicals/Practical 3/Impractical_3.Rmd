@@ -1,5 +1,5 @@
 ---
-title: "Impractical 3: Text as features: Text classification"
+title: "Practical 3: Text as features: Text classification"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
@@ -13,7 +13,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Impractical_3.html
+    pandoc_args: --output=Practical_3.html
 ---
 
 # Introduction
@@ -32,7 +32,7 @@ library(tidyverse)
 library(tm)
 library(dplyr)
 library(e1071)
-# install.packages(SnowballC)
+# install.packages("SnowballC")
 
 ```
 
@@ -56,7 +56,22 @@ library(e1071)
 
 ---
 
+```{r 1, include = TRUE}
+
+
+```
+
+---
+
 2. **Inspect the dtm object.**
+
+---
+
+
+```{r 2, include = TRUE}
+
+
+```
 
 ---
 
@@ -64,13 +79,33 @@ library(e1071)
 
 ---
 
+```{r 3, include = TRUE}
+
+
+```
+
+
+---
+
 4. **From the 'caret' package, use the train function with method = 'bayesglm' and fit a model on the dtm object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
+
+---
+
+```{r 4, include = TRUE, warning = FALSE}
+
+
+```
 
 ---
 
 5. **Use the fitted model to predict the outcome on the training data.**
 
 ---
+
+```{r 5, include = TRUE, warning = FALSE}
+
+
+```
 
 Here, you see that the model perfectly predicts the category for our training data.
 
@@ -80,15 +115,27 @@ Here, you see that the model perfectly predicts the category for our training da
 
 ---
 
-7. **Now we want to use a tfidf weighting for creating our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tfidf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.**
+```{r 6, include = TRUE}
+
+
+```
+
+---
+
+7. **Now we want to use a tf-idf weighting to create our dtm object. Remember to remove punctuations, stopwords, numbers and apply the stemming. What is different in this new tf-idf-based dtm? and in your prediction? Repeat the analysis in Q.3 to Q.6 with the new object.**
+
+---
+
+```{r 7, include = TRUE, warning = FALSE}
+
+
+```
 
 ---
 
 # Compare architectures: Naïve Bayes versus SVM
 
----
-
-The data set used in this part of the practical is the BBC News Data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
+The data set used in this part of the practical is the BBC News data set. The raw data set can be downloaded from [here](http://mlg.ucd.ie/datasets/bbc.html).
 It consists of 2225 documents from the BBC news website corresponding to stories in five topical areas from 2004 to 2005. These areas are:
 
 - Business
@@ -102,12 +149,31 @@ It consists of 2225 documents from the BBC news website corresponding to stories
 8. **Load the data set from the data folder and inspect its first rows.**
 
 ---
+```{r 8, include = TRUE, warning = FALSE}
+
+```
+
+---
 
 9. **Find out about the name of the categories and the number of observations in each of them.**
 
 ---
 
-10. **Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, and whitespaces.**
+```{r 9, include = TRUE, warning = FALSE}
+
+```
+
+
+---
+
+10. **Create a document-term matrix for the entire dataset and save the terms with the frequency higher than 10 in a new variable and name it features. In this process, convert the word into lowercase, remove punctuations, numbers, stopwords, whitespaces and clean any other data issues.**
+
+---
+
+```{r 10, include = TRUE, warning = FALSE}
+
+
+```
 
 ---
 
@@ -115,7 +181,21 @@ It consists of 2225 documents from the BBC news website corresponding to stories
 
 ---
 
+```{r 11, include = TRUE, warning = FALSE}
+
+
+```
+---
+
+
 12. **Create separate document-term matrices for the training and the test sets using the features variable as dictionary and convert them into data frames.**
+
+---
+
+```{r 12, include = TRUE, warning = FALSE}
+
+
+```
 
 ---
 
@@ -123,17 +203,48 @@ It consists of 2225 documents from the BBC news website corresponding to stories
 
 ---
 
+```{r 13, include = TRUE, warning = FALSE}
+
+
+```
+
+```{r}
+
+```
+
+---
+
 14. **Show 20 most frequent terms and their frequencies in a bar plot.**
 
 ---
 
-15. **Use the cbind function to add the categories to the train_dtm data and name the column y.**
+```{r 14, include = TRUE}
+
+
+```
+
+---
+
+15. **Use the cbind function to add the categories to the dtm_train data and name the column y.**
+
+---
+
+```{r 15, include = TRUE}
+
+
+```
 
 ---
 
 16. **Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
+
+
+```{r 16, include = TRUE}
+
+
+```
 
 The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.
 
@@ -143,11 +254,39 @@ The predict function allows you to specify whether you want the most probable cl
 
 ---
 
+```{r 17, include = TRUE}
+
+
+```
+
+
+
+---
+
 18. **Now prepare the test data for the models, then check the prediction performances.**
 
 ---
 
+```{r 18, include = TRUE}
+
+
+```
+
+
+```{r svm_test, include = TRUE}
+
+
+```
+
+---
+
 19. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
+
+---
+
+```{r 19, include = TRUE}
+
+```
 
 ---
 

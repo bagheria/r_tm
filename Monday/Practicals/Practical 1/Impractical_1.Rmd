@@ -1,5 +1,5 @@
 ---
-title: "Impractical 1: Processing Textual Data in R"
+title: "Practical 1: Processing Textual Data in R"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
@@ -7,19 +7,24 @@ fontsize: 12pt
 urlcolor: blue
 output: 
   html_document:
+    code_folding: hide
     toc: true
     toc_depth: 1
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Impractical_1.html
+    pandoc_args: --output=Practical_1.html
 ---
 
 # Introduction
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
 Welcome to the first practical of the course "Introduction to Text Mining with R". 
 
-In the practicals we will get hands-on experience with the materials in the lectures by programming in R and completing assignments. In this practical, we will work with different formats of text data, regular expressions and text visualisations.
+In the practicals we will get hands-on experience with the materials in the lectures by programming in R and completing assignments. In this practical, we will work with different formats of text data, regular expressions and text visualizations.
 
 The practicals always start with the packages we are going to use. Be sure to run these lines in your session to load their functions before you continue. If there are packages that you have not yet installed, first install them with `install.packages()`.
 
@@ -29,13 +34,15 @@ library(plyr)      # for data manipulation
 library(magrittr)  # for pipes
 library(tidyverse) # for tidy data and pipes
 library(ggplot2)   # for visualization
-library(xlsx)      # for working with excel files
+#library(xlsx)      
+#library(readxl)    
+library(openxlsx)  # for working with excel files
 library(qdap)      # provides parsing tools for preparing transcript data
 library(wordcloud) # to create pretty word clouds
-
+library(stringr)   # for working with regular expressions
 ```
 
-Before starting the exercises, you need to set your working directory to your Practicals folder (or create a project folder). To this end, you can either create a project in RStudio and move the Rmd and data files to the project forlder, or you can use the following line instead of creating a new project:
+Before starting the exercises, you need to set your working directory to your Practicals folder (or create a project folder). To this end, you can either create a project in RStudio and move the Rmd and data files to the project folder, or you can use the following line instead of creating a new project:
 
 ```{r, message = FALSE, warning = FALSE}
 # setwd("drivename:/folder1/folder2/r_tm/monday/Practicals/")
@@ -48,22 +55,32 @@ Before starting the exercises, you need to set your working directory to your Pr
 
 --- 
 
-1. **Use the `read.xlsx` function from the `xlsx` package to read the `blog-gender-dataset.xlsx` file:**
+1. **Use the `read.xlsx` function from the `openxlsx` package to read the `blog-gender-dataset.xlsx` file. Alternatively, you can use the `read.xlsx` function from the `xlsx` package or the `read_excel` function from the `readxl` package.**
 
 ---
 
 The dataset is already located in the practical folder. You can also find it online from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html#datasets)
 
+```{r 1, include = TRUE}
+
+
+```
+
 ---
 
-2. **Randomly sample 1000 of the blogs into a new variable and name it `blog_gender_1000`. Hint: use the `sample_n` function.**
+2. **Randomly sample 1000 of the blogs into a new variable and name it `blog_gender_1000`. Hint: use the `sample_n` function. Convert the object to a tibble.**
 
 ---
 
 To learn more about the application of a function or feature in R, you can use one of the two following help commands:
 ```{r help, message = FALSE, warning = FALSE}
-help(your_function_name)
-?your_function_name
+# help(your_function_name)
+# ?your_function_name
+
+```
+
+```{r 2, include = TRUE}
+
 
 ```
 
@@ -73,11 +90,25 @@ help(your_function_name)
 
 ---
 
+```{r 3, include = TRUE}
+
+
+```
+
+
+---
+
 4. **`wordcloud` is a function from the `wordcloud` package which plots cool word clouds based on word frequencies in the given dataset. Use this function to plot the top 50 frequent words with minimum frequency of 10. Also use the exposition pipe operator `%$%`.**
 
 ---
 
 The `%$%` pipe *exposes* the listed dimensions of a dataset, such that we can refer to them directly.
+
+```{r 4, include = TRUE, warning = FALSE}
+
+
+```
+
 
 ---
 
@@ -85,11 +116,16 @@ The `%$%` pipe *exposes* the listed dimensions of a dataset, such that we can re
 
 ---
 
-5. **Use the `read.csv` function to read the `IMDB Dataset.csv` file:**
+5. **Use the `read.csv` function to read the `IMDB Dataset.csv` file. Convert the object into a tibble.**
 
 ---
 
 IMDB dataset contains 50K movie reviews for natural language processing or Text analytics. You can also access the dataset from the [Kaggle website](https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews).
+
+```{r 5, include = TRUE, warning = FALSE}
+
+
+```
 
 ---
 
@@ -97,15 +133,32 @@ IMDB dataset contains 50K movie reviews for natural language processing or Text 
 
 ---
 
+```{r 6, include = TRUE}
+
+
+```
+
+---
+
 7. **Randomly sample 500 of the reviews into a new variable and name it `imdb_500`. In your sample take care of having equal number of observations from positive and negative reviews. (250 each)**
 
 ---
 
+
+```{r 7, include = TRUE, warning = FALSE}
+
+```
+
 ---
 
-8. **Plot the word coulds of positive and negative reviews in your sample separately and compare the visualizations.**
+8. **Plot the word clouds of positive and negative reviews in your sample separately and compare the visualizations.**
 
 ---
+
+```{r 8, include = TRUE, warning = FALSE}
+
+```
+
 
 ---
 
@@ -113,11 +166,22 @@ IMDB dataset contains 50K movie reviews for natural language processing or Text 
 
 ---
 
+```{r 9, include = TRUE, warning = FALSE}
+
+
+```
+
+
 ---
 
 10. **Using `ggplot`, plot a barchart for each of the freqent terms dataframes.**
 
 ---
+
+```{r 10, include = TRUE, warning = FALSE}
+
+
+```
 
 Package `ggplot2` offers far greater flexibility in data visualization than the standard plotting devices in `R`. However, it has its own language, which allows you to easily expand graphs with additional commands. To make these expansions or layers clearly visible, it is advisable to use the plotting language conventions. All ggplot2 documentation can be found at [http://docs.ggplot2.org/current/](http://docs.ggplot2.org/current/)
 
@@ -133,20 +197,35 @@ Package `ggplot2` offers far greater flexibility in data visualization than the 
 
 `Computer.txt` is an annotated dataset for the purpose of aspect-based sentiment analysis. You can find it from [here](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html).
 
+```{r 11, include = TRUE, warning = FALSE}
+
+
+```
 
 ---
 
-12. **Convert the data to a dataframe.**
+12. **Convert the data to a dataframe and name it `computer_531`.**
 
 ---
 
-As you may have noticed, here, we worked only with dataframes. In addition to dataframes we will also use `VCorpus` data type. 
+```{r 12, include = TRUE, warning = FALSE}
+
+
+```
+
+
+As you may have noticed, here, we worked only with tibbles and dataframes. In addition to these, we will also use `VCorpus` data type. 
 
 ---
 
 13. **Use the `head` and `tail` functions to take a look at the dataset.**
 
 ---
+
+```{r 13, include = TRUE}
+
+
+```
 
 ---
 
@@ -158,60 +237,118 @@ As you may have noticed, here, we worked only with dataframes. In addition to da
 
 ---
 
----
+```{r 14, include = TRUE}
 
-15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action", "Comedy", "Drama". Also include the lower case of the words in your seach.**
-
----
+```
 
 ---
 
-16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Action". Hint: Set the `value` in the `grep` function equal to `TRUE`**
+15. **Use regular expressions to find the number of reviews in `imdb_500` that contain words "Action" or "action", "Comedy" or "comedy", and "Drama" or "drama". (each genre separately)**
 
 ---
 
-`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for a more complicated regular expression.
+
+```{r 15, include = TRUE}
+
+
+```
 
 ---
 
-17. **Use the `regexpr` function to check if there is a fully campitalized word in each of the first 20 blogs in the `blog_gender_1000` data.**
+16. **Use regular expressions to find the reviews in `imdb_500` that contain word "Comedy". Hint: Set the `value` argument in the `grep` function equal to `TRUE`**
 
 ---
+
+```{r 16, include = TRUE}
+
+
+```
+
+
+`grep()` and the `grepl()` functions have some limitations. These functions tell you which strings in a character vector match a certain pattern but they don’t tell you where exactly the match occurs or what the match is for more complicated regular expression.
+
+---
+
+17. **Use the `regexpr` function to check if there is a fully capitalized word in each of the first 20 blogs in the `blog_gender_1000` data.**
+
+---
+
+```{r 17, include = TRUE}
+
+
+```
 
 The regexpr() function gives you the (a) index into each string where the match begins and the (b) length of the match for that string. 
 
 The `str_extract` function from `stringr` is also a useful function for this purpose:
 
+```{r str_extract, include = TRUE}
+
+
+```
 
 ---
 
-18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there are is more than one match. Use either of thesse functions to check if there is fully campitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
+18. **`regexpr` and `str_extract` only give you the first match of the string (reading left to right). On the other hand, `gregexpr` and `str_match_all` will give you all of the matches in a given string if there is more than one match. Use either of these functions to check if there are fully capitalized words in each of the first 10 blogs in the `blog_gender_1000` data.**
 
 ---
 
----
+```{r 18, include = TRUE}
 
-19. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginging of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
 
----
-
-20. **Add a new column to `computer_531` and name it aspect_sentiment. Fill this column for the entire data with the command you found in the previous question. **
+```
 
 ---
 
----
-
-21. **Now remove the sentiment scores from aspects. Add the only-aspect to another column to `computer_531` and name it `aspects`.**
+19. **Now we want to process the `computer_531` data and separate aspects and sentiments for each record. First, use regular expression to extract the characters at the beginning of each line until `##`. Apply this only for the first 20 reviews in data. Use `str_extract` or `gsub` function.**
 
 ---
+
+```{r 19, include = TRUE}
+
+
+```
+
+---
+
+20. **Add two new columns to `computer_531` and name them aspect_sentiment and review. Fill the `aspect_sentiment` column for the dataframe with the command you found in the previous question. In the `review` column, only keep the review text for each line in the dataframe.**
+
+---
+
+```{r 20, include = TRUE}
+
+
+```
+
+The difference is that sub only replaces the first occurrence of the pattern specified, whereas gsub does it for all occurrences (that is, it replaces globally). sub and gsub perform replacement of the first and all matches respectively.
+
+---
+
+21. **Now remove the sentiment scores from aspects. Add only the aspect to another column to `computer_531` and name it `aspects`.**
+
+---
+
+```{r 21, include = TRUE}
+
+
+```
+
 
 Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspects.
 
 ---
 
-22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero.**
+22. **Create a new column `sentiment` with the values `positive`, `negative` and `neutral`. Set a value `neutral` if there is no aspect in the corresponding column or the sum of scores is equal to zero. Save the resulting object as a csv. file and name it `computer_531.csv`**
 
 ---
+
+```{r 22, include = TRUE}
+
+```
+
+```{r 23, include = TRUE}
+
+```
 
 ---
 
@@ -219,7 +356,11 @@ Using `unlist(strsplit(string, ","))` gives you back a vector of separated aspec
 
 ---
 
-The primary R functions for dealing with regular expressions are
+- Text mining packages
+
+- Different text file formats
+
+The primary R functions for dealing with regular expressions are:
 
 - `grep()`, `grepl()`: Search for matches of a regular expression/pattern in a character vector
 

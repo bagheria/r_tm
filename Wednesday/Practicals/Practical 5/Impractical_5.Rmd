@@ -1,5 +1,5 @@
 ---
-title: "Impractical 5: Text Clustering and Topic Modeling"
+title: "Practical 5: Text Clustering and Topic Modeling"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
@@ -13,7 +13,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Impractical_5.html
+    pandoc_args: --output=Practical_5.html
 ---
 
 # Introduction
@@ -47,12 +47,27 @@ library(dbscan)
 
 ---
 
+```{r 1, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 2. **First we must preprocess the corpus. Create a document-term matrix from the `news` column of the dataframe. Complete the following preprocessing steps:**
 - convert to lower
 - remove stop words
 - remove numbers
 - remove punctuation
 - convert dtm to a dataframe
+
+---
+
+
+```{r 2, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -64,11 +79,30 @@ library(dbscan)
 
 ---
 
-4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for kmeans. What does the output look like? Also check the cluster centers.**
+```{r 3, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
+4. **Now we can run a k-means clustering algorithm, starting out with three centers. Use the dtm_cut object as the input for `kmeans`. What does the output look like? Also check the cluster centers.**
+
+---
+
+```{r 4, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
 5. **Apply a PCA with 2 components on the distance matrix, and then plot the output of kmeans clustering on using the PCA outputs.**
+
+```{r 5, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -76,7 +110,21 @@ library(dbscan)
 
 ---
 
-7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustring trees (dendrograms).**
+```{r 6, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
+7. **Apply the hierarchical clustering method on the distance matrix with Ward's minimum variance method ("ward.D2"), and complete linkage method ("complete"). Plot the resulting clustering trees (dendrograms).**
+
+---
+
+```{r 7, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -84,8 +132,22 @@ library(dbscan)
 
 ---
 
+```{r 8, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+
+---
+
 9. **From the library dbscan apply the dbscan algorithm on the distance matrix and plot the output with the PCA components. Compare the visualization with the output of previous methods.**
 
+---
+
+```{r 9, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 ---
 
 # Topic Modeling
@@ -98,7 +160,21 @@ Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a
 
 ---
 
-11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilites for each term and topic.**
+```{r 10, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
+11. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilities for each term and topic.**
+
+---
+
+```{r 11, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -106,7 +182,22 @@ Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a
 
 ---
 
+```{r 12, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+
+---
+
 13. **Use the code below to present and save the terms and topics in a wide format.**
+
+---
+
+```{r 13, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -114,7 +205,22 @@ Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a
 
 ---
 
+```{r 14, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+
+---
+
 15. **Besides estimating each topic as a mixture of words, LDA also models each document as a mixture of topics. We can examine the per-document-per-topic probabilities, called “gamma”, with the matrix = "gamma" argument to tidy(). Call this function for your LDA model and save the probabilities in a varibale named lda_documents.**
+
+---
+
+```{r 15, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -122,7 +228,22 @@ Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a
 
 ---
 
+```{r 16, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 17. **Visualise the topic probabilities for example documents using boxplots.**
+
+---
+
+```{r 17, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Impractical 6: Word embedding approaches"
+title: "Practical 6: Word embedding approaches"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
@@ -13,7 +13,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Impractical_6.html
+    pandoc_args: --output=Practical_6.html
 ---
 
 # Introduction
@@ -38,7 +38,7 @@ library(tidytext)
 
 ---
 
-A key idea in the working with text data concerns representing words as numeric quantities. There are a number of ways to go about this, and we have actually already done so. One other method that we want to explore today is word embeddings. Word embedding techniques such as word2vec and GloVe use neural networks approaches to construct word vectors. With these vector representations of words we can see how similar they are to each other, and perform other tasks based on that information. Here are two famous example:
+A key idea in working with text data concerns representing words as numeric quantities. There are a number of ways to go about this, and we have actually already done so. An additional method that we want to explore today is word embeddings. Word embedding techniques such as word2vec and GloVe use neural networks approaches to construct word vectors. With these vector representations of words, we can see how similar they are to each other, and perform other tasks based on that information. Here are two famous examples:
 
 king - man + woman = queen
 
@@ -97,18 +97,30 @@ head(hp_words)
 2. **Convert the hp_words object into a dataframe and use the unnest_tokens() function from the tidytext package to tokenize the data frame.**
 
 ---
+```{r 2, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
 3. **Remove the stop words from the tokenized data frame.**
 
 ---
+```{r 3, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
-4. **Creates a vocabulary of unique terms using the create_vocabulary() function from the text2vec package and remove the words that they appear less than 5 times.**
+4. **Create a vocabulary of unique terms using the create_vocabulary() function from the text2vec package and remove the words that appear less than 5 times.**
 
 ---
+```{r 4, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -116,29 +128,54 @@ head(hp_words)
 
 ---
 
+```{r 5, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
 6. **Use the GlobalVectors to fit the word vectors on our data set. Choose the embedding size (rank) equal to 50, and the maximum number of co-occurrences to use in the weighting function equal to 10. Train word vectors in 50 iterations if you have the (memory / cpu) resources. Also check the other input arguments of the fit_transform function [here](https://www.rdocumentation.org/packages/text2vec/versions/0.5.1/topics/GlobalVectors).**
 
 ---
 
----
+```{r 6, message = FALSE, warning = FALSE, include = TRUE}
 
-7. **Extract the word vectirs and save the sum of them for further questions.**
 
----
-
----
-
-8. **Find the most similar words to words "harry", "death", and "love". Use the cosine similary measure with the function sim2.**
+```
 
 ---
+
+7. **Extract the word vectors and save the sum of them for further questions.**
+
+---
+
+```{r 7, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
+8. **Find the most similar words to words "harry", "death", and "love". Use the cosine similarity measure with the function sim2. Set the norm argument to "l2".**
+
+---
+
+```{r 8, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
 9. **Add the word vector of "harry" with the word vector of "love" and subtract them from the word vector of "death". What are the top terms in your result?**
 
 ---
+
+```{r 9, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -160,6 +197,12 @@ wiki <- readLines(text8_file, n = 1, warn = FALSE)
 
 ```
 
+
+```{r 10, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
 11. **Use the Wikipedia word embeddings and try the two famous examples below.**
@@ -171,6 +214,10 @@ Paris - France + Germany = Berlin
 
 ---
 
+```{r 11, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 ---
 
 # TensorFlow and Keras
@@ -199,8 +246,10 @@ Then, install the tensorflow R package from GitHub as follows:
 Then, use the install_tensorflow() function to install TensorFlow:
 
 ```{r}
-library(tensorflow)
-# install_tensorflow(package_url = "https://pypi.python.org/packages/b8/d6/af3d52dd52150ec4a6ceb7788bfeb2f62ecb6aa2d1172211c4db39b349a2/tensorflow-1.3.0rc0-cp27-cp27mu-manylinux1_x86_64.whl#md5=1cf77a2360ae2e38dd3578618eacc03b")
+# tensorflow::install_tensorflow(package_url = "https://files.pythonhosted.org/packages/66/8e/19d47c7b9e2629c37fb3b2febb09a45d4ee7055e6bcb7ff790d8604d822c/tensorflow-2.9.1-cp310-cp310-win_amd64.whl")
+# tensorflow::install_tensorflow(version = "2.9.1", method = "conda", envname = "r-reticulate") # in case line 312 doesn't work
+
+library(tensorflow) 
 
 ```
 
@@ -240,23 +289,23 @@ The Keras R interface uses the TensorFlow backend engine by default. This will p
 
 # Sentiment classification with pre-trained word vectors
 
-Now we have TensorFlow and Keras ready for fine-tuning pre-trained word embeddings for sentiment classification of movie reviews. 
+Now we have TensorFlow and Keras ready for fine-tuning of pre-trained word embeddings for sentiment classification of movie reviews. 
 
-Rememebr to load the following libraries:
+Remember to load the following libraries:
 ```{r}
 library(keras)
 ```
 
 ---
 
-12. **For this purpose, we want to use [GloVe](https://nlp.stanford.edu/projects/glove/) pretrained word vectors. In the data folder you find these word vectors which were trained on Wikipedia 2014 and Gigaword 5 containing 6B tokens, 400K vocab, uncased, 50d, 100d, 200d, & 300d vectors. You can also manually download them or use the code below for this purpose.**
+12. **For this purpose, we want to use [GloVe](https://nlp.stanford.edu/projects/glove/) pretrained word vectors. In the data folder you find these word vectors which were trained on Wikipedia 2014 and Gigaword Fifth Edition containing 6B tokens, 400K vocab, uncased, 50d, 100d, 200d, & 300d vectors. You can also manually download them or use the code below for this purpose.**
 
 ---
 
 ```{r 12, message = FALSE, warning = FALSE, include = TRUE}
-# Download Glove vectors if necessary
+# Download Glove vectors if necessary and save them in your data folder
 # if (!file.exists('glove.6B.zip')) {
-#   download.file('https://nlp.stanford.edu/data/glove.6B.zip',destfile = 'glove.6B.zip')
+#   download.file('https://nlp.stanford.edu/data/glove.6B.zip',destfile = 'data/glove.6B.zip')
 #   unzip('glove.6B.zip')
 # }
 
@@ -264,15 +313,25 @@ library(keras)
 
 ---
 
-13. **Load the pre-traind word vectors from the file 'glove.6B.300d.txt' (if you have memory issues load the file 'glove.6B.50d.txt' instead).**
+13. **Load the pre-trained word vectors from the file 'glove.6B.300d.txt' (if you have memory issues load the file 'glove.6B.50d.txt' instead).**
 
 ---
 
+```{r 13, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
-14. **IMDB movie reviews is a labeled data set available with the text2vec package. This data set consists of 5000 IMDB movie reviews, specially selected for sentiment analysis. The sentiment of the reviews is binary, meaning an IMDB rating < 5 results in a sentiment score of 0, and a rating >=7 has a sentiment score of 1. No individual movie has more than 30 reviews. Load this data set and convert that to a dataframe.**
+14. **IMDB movie reviews is a labeled data set available in the text2vec package. This data set consists of 5000 IMDB movie reviews, specially selected for sentiment analysis. The sentiment of the reviews is binary, meaning an IMDB rating < 5 results in a sentiment score of 0, and a rating >=7 has a sentiment score of 1. No individual movie has more than 30 reviews. Load this data set and convert that to a dataframe.**
 
 ---
+
+```{r 14, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -280,17 +339,31 @@ library(keras)
 
 ---
 
+```{r 15, message = FALSE, warning = FALSE, include = TRUE}
+
+```
+
 ---
 
 16. **Use the text_tokenizer function from keras and tokenize the imdb review data using a maximum of 10000 words.**
 
 ---
 
+```{r 16, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
-17. **Transform each text in texts in a sequence of integers and get indices instead of words, later pad the sequence.**
+17. **Transform each text in `movie_review$review` to a sequence of integers and get indices instead of words, later pad the sequence.**
 
 ---
+
+```{r 17, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -298,11 +371,21 @@ library(keras)
 
 ---
 
+```{r 18, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
 19. **Join the dataframe of indices of words from the IMDB reviews with GloVe pre-trained word vectors.**
 
 ---
+
+```{r 19, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -310,6 +393,10 @@ library(keras)
 
 ---
 
+```{r 20, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -317,17 +404,38 @@ library(keras)
 
 ---
 
+```{r 21, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
 22. **Compile the model with an 'adam' optimizer, and the binary_crossentropy loss. You can choose accuracy or AUC for the metrics.**
 
 ---
 
+```{r 22, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 ---
 
 23. **Fit the model with  5 or 10 epochs (iterations), batch_size = 32, and validation_split = 0.2. Check the training performance versus the validation performance.**
 
 ---
+
+```{r 23, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+```{r}
+
+
+```
+
 
 ---
 

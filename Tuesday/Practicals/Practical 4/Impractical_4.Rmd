@@ -1,5 +1,5 @@
 ---
-title: "Impractical 4: Sentiment analysis"
+title: "Practical 4: Sentiment analysis"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
@@ -13,7 +13,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    pandoc_args: --output=Impractical_4.html
+    pandoc_args: --output=Practical_4.html
 ---
 
 # Introduction
@@ -46,6 +46,13 @@ library(rpart.plot)
 
 ---
 
+```{r 1, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 2. **First we must preprocess the corpus. Create a document-term matrix from the `lyrics` column of the `ts` data frame. Complete the following preprocessing steps:**
 - convert to lower
 - remove stop words
@@ -54,9 +61,23 @@ library(rpart.plot)
 
 ---
 
+
+```{r 2, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 3. **Inspect the dtm object and convert it to a dataframe.**
 
 ---
+
+```{r 3, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
 
 ---
 
@@ -68,7 +89,7 @@ library(rpart.plot)
 
 The tidytext package contains 4 general purpose lexicons in the sentiments dataset.
 
-AFINN - listing of English words rated for valence between -5 and +5
+afinn - listing of English words rated for valence between -5 and +5
 
 bing - listing of positive and negative sentiment
 
@@ -78,9 +99,21 @@ loughran - list of sentiment words for accounting and finance by category (Negat
 
 ---
 
+```{r 4, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 5. **The afinn_sentiments has the rating for valence between -5 and +5, while the bing_sentiments contains listing of positive and negative sentiment. Add a column to `bing_sentiments` called `score`. This column should hold a "1" for positive words and "-1" for negative words.**
 
 ---
+
+```{r 5, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -92,7 +125,21 @@ loughran - list of sentiment words for accounting and finance by category (Negat
 
 ---
 
+```{r 6, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 7. **To calculate a score for each lyric, multiply your dtm object by the scoring dataframe.**
+
+---
+
+```{r 7, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -100,15 +147,53 @@ loughran - list of sentiment words for accounting and finance by category (Negat
 
 ---
 
+```{r 8, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 9. **Plot the bing sentiment scores for each lyric.**
 
 ---
 
-10. **Using the code you wrote above, below we made a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+```{r 9, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
+10. **Using the code you wrote above, below we create a function that gets 1) a vector of texts, and 2) a sentiment dictionary (i.e. a dataframe with words and scores), and returns a vector of sentiment scores for each text. Use this function to repeat your analysis with the `afinn` sentiment dictionary.**
+
+---
+
+```{r 10, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+```{r 10+1, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+```{r 10+2, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
 11. **Compare the bing and afinn dictionaries by finding out which the most and least positive Taylor Swift album is. You can also plot the sentiments for albums.**
+
+---
+
+```{r 11, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -117,7 +202,13 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
-12. **Load the final `computer_531` dataframe from the first practical and  to read data from the 'computer.txt' file.**
+12. **Load the `computer_531` dataframe you created at the very end of the first practical**
+
+---
+
+```{r 12, message = FALSE, warning = FALSE, include = TRUE}
+
+```
 
 ---
 
@@ -125,7 +216,20 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
+```{r 13, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 14. **Create a confusion matrix, and calculate Accuracy, precision, recall and F1 measures for the output of the bing dictionary.**
+
+---
+
+```{r 14, message = FALSE, warning = FALSE, include = TRUE}
+
+```
 
 ---
 
@@ -133,7 +237,20 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
+```{r 15, message = FALSE, warning = FALSE, include = TRUE}
+
+```
+
+---
+
 16. **From the `rpart` package, we want to build a tree on this dataset to predict sentiments. For this purpose, first prepare your data by doing preprocessing on reviews, converting to dtm and creating training and test sets.**
+
+---
+
+```{r 16, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
@@ -141,13 +258,32 @@ In this part of the practical, we will do some sentiment analysis on computer pr
 
 ---
 
+```{r 17, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
+
+---
+
 18. **Check the performance of the tree on your training set.**
+
+---
+
+```{r 18, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 ---
 
 19. **Check the performance of the tree on the test set, and compare it with the training performance.**
 
 ---
+
+```{r 19, message = FALSE, warning = FALSE, include = TRUE}
+
+
+```
 
 Here you found that while decision trees could outperform a simple dictionary-based method, they are not very good with high dimensional data such as text. If you have some time left try a Random Forest, naive Bayes, or SVM to compare the performance. They will perform better, but you will lose interpretability!
 
