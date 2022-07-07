@@ -1,5 +1,5 @@
 ---
-title: "Practical 3: Text as features: Text classification"
+title: "Impractical 3: Text as features: Text classification"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial

@@ -1,5 +1,5 @@
 ---
-title: "Practical 1: Processing Textual Data in R"
+title: "Impractical 1: Processing Textual Data in R"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
