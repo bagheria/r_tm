@@ -199,7 +199,7 @@ If all fails and you have insufficient rights to your machine, the following web
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Practicals are walkthrough files that guide you through the exercises, use the show/hide code in front of each question when you feel you need a tip.
 
 Here you will find the materials for Monday:
 
@@ -232,21 +232,21 @@ Here you will find the materials for Monday:
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Practicals are walkthrough files that guide you through the exercises, use the show/hide code in front of each question when you feel you need a tip.
 
 Here you will find the materials for Tuesday:
 
 - Part 3: Text representation & classification
     - [Lecture 3](Tuesday/Lectures/Lecture 3/Lecture_3.html)
     - [Lecture 3 Handout](Tuesday/Lectures/Lecture 3/Lecture_3_Handout.pdf)
-    - [Impractical 3](Tuesday/Practicals/Practical 3/Impractical_3.html)
+    <!-- - [Impractical 3](Tuesday/Practicals/Practical 3/Impractical_3.html) -->
     - [Practical 3](Tuesday/Practicals/Practical 3/Practical_3.html)
     - [Data for practical 3](Tuesday/Practicals/Practical 3/news_dataset.zip)
 
 - Part 4: Sentiment analysis
     - [Lecture 4](Tuesday/Lectures/Lecture 4/Lecture_4.html)
     - [Lecture 4 Handout](Tuesday/Lectures/Lecture 4/Lecture_4_Handout.pdf)
-    - [Impractical 4](Tuesday/Practicals/Practical 4/Impractical_4.html)
+    <!-- - [Impractical 4](Tuesday/Practicals/Practical 4/Impractical_4.html) -->
     - [Practical 4](Tuesday/Practicals/Practical 4/Practical_4.html)
     - [Data for practical 4](Tuesday/Practicals/Practical 4/data.zip)
 
@@ -263,21 +263,21 @@ Here you will find the materials for Tuesday:
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Practicals are walkthrough files that guide you through the exercises, use the show/hide code in front of each question when you feel you need a tip.
 
 Here you will find the materials for Wednesday:
 
-- Part 5: Feature selection in text
+- Part 5: Feature selection & text clustering
     - [Lecture 5](Wednesday/Lectures/Lecture 5/Lecture_50.html)
     - [Lecture 5 Handout]()
-    - [Impractical 5]()
+    <!-- - [Impractical 5]() -->
     - [Practical 5]()
     - [Data for practical 5]()
     
-- Part 6: Text clustering & topic modeling
+- Part 6: Topic modeling
     - [Lecture 6](Wednesday/Lectures/Lecture 5/Lecture_5.html)
     - [Lecture 6 Handout](Wednesday/Lectures/Lecture 5/Lecture_5_Handout.pdf)
-    - [Impractical 6](Wednesday/Practicals/Practical 5/Impractical_5.html)
+    <!-- - [Impractical 6](Wednesday/Practicals/Practical 5/Impractical_5.html) -->
     - [Practical 6](Wednesday/Practicals/Practical 5/Practical_5.html)
     - [Data for practical 6](Wednesday/Practicals/Practical 5/data.zip)
 
@@ -296,20 +296,20 @@ Here you will find the materials for Wednesday:
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Practicals are walkthrough files that guide you through the exercises, use the show/hide code in front of each question when you feel you need a tip.
 
 Here you will find the materials for Thursday:
 
 - Part 7: Word embedding
     - [Lecture 7](Wednesday/Lectures/Lecture 6/Lecture_6.pdf)
-    - [Impractical 7](Wednesday/Practicals/Practical 6/Impractical_6.html)
+    <!-- - [Impractical 7](Wednesday/Practicals/Practical 6/Impractical_6.html) -->
     - [Practical 7](Wednesday/Practicals/Practical 6/Practical_6.html)
     - [Data for practical 7](Wednesday/Practicals/Practical 6/data.zip)
 
-- Part 8: Neural networks and text mining applications
+- Part 8: Deep learning for text
     - [Lecture 8](Tuesday/Lectures/Lecture 4/Lecture_4.html)
     - [Lecture 8 Handout](Tuesday/Lectures/Lecture 4/Lecture_4_Handout.pdf)
-    - [Impractical 8](Tuesday/Practicals/Practical 4/Impractical_4.html)
+    <!-- - [Impractical 8](Tuesday/Practicals/Practical 4/Impractical_4.html) -->
     - [Practical 8](Tuesday/Practicals/Practical 4/Practical_4.html)
     - [Data for practical 8](Tuesday/Practicals/Practical 4/data.zip)
 
