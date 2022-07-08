@@ -3,11 +3,15 @@ title: "Introduction"
 author: "Ayoub Bagheri"
 subtitle: Introduction to Text Mining with R
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  html_document:
+    number_sections: no
+    toc: yes
+    toc_depth: 5
+    toc_float: yes
   beamer_presentation: default
-  ioslides_presentation:
-    logo: logo.png
-    smaller: yes
-    widescreen: no
 ---
 
 ```{r, include=FALSE}
@@ -216,6 +220,11 @@ include_graphics("img/page5_person3.png")
 
 - What are the challenges they encounter in working with text?
 
+<div style="float: left; width:90%">
+```{r, echo=FALSE, fig.align='center', out.width="90%"}
+include_graphics("img/q1.jpg")
+```
+</div>
 
 <!-- # Challenges with Text Data -->
 
@@ -251,7 +260,7 @@ include_graphics("img/page5_person3.png")
 
 
 
-## Language is hard
+## Language is hard!
 
 - Different things can mean more or less the same ("data science" vs. "statistics")
 - Context dependency ("You have very nice shoes");
@@ -291,7 +300,7 @@ include_graphics("img/page5_person3.png")
 <!-- ``` -->
 
 
-## Language is hard
+## Language is hard!
 
 - We won't solve linguistics ...
 - In spite of the problems, text mining can be quite effective!
@@ -472,6 +481,13 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 
 <!-- <br> -->
 <!-- Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5 -->
+
+## 10-minute break
+
+<div align="center">
+<br>
+<img src="img/Coffee.png" width=200>
+</div>
 
 # Regular Expressions
 
