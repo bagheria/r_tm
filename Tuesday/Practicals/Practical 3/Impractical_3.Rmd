@@ -18,11 +18,11 @@ output:
 
 # Introduction
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning = FALSE}
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
+Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them.
 
 In this practical we are going to use the following packages:
 
@@ -30,10 +30,7 @@ In this practical we are going to use the following packages:
 library(caret)
 library(tidyverse)
 library(tm)
-library(dplyr)
 library(e1071)
-# install.packages(SnowballC)
-
 ```
 
 ---
@@ -100,6 +97,10 @@ It consists of 2225 documents from the BBC news website corresponding to stories
 ---
 
 8. **Load the data set from the data folder and inspect its first rows.**
+
+Note that the loaded data set object is called `df_final`.
+
+You can also take a subset (e.g. 20% of the original data set) to reduce computational time for the models.
 
 ---
 

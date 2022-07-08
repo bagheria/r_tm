@@ -18,11 +18,11 @@ output:
 
 # Introduction
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning = FALSE}
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them with using a feature selection method.
+Welcome to the third practical of the course "Introduction to Text Mining with R". In this practical we will start with creating a pipeline for text classification using simple training and test sets. In the second part of the practical, we will train machine learning techniques on a news dataset and we will compare them.
 
 In this practical we are going to use the following packages:
 
@@ -30,10 +30,7 @@ In this practical we are going to use the following packages:
 library(caret)
 library(tidyverse)
 library(tm)
-library(dplyr)
 library(e1071)
-# install.packages("SnowballC")
-
 ```
 
 ---
@@ -223,11 +220,16 @@ It consists of 2225 documents from the BBC news website corresponding to stories
 
 8. **Load the data set from the data folder and inspect its first rows.**
 
+Note that the loaded data set object is called `df_final`.
+
 ---
 ```{r 8, include = TRUE, warning = FALSE}
 load("data/news_dataset.rda")
 head(df_final)
 
+#can take a subset (e.g. 20% of the original data set) to reduce computational time
+set.seed(123)
+df_final <- sample_frac(df_final, 0.2)
 ```
 
 ---
@@ -251,9 +253,6 @@ table(df_final$Category)
 ---
 
 ```{r 10, include = TRUE, warning = FALSE}
-## set the seed to make your partition reproducible
-set.seed(123)
-
 corpus <- Corpus(VectorSource(df_final$Content))
 
 # standardize to lowercase
@@ -291,6 +290,8 @@ head(features)
 ---
 
 ```{r 11, include = TRUE, warning = FALSE}
+## set the seed to make your partition reproducible
+set.seed(123)
 
 train_idx <- createDataPartition(df_final$Category, p=0.80, list=FALSE)
 # set for the original raw data 
@@ -301,8 +302,8 @@ train2 <- corpus[train_idx]
 test2 <- corpus[-train_idx]
 
 ```
----
 
+---
 
 12. **Create separate document-term matrices for the training and the test sets using the features variable as dictionary and convert them into data frames.**
 
@@ -316,7 +317,6 @@ dtm_train <- as.data.frame(as.matrix(dtm_train))
 dtm_test <- as.data.frame(as.matrix(dtm_test))
 str(dtm_test)
 
-
 ```
 
 ---
@@ -326,7 +326,6 @@ str(dtm_test)
 ---
 
 ```{r 13, include = TRUE, warning = FALSE}
-
 freq <- colSums(dtm_train)
 
 head(freq, 10)
@@ -384,7 +383,7 @@ dtm_test1<-as.data.frame(dtm_test1)
 ---
 
 
-```{r 16, include = TRUE}
+```{r 16, include = TRUE, warning = FALSE}
 # gc()
 # Naive Bayes with Laplace smoothing
 fit_nb <- naiveBayes(cat~., data=dtm_train1, laplace = 1)
@@ -393,8 +392,6 @@ summary(fit_nb)
 pred_nb_train <- predict(fit_nb, na.omit(dtm_train1))
 fit_nb_table <- table(na.omit(dtm_train1$cat), pred_nb_train, dnn=c("Actual", "Predicted"))
 fit_nb_table
-
-
 ```
 
 The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.
@@ -405,7 +402,7 @@ The predict function allows you to specify whether you want the most probable cl
 
 ---
 
-```{r 17, include = TRUE}
+```{r 17, include = TRUE, warning = FALSE}
 fit_svm <- svm(cat~., data=dtm_train1)
 summary(fit_svm)
 
@@ -414,7 +411,6 @@ fit_svm_table <- table(na.omit(dtm_train1$cat), pred_svm_train, dnn=c("Actual", 
 fit_svm_table
 
 ```
-
 
 
 ---
@@ -432,7 +428,7 @@ fit_nb_test
 ```
 
 
-```{r svm_test, include = TRUE}
+```{r svm_test, include = TRUE, warning = FALSE}
 # prediction on test data
 pred_svm_test <- predict(fit_svm, na.omit(dtm_test1))
 fit_svm_test <- table(na.omit(dtm_test1$cat), pred_svm_test, dnn=c("Actual", "Predicted"))
