@@ -205,7 +205,7 @@ Here you will find the materials for Monday:
 
 - Part 1: Introduction
     - [Lecture 1](Monday/Lectures/Lecture 1/Lecture_1.html)
-    <!-- - [Lecture 1 Handout](Monday/Lectures/Lecture 1/Lecture_1_handout.pdf) -->
+    - [Lecture 1 Handout](Monday/Lectures/Lecture 1/Lecture_1_handout.pdf)
     <!-- - [Impractical 1](Monday/Practicals/Practical 1/Impractical_1.html) -->
     - [Practical 1](Monday/Practicals/Practical 1/Practical_1.html)
     - [Data for practical 1](Monday/Practicals/Practical 1/data.zip)
