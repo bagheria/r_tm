@@ -1,7 +1,7 @@
 ---
 title: "Preprocessing text"
-author: "José de Kruif"
-date: "19 july 2021"
+author: "Mees van Stiphout"
+date: "11 July 2022"
 output:
   beamer_presentation: default
   html_document:
@@ -146,16 +146,6 @@ print (TEXTtokens [1:50])
 wordcloud(TEXTtokens, scale = c(4,.5), min.freq =1, colors = brewer.pal(1, "Dark2"))
 ```
 
-
-<!-- ## Well known Word cloud.... -->
-
-<!-- ```{r fig.width=8, fig.height=5, echo = FALSE} -->
-<!-- include_graphics("Ihaveadream.png") -->
-
-<!-- #img <- readPNG("Ihaveadream.png") -->
-<!-- #grid.raster(img) -->
-<!-- ``` -->
-
 ## Clean text: all words in lower case
 
 ```{r, echo=TRUE}
@@ -236,7 +226,7 @@ print (sum(testtokens2))
 ```{r}
 #Stopwordslist  
   
-Joseesstopwords <- c("the", "a", "an", "and", "i","in", "ïf", "he","she",
+Meesstopwords <- c("the", "a", "an", "and", "i","in", "ïf", "he","she",
                      "him", "should", "or", "we", "no", "over", "only",
                      "could", "to", "of", "it", "is", "that", "this",
                      "was", "/'s", "with","/'t", "as", "'t", "on", "are",
@@ -252,8 +242,8 @@ Joseesstopwords <- c("the", "a", "an", "and", "i","in", "ïf", "he","she",
 
 ## Remove these words:
 ```{r}
-Keynestext <- removeWords(Keynes$clean_content, Joseesstopwords)
-#And store clean text in a new field
+Keynestext <- removeWords(Keynes$clean_content, Meesstopwords)
+#And store clean text in a new column
 Keynes$clean_content <- Keynestext
 ```
 
