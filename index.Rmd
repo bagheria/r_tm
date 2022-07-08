@@ -119,7 +119,7 @@ and follow the guide to run the `R Programming: The basics of programming in R` 
 
 ### System requirements
 
-Bring a laptop computer to the course and make sure that you have full write access and administrator rights to the machine. We will explore programming and compiling in this course. This means that you need full access to your machine. Some corporate laptops come with limited access for their users, we therefore advice you to bring a personal laptop computer, if you have one. 
+Bring a laptop computer to the course and make sure that you have full write access and administrator rights to the machine. We will explore programming and compiling in this course. This means that you need full access to your machine. Some corporate laptops come with limited access for their users, we therefore advise you to bring a personal laptop computer, if you have one. 
 
 ### **1. Install `R`**
 `R` can be obtained [here](https://cran.r-project.org). We won't use `R` directly in the course, but rather call `R` through `RStudio`. Therefore it needs to be installed. 
@@ -199,7 +199,7 @@ If all fails and you have insufficient rights to your machine, the following web
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advice all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
 
 Here you will find the materials for Monday:
 
@@ -232,7 +232,7 @@ Here you will find the materials for Monday:
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advice all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
 
 Here you will find the materials for Tuesday:
 
@@ -263,7 +263,7 @@ Here you will find the materials for Tuesday:
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advice all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
 
 Here you will find the materials for Wednesday:
 
@@ -296,7 +296,7 @@ Here you will find the materials for Wednesday:
 
 ### Materials
 
-We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advice all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
+We adapt the course as we go. To ensure that you work with the latest iteration of the course materials, we advise all course participants to access the materials online. All lectures are in html format. Impractical files contain the exercises, without walkthrough, explanations and solutions. Practicals are walkthrough files that guide you through the exercises.
 
 Here you will find the materials for Thursday:
 
