@@ -1,5 +1,5 @@
 ---
-title: "Practical 6: Word embedding approaches"
+title: "Practical 6: Topic Modeling"
 author: "Ayoub Bagheri"
 date: "Introduction to Text Mining with R"
 mainfont: Arial
@@ -22,528 +22,291 @@ output:
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-Welcome to the last practical of the course "Introduction to Text Mining with R". In this practical, we will apply word embedding approaches. 
-
-In this practical, we are going to use the following packages:
+In this practical, we will apply a topic modeling approach on news articles to cluster them into different gourps. Here, we are going to use the following packages:
 
 ```{r load_packages, message = FALSE, warning = FALSE}
-library(text2vec)
-library(tidyverse)
+library(tm)
 library(tidytext)
+library(dplyr)
+library(proxy)
+library(topicmodels)
+library(ggplot2)
+library(tidyr)
 ```
 
 ---
 
-# Word embeddings
+# Read data
 
 ---
 
-A key idea in working with text data concerns representing words as numeric quantities. There are a number of ways to go about this, and we have actually already done so. An additional method that we want to explore today is word embeddings. Word embedding techniques such as word2vec and GloVe use neural networks approaches to construct word vectors. With these vector representations of words, we can see how similar they are to each other, and perform other tasks based on that information. Here are two famous examples:
-
-king - man + woman = queen
-
-
-Paris - France + Germany = Berlin
-
-
-The first part of the practical leverages the data provided in the harrypotter package. This package supplies the first seven novels in the Harry Potter series. You can load the harrypotter package with the following:
-
-```{r}
-#devtools::install_github("bradleyboehmke/harrypotter")
-library(harrypotter) # Not to be confused with the CRAN palettes package
-```
-
-The aim of [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) is to make your life easier by providing R functions that simplify many common tasks.
-
----
-
-1. **Use the code below to load the first seven novels in the Harry Potter series. View the data sets.**
+1. **The dataset that we are going to use is the BBC dataset from practical 3. This dataset consists of 2225 documents and 5 categories: business, entertainment, politics, sport, and tech. For text clustering and topic modeling, we will ignore the labels but we will use them while evaluating models. Load the Rda file of the news dataset.**
 
 ---
 
 ```{r 1, message = FALSE, warning = FALSE, include = TRUE}
-hp_books <- c("philosophers_stone", "chamber_of_secrets",
-              "prisoner_of_azkaban", "goblet_of_fire",
-              "order_of_the_phoenix", "half_blood_prince",
-              "deathly_hallows")
-
-hp_words <- list(
-  philosophers_stone,
-  chamber_of_secrets,
-  prisoner_of_azkaban,
-  goblet_of_fire,
-  order_of_the_phoenix,
-  half_blood_prince,
-  deathly_hallows
-) %>%
-  # name each list element
-  set_names(hp_books) %>%
-  # convert each book to a data frame and merge into a single data frame
-  map_df(as_tibble, .id = "book") %>%
-  # convert book to a factor
-  mutate(book = factor(book, levels = hp_books)) %>%
-  # remove empty chapters
-  filter(!is.na(value)) %>%
-  # create a chapter id column
-  group_by(book) %>%
-  mutate(chapter = row_number(book))
-
-head(hp_words)
-
+load("data/news_dataset.rda")
+head(df_final)
+# Note that the next chunk (when using `DocumentTermMatrix`) will not work
+# returns error invalid multibyte string 1512
+# Two possible solutions: 
+# 1) Omission of the whole observation
+# df_final <- df_final[-1512,]
+# 2) Omission of the string "\xa315.8m" from that specifc text
+df_final[1512,][2] <- gsub("\xa315.8m", "", df_final[1512,][2])
+# I prefer the second solution
 ```
 
 ---
 
-2. **Convert the hp_words object into a dataframe and use the unnest_tokens() function from the tidytext package to tokenize the data frame.**
+2. **First we must preprocess the corpus. Create a document-term matrix from the `news` column of the dataframe. Complete the following preprocessing steps:**
+- convert to lower
+- remove stop words
+- remove numbers
+- remove punctuation
+- convert dtm to a dataframe
 
 ---
+
+
 ```{r 2, message = FALSE, warning = FALSE, include = TRUE}
-# tokenize the data frame
-hp_words <- as.data.frame(hp_words) %>%
-  unnest_tokens(word, value)
+docs <- Corpus(VectorSource(df_final$Content))
 
-head(hp_words)
-
+dtm <- DocumentTermMatrix(docs,
+           control = list(tolower = TRUE,
+                          removeNumbers = TRUE,
+                          removePunctuation = TRUE,
+                          stopwords = TRUE
+                         ))
+# We remove A LOT of features. R is natively very weak with high dimensional data
+dtm_cut <- removeSparseTerms(dtm,  sparse = 0.93)
+# with sparse = 0.93 the dtm will end up with 359 terms; you can adjust this number based on your available memory
 ```
 
 ---
 
-3. **Remove the stop words from the tokenized data frame.**
+# Topic Modeling
 
 ---
+
+Latent Dirichlet allocation (LDA) is a particularly popular method for fitting a topic model. It treats each document as a mixture of topics, and each topic as a mixture of words. This allows documents to “overlap” each other in terms of content, rather than being separated into discrete groups, in a way that mirrors typical use of natural language.
+
+3. **Use the LDA function from the topicmodels package and train an LDA model with 5 topics with the Gibbs sampling method.**
+
+---
+
 ```{r 3, message = FALSE, warning = FALSE, include = TRUE}
-hp_words <- hp_words %>% 
-  anti_join(stop_words)
+# A LDA topic model with 5 topics; if it takes a lot of time for you to run this change k to 2
+out_lda <- LDA(dtm_cut, k = 5, method= "Gibbs", control = list(seed = 321))
+out_lda
 
-head(hp_words)
 ```
 
 ---
 
-4. **Create a vocabulary of unique terms using the create_vocabulary() function from the text2vec package and remove the words that appear less than 5 times.**
+4. **The tidy() method is originally from the broom package (Robinson 2017), for tidying model objects. The tidytext package provides this method for extracting the per-topic-per-word probabilities, called “beta”, from the LDA model. Use this function and check the beta probabilities for each term and topic.**
 
 ---
+
 ```{r 4, message = FALSE, warning = FALSE, include = TRUE}
-hp_words_ls <- list(hp_words$word) # create list of tokenized text to pass to itoken
-it <- itoken(hp_words_ls, progressbar = FALSE) # create index-tokens
-hp_vocab <- create_vocabulary(it) # create vocabulary of unique terms
-hp_vocab <- prune_vocabulary(hp_vocab, term_count_min = 5) # remove the words with frequency less than 5
-
-hp_vocab
-
+lda_topics <- tidy(out_lda, matrix = "beta")
+lda_topics
 ```
 
 ---
 
-5. **The next step is to create a token co-occurrence matrix (TCM). The definition of whether two words occur together is arbitrary. First create a vocab_vectorizer, then, use a window of 5 for context words to create the TCM.**
+5. **Plot the top 20 terms within each topic. Try to label them and compare your labeling with the original categories in the dataset.**
 
 ---
 
 ```{r 5, message = FALSE, warning = FALSE, include = TRUE}
-# maps words to indices
-vectorizer <- vocab_vectorizer(hp_vocab)
+lda_top_terms <- lda_topics %>%
+  group_by(topic) %>%
+  slice_max(beta, n = 20) %>% # We use dplyr’s slice_max() to find the top 10 terms within each topic.
+  ungroup() %>%
+  arrange(topic, -beta)
 
-# use window of 5 for context words
-hp_tcm <- create_tcm(it, vectorizer, skip_grams_window = 5)
-
-dim(hp_tcm) # inspect dimensions of the TCM
+lda_top_terms %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  scale_y_reordered()
 
 ```
 
+
 ---
 
-6. **Use the GlobalVectors to fit the word vectors on our data set. Choose the embedding size (rank) equal to 50, and the maximum number of co-occurrences to use in the weighting function equal to 10. Train word vectors in 50 iterations if you have the (memory / cpu) resources. Also check the other input arguments of the fit_transform function [here](https://www.rdocumentation.org/packages/text2vec/versions/0.5.1/topics/GlobalVectors).**
+6. **Use the code below to present and save the terms and topics in a wide format.**
 
 ---
 
 ```{r 6, message = FALSE, warning = FALSE, include = TRUE}
-glove <- GlobalVectors$new(rank = 50, x_max = 10) # create the model
-hp_wv_main <- glove$fit_transform(hp_tcm, n_iter = 20, convergence_tol = 0.001) # fit the model to the TCM
+beta_wide <- lda_topics %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>% 
+  mutate(log_ratio21 = log2(topic2 / topic1)) %>% 
+  mutate(log_ratio31 = log2(topic3 / topic1))%>% 
+  mutate(log_ratio41 = log2(topic4 / topic1))%>% 
+  mutate(log_ratio51 = log2(topic5 / topic1))
+
+beta_wide
 
 ```
 
 ---
 
-7. **Extract the word vectors and save the sum of them for further questions.**
+7. **Use the log ratios to visualize the words with the greatest differences between topic 1 and other topics.**
 
 ---
 
 ```{r 7, message = FALSE, warning = FALSE, include = TRUE}
-dim(hp_wv_main) # check the dimensions
+# topic 1 versus topic 2
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio21, n = 10) %>%
+  arrange(term, -log_ratio21)
 
-hp_wv_context <- glove$components # extract components
-dim(hp_wv_context)
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio21, n = 10) %>%
+  arrange(term, -log_ratio21)
 
-# Either word-vectors matrices could work, but the developers of the technique suggest the sum/mean may work better
-hp_word_vectors <- hp_wv_main + t(hp_wv_context) # use the transpose of hp_wv_context to sum
+lda_top_terms12 <- rbind(lda_top_terms1, lda_top_terms2)
 
-dim(hp_word_vectors)
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms12$term <- factor(lda_top_terms12$term, levels = lda_top_terms12$term[order(lda_top_terms12$log_ratio21)])
 
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms12 %>%
+  ggplot(aes(log_ratio21, term, fill = (log_ratio21 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+
+
+# topic 1 versus topic 3
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio31, n = 10) %>%
+  arrange(term, -log_ratio31)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio31, n = 10) %>%
+  arrange(term, -log_ratio31)
+
+lda_top_terms13 <- rbind(lda_top_terms1, lda_top_terms2)
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms13$term <- factor(lda_top_terms13$term, levels = lda_top_terms13$term[order(lda_top_terms13$log_ratio31)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms13 %>%
+  ggplot(aes(log_ratio31, term, fill = (log_ratio31 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+
+
+# topic 1 versus topic 4
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio41, n = 10) %>%
+  arrange(term, -log_ratio41)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio41, n = 10) %>%
+  arrange(term, -log_ratio41)
+
+lda_top_terms14 <- rbind(lda_top_terms1, lda_top_terms2)
+
+lda_top_terms14[1,]$term <- 'SPELLING ERROR!'
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms14$term <- factor(lda_top_terms14$term, levels = lda_top_terms14$term[order(lda_top_terms14$log_ratio41)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms14 %>%
+  ggplot(aes(log_ratio41, term, fill = (log_ratio41 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
+
+
+# topic 1 versus topic 5
+lda_top_terms1 <- beta_wide %>%
+  slice_max(log_ratio51, n = 10) %>%
+  arrange(term, -log_ratio51)
+
+lda_top_terms2 <- beta_wide %>%
+  slice_max(-log_ratio51, n = 10) %>%
+  arrange(term, -log_ratio51)
+
+lda_top_terms15 <- rbind(lda_top_terms1, lda_top_terms2)
+
+# this is for ggplot to understand in which order to plot name on the x axis.
+lda_top_terms15$term <- factor(lda_top_terms15$term, levels = lda_top_terms15$term[order(lda_top_terms15$log_ratio51)])
+
+# Words with the greatest difference in beta between topic 2 and topic 1
+lda_top_terms15 %>%
+  ggplot(aes(log_ratio51, term, fill = (log_ratio51 > 0))) +
+  geom_col(show.legend = FALSE) +
+  scale_y_reordered() +
+  theme_minimal()
 ```
 
 ---
 
-8. **Find the most similar words to words "harry", "death", and "love". Use the cosine similarity measure with the function sim2. Set the norm argument to "l2".**
+8. **Besides estimating each topic as a mixture of words, LDA also models each document as a mixture of topics. We can examine the per-document-per-topic probabilities, called “gamma”, with the matrix = "gamma" argument to tidy(). Call this function for your LDA model and save the probabilities in a varibale named lda_documents.**
 
 ---
 
 ```{r 8, message = FALSE, warning = FALSE, include = TRUE}
-harry <- hp_word_vectors["harry", , drop = F] # extract the row for "harry"
-
-cos_sim_rom <- sim2(x = hp_word_vectors, y = harry, method = "cosine", norm = "l2") # pairwise similarity matrix computation
-head(sort(cos_sim_rom[,1], decreasing = T), 10) # see top 10 most similar words
-
-death <- hp_word_vectors["death", , drop = F]
-
-cos_sim_rom <- sim2(x = hp_word_vectors, y = death, method = "cosine", norm = "l2")
-head(sort(cos_sim_rom[,1], decreasing = T), 10)
-
-love <- hp_word_vectors["love", , drop = F]
-
-cos_sim_rom <- sim2(x = hp_word_vectors, y = love, method = "cosine", norm = "l2")
-head(sort(cos_sim_rom[,1], decreasing = T), 10)
+lda_documents <- tidy(out_lda, matrix = "gamma")
 
 ```
 
 ---
 
-9. **Add the word vector of "harry" with the word vector of "love" and subtract them from the word vector of "death". What are the top terms in your result?**
+9. **Check the topic probabilities for some of the documents (for example documents 1, 1000, 2000, 2225). Also look at the contents of some them.**
 
 ---
 
 ```{r 9, message = FALSE, warning = FALSE, include = TRUE}
-test <- hp_word_vectors["harry", , drop = F] -
-  hp_word_vectors["death", , drop = F] +
-  hp_word_vectors["love", , drop = F]
+lda_documents[lda_documents$document == 1,]
+lda_documents[lda_documents$document == 1000,]
+lda_documents[lda_documents$document == 2000,]
+lda_documents[lda_documents$document == 2225,]
 
-cos_sim_test <- sim2(x = hp_word_vectors, y = test, method = "cosine", norm = "l2")
-head(sort(cos_sim_test[,1], decreasing = T), 10)
+tidy(dtm_cut) %>%
+  filter(document == 2225) %>%
+  arrange(desc(count))
+
+df_final[2225,]$Content
 ```
 
 ---
 
-# Wikipedia word embeddings
+10. **Visualize the topic probabilities for example documents using boxplots.**
 
 ---
-
-10. **Here we want to repeat the same analysis as for Harry Potter novel series with texts from Wikipedia. Start with the code below and train the word vectors using the wiki object.**
-
----
-
-```{r}
-text8_file <- "data/text8/text8"
-if (!file.exists(text8_file)) {
-  download.file("http://mattmahoney.net/dc/text8.zip", "data/text8.zip")
-  unzip("data/text8.zip", files = "text8", exdir = "data/texts_raw/")
-}
-wiki <- readLines(text8_file, n = 1, warn = FALSE)
-
-```
-
 
 ```{r 10, message = FALSE, warning = FALSE, include = TRUE}
-tokens <- space_tokenizer(wiki)
-it <- itoken(tokens, progressbar = FALSE)
-vocab <- create_vocabulary(it)
-vocab <- prune_vocabulary(vocab, term_count_min = 5L)
-vectorizer <- vocab_vectorizer(vocab)
+# reorder titles in order of topic 1, topic 2, etc before plotting
+lda_documents[lda_documents$document %in% c(1, 1000, 2000, 2225),] %>%
+  mutate(document = reorder(document, gamma * topic)) %>%
+  ggplot(aes(factor(topic), gamma)) +
+  geom_boxplot() +
+  facet_wrap(~ document) +
+  labs(x = "topic", y = expression(gamma)) +
+  theme_minimal()
 
-tcm <- create_tcm(it, vectorizer, skip_grams_window = 5L)
-
-glove <- GlobalVectors$new(rank = 50, x_max = 10)
-
-wv_main <- glove$fit_transform(tcm, n_iter = 20, convergence_tol = 0.001)
-wv_context <- glove$components
-word_vectors <- wv_main + t(wv_context)
-```
-
----
-
-11. **Use the Wikipedia word embeddings and try the two famous examples below.**
-
-king - man + woman = queen
-
-
-Paris - France + Germany = Berlin
-
----
-
-```{r 11, message = FALSE, warning = FALSE, include = TRUE}
-queen <- word_vectors["king", , drop = FALSE] -
-  word_vectors["man", , drop = FALSE] +
-  word_vectors["woman", , drop = FALSE]
-queen_cos_sim <- sim2(x = word_vectors, y = queen, method = "cosine", norm = "l2")
-head(sort(queen_cos_sim[,1], decreasing = TRUE), 21) #the word queen has the 21st highest loading
-
-berlin <- word_vectors["paris", , drop = FALSE] -
-  word_vectors["france", , drop = FALSE] +
-  word_vectors["germany", , drop = FALSE]
-berlin_cos_sim <- sim2(x = word_vectors, y = berlin, method = "cosine", norm = "l2")
-head(sort(berlin_cos_sim[,1], decreasing = TRUE), 5)
-```
----
-
-# TensorFlow and Keras
-
-In this part of the practical, we will show an example of loading pre-trained word vectors and fine-tune them for our purpose of sentiment classification for movie reviews. First, we need to install the TensorFlow and Keras packages for R.
-
-The tensorflow package provides code completion and inline help for the [TensorFlow API](https://www.tensorflow.org/api_docs/python/tf/all_symbols) when running within the RStudio IDE. The TensorFlow API is composed of a set of Python modules that enable constructing and executing TensorFlow graphs.
-
-To get started, we need to use the devtools package from CRAN. If you do not have it install it first:
-
-```{r}
-# This line is commented because I already have the package installed!
-# install.packages("devtools")
 
 ```
 
-The aim of devtools is to make package development easier by providing R functions that simplify and expedite common tasks.
-
-Then, install the tensorflow R package from GitHub as follows:
-
-```{r}
-# devtools::install_github("rstudio/tensorflow")
-
-```
-
-Then, use the install_tensorflow() function to install TensorFlow:
-
-```{r}
-# tensorflow::install_tensorflow(package_url = "https://files.pythonhosted.org/packages/66/8e/19d47c7b9e2629c37fb3b2febb09a45d4ee7055e6bcb7ff790d8604d822c/tensorflow-2.9.1-cp310-cp310-win_amd64.whl")
-# tensorflow::install_tensorflow(version = "2.9.1", method = "conda", envname = "r-reticulate") # in case line 312 doesn't work
-
-library(tensorflow) 
-
-```
-
-The provided url just installs the latest tensorflow version, you can also run this line without providing any argument to the install_tensorflow function.
-
-Finally, you can confirm that the installation succeeded with:
-
-```{r}
-tmr <- tf$constant("Text Mining with R!")
-print(tmr)
-
-```
-
-This will provide you with a default installation of TensorFlow suitable for getting started with the tensorflow R package. See the article on installation (https://tensorflow.rstudio.com/installation/) to learn about more advanced options, including installing a version of TensorFlow that takes advantage of Nvidia GPUs if you have the correct CUDA libraries installed.
-
-
-To install the Keras package you first run either of the following lines:
-```{r}
-# install.packages("keras")
-
-```
-
-```{r}
-# devtools::install_github("rstudio/keras")
-
-```
-
-Then, use the install_keras() function to install keras:
-
-```{r}
-# install_keras()
-
-```
-
-The Keras R interface uses the TensorFlow backend engine by default. This will provide you with default CPU-based installations of Keras and TensorFlow. If you want a more customized installation, e.g. if you want to take advantage of NVIDIA GPUs, see the documentation for install_keras() and the article on installation (https://tensorflow.rstudio.com/installation/).
-
-
-# Sentiment classification with pre-trained word vectors
-
-Now we have TensorFlow and Keras ready for fine-tuning of pre-trained word embeddings for sentiment classification of movie reviews. 
-
-Remember to load the following libraries:
-```{r}
-library(keras)
-```
 
 ---
 
-12. **For this purpose, we want to use [GloVe](https://nlp.stanford.edu/projects/glove/) pretrained word vectors. In the data folder you find these word vectors which were trained on Wikipedia 2014 and Gigaword Fifth Edition containing 6B tokens, 400K vocab, uncased, 50d, 100d, 200d, & 300d vectors. You can also manually download them or use the code below for this purpose.**
+# Alternative LDA implementations
 
----
-
-```{r 12, message = FALSE, warning = FALSE, include = TRUE}
-# Download Glove vectors if necessary and save them in your data folder
-# if (!file.exists('glove.6B.zip')) {
-#   download.file('https://nlp.stanford.edu/data/glove.6B.zip',destfile = 'data/glove.6B.zip')
-#   unzip('glove.6B.zip')
-# }
-
-```
-
----
-
-13. **Load the pre-trained word vectors from the file 'glove.6B.300d.txt' (if you have memory issues load the file 'glove.6B.50d.txt' instead).**
-
----
-
-```{r 13, message = FALSE, warning = FALSE, include = TRUE}
-# load glove vectors
-vectors <- data.table::fread('data/glove.6B/glove.6B.300d.txt', data.table = F,  encoding = 'UTF-8')
-colnames(vectors) <- c('word',paste('dim',1:300,sep = '_'))
-# vectors to dataframe
-as_tibble(vectors)
-
-```
-
----
-
-14. **IMDB movie reviews is a labeled data set available in the text2vec package. This data set consists of 5000 IMDB movie reviews, specially selected for sentiment analysis. The sentiment of the reviews is binary, meaning an IMDB rating < 5 results in a sentiment score of 0, and a rating >=7 has a sentiment score of 1. No individual movie has more than 30 reviews. Load this data set and convert that to a dataframe.**
-
----
-
-```{r 14, message = FALSE, warning = FALSE, include = TRUE}
-# load an example dataset from text2vec
-data("movie_review")
-as_tibble(movie_review)
-
-```
-
----
-
-15. **Define the parameters of your keras model with a maximum of 10000 words, maxlen of 60 and word embedding size of 300 (if you had memory problems change the embedding dimension to 50).**
-
----
-
-```{r 15, message = FALSE, warning = FALSE, include = TRUE}
-max_words <- 1e4
-maxlen    <- 60
-dim_size  <- 300
-```
-
----
-
-16. **Use the text_tokenizer function from keras and tokenize the imdb review data using a maximum of 10000 words.**
-
----
-
-```{r 16, message = FALSE, warning = FALSE, include = TRUE}
-# tokenize the input data and then fit the created object
-word_seqs <- text_tokenizer(num_words = max_words) %>%
-  fit_text_tokenizer(movie_review$review)
-```
-
----
-
-17. **Transform each text in `movie_review$review` to a sequence of integers and get indices instead of words, later pad the sequence.**
-
----
-
-```{r 17, message = FALSE, warning = FALSE, include = TRUE}
-# apply tokenizer to the text and get indices instead of words
-# later pad the sequence
-x_train <- texts_to_sequences(word_seqs, movie_review$review) %>%
-  pad_sequences(maxlen = maxlen)
-
-```
-
----
-
-18. **Convert the word indices into a dataframe.**
-
----
-
-```{r 18, message = FALSE, warning = FALSE, include = TRUE}
-# unlist word indices
-word_indices <- unlist(word_seqs$word_index)
-
-# then place them into data.frame 
-dic <- data.frame(word = names(word_indices), key = word_indices, stringsAsFactors = FALSE) %>%
-  arrange(key) %>% .[1:max_words,]
-
-```
-
----
-
-19. **Join the dataframe of indices of words from the IMDB reviews with GloVe pre-trained word vectors.**
-
----
-
-```{r 19, message = FALSE, warning = FALSE, include = TRUE}
-# join the words with GloVe vectors and
-# if word does not exist in GloVe, then fill NA's with 0
-word_embeds <- dic  %>% left_join(vectors) %>% .[,3:302] %>% replace(., is.na(.), 0) %>% as.matrix()
-```
-
----
-
-20. **Extract the outcome variable from the sentiment column in the original dataframe and name it y_train.**
-
----
-
-```{r 20, message = FALSE, warning = FALSE, include = TRUE}
-# extract the output
-y_train <- as.matrix(movie_review$sentiment)
-```
-
----
-
-21. **Use the Keras functional API and create a neural network model as below. Can describe this model?**
-
----
-
-```{r 21, message = FALSE, warning = FALSE, include = TRUE}
-# Use Keras Functional API 
-input <- layer_input(shape = list(maxlen), name = "input")
-
-model <- input %>%
-  layer_embedding(input_dim = max_words, output_dim = dim_size, input_length = maxlen,
-                  # put weights into list and do not allow training
-                  weights = list(word_embeds), trainable = FALSE) %>%
-  layer_spatial_dropout_1d(rate = 0.2) %>%
-  bidirectional(
-    layer_gru(units = 80, return_sequences = TRUE)
-  )
-max_pool <- model %>% layer_global_max_pooling_1d()
-ave_pool <- model %>% layer_global_average_pooling_1d()
-
-output <- layer_concatenate(list(ave_pool, max_pool)) %>%
-  layer_dense(units = 1, activation = "sigmoid")
-
-model <- keras_model(input, output)
-
-#model summary
-summary(model)
-```
-
----
-
-22. **Compile the model with an 'adam' optimizer, and the binary_crossentropy loss. You can choose accuracy or AUC for the metrics.**
-
----
-
-```{r 22, message = FALSE, warning = FALSE, include = TRUE}
-# instead of accuracy we can use "AUC" metrics from "tensorflow.keras"
-model %>% compile(
-  optimizer = "adam", # optimizer = optimizer_rmsprop(),
-  loss = "binary_crossentropy",
-  metrics = tensorflow::tf$keras$metrics$AUC() # metrics = c('accuracy')
-)
-
-```
-
----
-
-23. **Fit the model with  5 or 10 epochs (iterations), batch_size = 32, and validation_split = 0.2. Check the training performance versus the validation performance.**
-
----
-
-```{r 23, message = FALSE, warning = FALSE, include = TRUE}
-history <- model %>% keras::fit(
-  x_train, y_train,
-  epochs = 10,
-  batch_size = 32,
-  validation_split = 0.2
-)
-```
-
-```{r}
-plot(history)
-```
-
+The LDA() function in the topicmodels package is only one implementation of the latent Dirichlet allocation algorithm. For example, the mallet package (Mimno 2013) implements a wrapper around the MALLET Java package for text classification tools, and the tidytext package provides tidiers for this model output as well. The textmineR package has extensive functionality for topic modeling. You can fit Latent Dirichlet Allocation (LDA), Correlated Topic Models (CTM), and Latent Semantic Analysis (LSA) from within textmineR (https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html). 
 
 ---
 
@@ -553,10 +316,8 @@ plot(history)
 
 In this practical, we learned about:
 
-- Word embeddings
-- Pre-trained word vectors
-- Text2vec, Keras, TensorFlow
-- More on [Keras Training Visualization](https://keras.rstudio.com/articles/training_visualization.html)
+- Topic modeling
+- LDA
 
 ---
 
