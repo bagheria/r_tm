@@ -301,17 +301,18 @@ We adapt the course as we go. To ensure that you work with the latest iteration 
 Here you will find the materials for Thursday:
 
 - Part 7: Word embedding
-    - [Lecture 7](Wednesday/Lectures/Lecture 6/Lecture_6.pdf)
+    - [Lecture 7](Thursday/Lectures/Lecture 7/Lecture_70.pdf)
+    - [Lecture 7 Handout](Thursday/Lectures/Lecture 7/Lecture_70.pdf)
     <!-- - [Impractical 7](Wednesday/Practicals/Practical 6/Impractical_6.html) -->
-    - [Practical 7](Wednesday/Practicals/Practical 6/Practical_6.html)
-    - [Data for practical 7](Wednesday/Practicals/Practical 6/data.zip)
+    - [Practical 7](Thursday/Practicals/Practical 7/Practical_7.html)
+    - [Data for practical 7](Thursday/Practicals/Practical 7/data.zip)
 
 - Part 8: Deep learning for text
-    - [Lecture 8](Tuesday/Lectures/Lecture 4/Lecture_4.html)
-    - [Lecture 8 Handout](Tuesday/Lectures/Lecture 4/Lecture_4_Handout.pdf)
-    <!-- - [Impractical 8](Tuesday/Practicals/Practical 4/Impractical_4.html) -->
-    - [Practical 8](Tuesday/Practicals/Practical 4/Practical_4.html)
-    - [Data for practical 8](Tuesday/Practicals/Practical 4/data.zip)
+    - [Lecture 8](Thursday/Lectures/Lecture 8/Lecture_8.html)
+    - [Lecture 8 Handout](Thursday/Lectures/Lecture 8/Lecture_8.pdf)
+    <!-- - [Impractical 8](Thursday/Practicals/Practical 4/Impractical_4.html) -->
+    - [Practical 8](Thursday/Practicals/Practical 8/Practical_8.html)
+    - [Data for practical 8](Thursday/Practicals/Practical 8/data.zip)
 
 ## Column 2
 
