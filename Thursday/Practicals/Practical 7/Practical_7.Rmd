@@ -1,0 +1,299 @@
+---
+title: "Practical 7: Word Embedding"
+author: "Ayoub Bagheri"
+date: "Introduction to Text Mining with R"
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical_7.html
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+In this practical, we are going to apply word embedding approaches. Here are the packages used in this practical:
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(text2vec)
+library(tidyverse)
+library(tidytext)
+```
+
+---
+
+# Word embeddings
+
+---
+
+A key idea in working with text data concerns representing words as numeric quantities. There are a number of ways to go about this, and we have actually already done so. An additional method that we want to explore today is word embeddings. Word embedding techniques such as word2vec and GloVe use neural networks approaches to construct word vectors. With these vector representations of words, we can see how similar they are to each other, and perform other tasks based on that information. Here are two famous examples:
+
+king - man + woman = queen
+
+
+Paris - France + Germany = Berlin
+
+
+The first part of the practical leverages the data provided in the harrypotter package. This package supplies the first seven novels in the Harry Potter series. You can load the harrypotter package with the following:
+
+```{r}
+#devtools::install_github("bradleyboehmke/harrypotter")
+library(harrypotter) # Not to be confused with the CRAN palettes package
+```
+
+The aim of [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) is to make your life easier by providing R functions that simplify many common tasks.
+
+---
+
+1. **Use the code below to load the first seven novels in the Harry Potter series. View the data sets.**
+
+---
+
+```{r 1, message = FALSE, warning = FALSE, include = TRUE}
+hp_books <- c("philosophers_stone", "chamber_of_secrets",
+              "prisoner_of_azkaban", "goblet_of_fire",
+              "order_of_the_phoenix", "half_blood_prince",
+              "deathly_hallows")
+
+hp_words <- list(
+  philosophers_stone,
+  chamber_of_secrets,
+  prisoner_of_azkaban,
+  goblet_of_fire,
+  order_of_the_phoenix,
+  half_blood_prince,
+  deathly_hallows
+) %>%
+  # name each list element
+  set_names(hp_books) %>%
+  # convert each book to a data frame and merge into a single data frame
+  map_df(as_tibble, .id = "book") %>%
+  # convert book to a factor
+  mutate(book = factor(book, levels = hp_books)) %>%
+  # remove empty chapters
+  filter(!is.na(value)) %>%
+  # create a chapter id column
+  group_by(book) %>%
+  mutate(chapter = row_number(book))
+
+head(hp_words)
+
+```
+
+---
+
+2. **Convert the hp_words object into a dataframe and use the unnest_tokens() function from the tidytext package to tokenize the data frame.**
+
+---
+```{r 2, message = FALSE, warning = FALSE, include = TRUE}
+# tokenize the data frame
+hp_words <- as.data.frame(hp_words) %>%
+  unnest_tokens(word, value)
+
+head(hp_words)
+
+```
+
+---
+
+3. **Remove the stop words from the tokenized data frame.**
+
+---
+```{r 3, message = FALSE, warning = FALSE, include = TRUE}
+hp_words <- hp_words %>% 
+  anti_join(stop_words)
+
+head(hp_words)
+```
+
+---
+
+4. **Create a vocabulary of unique terms using the create_vocabulary() function from the text2vec package and remove the words that appear less than 5 times.**
+
+---
+```{r 4, message = FALSE, warning = FALSE, include = TRUE}
+hp_words_ls <- list(hp_words$word) # create list of tokenized text to pass to itoken
+it <- itoken(hp_words_ls, progressbar = FALSE) # create index-tokens
+hp_vocab <- create_vocabulary(it) # create vocabulary of unique terms
+hp_vocab <- prune_vocabulary(hp_vocab, term_count_min = 5) # remove the words with frequency less than 5
+
+hp_vocab
+
+```
+
+---
+
+5. **The next step is to create a token co-occurrence matrix (TCM). The definition of whether two words occur together is arbitrary. First create a vocab_vectorizer, then, use a window of 5 for context words to create the TCM.**
+
+---
+
+```{r 5, message = FALSE, warning = FALSE, include = TRUE}
+# maps words to indices
+vectorizer <- vocab_vectorizer(hp_vocab)
+
+# use window of 5 for context words
+hp_tcm <- create_tcm(it, vectorizer, skip_grams_window = 5)
+
+dim(hp_tcm) # inspect dimensions of the TCM
+
+```
+
+---
+
+6. **Use the GlobalVectors to fit the word vectors on our data set. Choose the embedding size (rank) equal to 50, and the maximum number of co-occurrences to use in the weighting function equal to 10. Train word vectors in 50 iterations if you have the (memory / cpu) resources. Also check the other input arguments of the fit_transform function [here](https://www.rdocumentation.org/packages/text2vec/versions/0.5.1/topics/GlobalVectors).**
+
+---
+
+```{r 6, message = FALSE, warning = FALSE, include = TRUE}
+glove <- GlobalVectors$new(rank = 50, x_max = 10) # create the model
+hp_wv_main <- glove$fit_transform(hp_tcm, n_iter = 20, convergence_tol = 0.001) # fit the model to the TCM
+
+```
+
+---
+
+7. **Extract the word vectors and save the sum of them for further questions.**
+
+---
+
+```{r 7, message = FALSE, warning = FALSE, include = TRUE}
+dim(hp_wv_main) # check the dimensions
+
+hp_wv_context <- glove$components # extract components
+dim(hp_wv_context)
+
+# Either word-vectors matrices could work, but the developers of the technique suggest the sum/mean may work better
+hp_word_vectors <- hp_wv_main + t(hp_wv_context) # use the transpose of hp_wv_context to sum
+
+dim(hp_word_vectors)
+
+```
+
+---
+
+8. **Find the most similar words to words "harry", "death", and "love". Use the cosine similarity measure with the function sim2. Set the norm argument to "l2".**
+
+---
+
+```{r 8, message = FALSE, warning = FALSE, include = TRUE}
+harry <- hp_word_vectors["harry", , drop = F] # extract the row for "harry"
+
+cos_sim_rom <- sim2(x = hp_word_vectors, y = harry, method = "cosine", norm = "l2") # pairwise similarity matrix computation
+head(sort(cos_sim_rom[,1], decreasing = T), 10) # see top 10 most similar words
+
+death <- hp_word_vectors["death", , drop = F]
+
+cos_sim_rom <- sim2(x = hp_word_vectors, y = death, method = "cosine", norm = "l2")
+head(sort(cos_sim_rom[,1], decreasing = T), 10)
+
+love <- hp_word_vectors["love", , drop = F]
+
+cos_sim_rom <- sim2(x = hp_word_vectors, y = love, method = "cosine", norm = "l2")
+head(sort(cos_sim_rom[,1], decreasing = T), 10)
+
+```
+
+---
+
+9. **Add the word vector of "harry" with the word vector of "love" and subtract them from the word vector of "death". What are the top terms in your result?**
+
+---
+
+```{r 9, message = FALSE, warning = FALSE, include = TRUE}
+test <- hp_word_vectors["harry", , drop = F] -
+  hp_word_vectors["death", , drop = F] +
+  hp_word_vectors["love", , drop = F]
+
+cos_sim_test <- sim2(x = hp_word_vectors, y = test, method = "cosine", norm = "l2")
+head(sort(cos_sim_test[,1], decreasing = T), 10)
+```
+
+---
+
+# Wikipedia word embeddings
+
+---
+
+10. **Here we want to repeat the same analysis as for Harry Potter novel series with texts from Wikipedia. Start with the code below and train the word vectors using the wiki object.**
+
+---
+
+```{r}
+text8_file <- "data/text8/text8"
+if (!file.exists(text8_file)) {
+  download.file("http://mattmahoney.net/dc/text8.zip", "data/text8.zip")
+  unzip("data/text8.zip", files = "text8", exdir = "data/texts_raw/")
+}
+wiki <- readLines(text8_file, n = 1, warn = FALSE)
+
+```
+
+
+```{r 10, message = FALSE, warning = FALSE, include = TRUE}
+tokens <- space_tokenizer(wiki)
+it <- itoken(tokens, progressbar = FALSE)
+vocab <- create_vocabulary(it)
+vocab <- prune_vocabulary(vocab, term_count_min = 5L)
+vectorizer <- vocab_vectorizer(vocab)
+
+tcm <- create_tcm(it, vectorizer, skip_grams_window = 5L)
+
+glove <- GlobalVectors$new(rank = 50, x_max = 10)
+
+wv_main <- glove$fit_transform(tcm, n_iter = 20, convergence_tol = 0.001)
+wv_context <- glove$components
+word_vectors <- wv_main + t(wv_context)
+```
+
+---
+
+11. **Use the Wikipedia word embeddings and try the two famous examples below.**
+
+king - man + woman = queen
+
+
+Paris - France + Germany = Berlin
+
+---
+
+```{r 11, message = FALSE, warning = FALSE, include = TRUE}
+queen <- word_vectors["king", , drop = FALSE] -
+  word_vectors["man", , drop = FALSE] +
+  word_vectors["woman", , drop = FALSE]
+queen_cos_sim <- sim2(x = word_vectors, y = queen, method = "cosine", norm = "l2")
+head(sort(queen_cos_sim[,1], decreasing = TRUE), 21) #the word queen has the 21st highest loading
+
+berlin <- word_vectors["paris", , drop = FALSE] -
+  word_vectors["france", , drop = FALSE] +
+  word_vectors["germany", , drop = FALSE]
+berlin_cos_sim <- sim2(x = word_vectors, y = berlin, method = "cosine", norm = "l2")
+head(sort(berlin_cos_sim[,1], decreasing = TRUE), 5)
+```
+---
+
+---
+
+# Summary
+
+---
+
+In this practical, we learned about:
+
+- Word embedding
+- Pre-trained word vectors
+
+---
+
+End of practical
+
+---
