@@ -1,6 +1,6 @@
 ---
 title: "Feature Engineering and Text Classification"
-author: "Ayoub Bagheri"
+author: "Ayoub Bagheri & Qixiang Fang"
 output:
   ioslides_presentation:
     logo: logo.png
@@ -14,15 +14,15 @@ library(DiagrammeR)
 
 ## Lecture’s Plan
 
-1. How to represent a document?
+- How to represent a document?
 
-2. What are vector space and bag-of-words models?
+- What are vector space and bag-of-words models?
 
-3. Features in text? And how to do text feature selection?
+<!-- 3. Features in text? And how to do text feature selection? -->
 
-4. How to classify text data?
+- How to classify text data?
 
-5. How to evaluate a classifier?
+- How to evaluate a classifier?
 
 # Text Classification
 
@@ -38,7 +38,7 @@ library(DiagrammeR)
   
   - Training set
 
-```{r, echo=FALSE, out.width="40%"}
+```{r, echo=FALSE, out.width="40%", fig.align='center'}
 include_graphics("img/page 24.png")
 ```
 
@@ -70,9 +70,9 @@ include_graphics("img/page 24.png")
 
   - Classifying reviews into positive and negative sentiment
 
-<br>
-<br>
-Go to <a href="www.menti.com">www.menti.com</a> and use the code 9594 3321
+<!-- <br> -->
+<!-- <br> -->
+<!-- Go to <a href="www.menti.com">www.menti.com</a> and use the code 9594 3321 -->
 
 ## Pipeline
 ```{r, echo=FALSE}
@@ -105,13 +105,15 @@ text  -> repre -> class -> pred
 
   - Sentence is just like a short document (recursive definition)
 
-- Represent by a vector?
-  
-  - A vector is an ordered finite list of numbers.
+<!-- - Represent by a vector? -->
+
+<!--   - A vector is an ordered finite list of numbers. -->
 
 ## Vector space model
 
 - A vector space is a collection of vectors
+
+- A vector is an ordered finite list of numbers.
 
 - Represent documents by <u>concept</u> vectors
   
@@ -162,9 +164,9 @@ include_graphics("img/page 8.png")
 
 - Bag of Words
 
-- Topics
+- Topics (later)
 
-- Word Embeddings
+- Word Embeddings (later)
 
 ## Bag of Words (BOW)
 
@@ -209,7 +211,7 @@ include_graphics("img/page 12.png")
   
 <!-- ## Zipf’s law -->
 
-<!-- <!-- - The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on. --> -->
+<!-- <!-- - The most frequent word occurs 90,000 times, the second one 45,000 times, the third 30,000, and so on. --> 
 
 <!-- - In a clinical text dataset, if we know the most popular word’s frequency is 69,542, what is your best estimate of its second and third most popular word’s frequencies respectively?  -->
 
@@ -231,24 +233,28 @@ include_graphics("img/page 12.png")
 
 - Idea: a term is more important if it occurs more frequently in a document
 
-- TF Formulas
-  
-  - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$
+- Term frequency (TF): the frequency count of term $t$ in doc $d$
 
-  - Raw TF: $tf(t,d) = c(t,d)$
+<!-- - TF Formulas -->
 
-## BOW weights: TFiDF
-- Idea: a term is more discriminative if it occurs a lot but only in fewer documents
+<!--   - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$ -->
 
-Let $n_{d,t}$ denote the number of times the $t$-th term appears in the $d$-th document.
+<!--   - Raw TF: $tf(t,d) = c(t,d)$ -->
 
-$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
-Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing the $t$-th term.
+## BOW weights: TF-IDF
+- Idea: a term is more discriminative if it occurs a lot but only in fewer documents. 
 
-$$IDF_t = log(\frac{N}{N_t})$$
-TF-IDF weight: 
+- TF-IDF (term frequency–inverse document frequency) weight: 
 
 $$w_{d,t} = TF_{d,t} \cdot IDF_t$$
+
+Let $n_{d,t}$ denote the number of times term $t$ appears in document $d$. The relative frequency of $t$ in $d$ is: 
+
+$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
+Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing term $t$.
+
+$$IDF_t = log(\frac{N}{N_t})$$
+
 
 <!-- ## Similarity metric -->
 
@@ -285,39 +291,39 @@ inspect(dtm)
 ```
 
 
-# Feature Selection
+<!-- # Feature Selection -->
 
-## Feature selection for text classification
+<!-- ## Feature selection for text classification -->
 
-- Feature selection is the process of selecting a specific subset of the terms of the training set and using only them in the classification algorithm.
+<!-- - Feature selection is the process of selecting a specific subset of the terms of the training set and using only them in the classification algorithm. -->
 
-- high dimensionality of text features
+<!-- - high dimensionality of text features -->
 
-- Select the most informative features for model training
-  
-  - Reduce noise in feature representation
-  
-  - Improve final classification performance
-  
-  - Improve training/testing efficiency
-  
-    - Less time complexity
-    
-    - Fewer training data
+<!-- - Select the most informative features for model training -->
 
-## Feature selection methods
+<!--   - Reduce noise in feature representation -->
 
-- Wrapper methods
-  - Find the best subset of features for a particular classification method
-  - Sequential forward selection or genetic search to speed up the search
+<!--   - Improve final classification performance -->
 
-- Filter methods
-  - Evaluate the features <u>independently</u> from the classifier and other features
-  - Feasible for very large feature se
-  - Usually used as a preprocessing step
-  
-- Embedded methods
- - e.g. Regularized regression, Regularized SVM
+<!--   - Improve training/testing efficiency -->
+
+<!--     - Less time complexity -->
+
+<!--     - Fewer training data -->
+
+<!-- ## Feature selection methods -->
+
+<!-- - Wrapper methods -->
+<!--   - Find the best subset of features for a particular classification method -->
+<!--   - Sequential forward selection or genetic search to speed up the search -->
+
+<!-- - Filter methods -->
+<!--   - Evaluate the features <u>independently</u> from the classifier and other features -->
+<!--   - Feasible for very large feature se -->
+<!--   - Usually used as a preprocessing step -->
+
+<!-- - Embedded methods -->
+<!--  - e.g. Regularized regression, Regularized SVM -->
 
 <!-- ```{r,echo=FALSE, out.width="70%", fig.align='center'} -->
 <!-- include_graphics("img/page 34.png") -->
@@ -341,44 +347,44 @@ inspect(dtm)
 <!-- include_graphics("img/page 37.png") -->
 <!-- ``` -->
 
-## Document frequency
+<!-- ## Document frequency -->
 
-- Rare words: non-influential for global prediction, reduce vocabulary size
+<!-- - Rare words: non-influential for global prediction, reduce vocabulary size -->
 
-```{r,echo=FALSE, out.width="90%", fig.align='center'}
-include_graphics("img/page 38.png")
-```
+<!-- ```{r,echo=FALSE, out.width="90%", fig.align='center'} -->
+<!-- include_graphics("img/page 38.png") -->
+<!-- ``` -->
 
-## Information gain
+<!-- ## Information gain -->
 
-- Decrease in entropy of categorical prediction when the feature is present or absent
+<!-- - Decrease in entropy of categorical prediction when the feature is present or absent -->
 
-```{r,echo=FALSE, out.width="90%", fig.align='center'}
-include_graphics("img/page 39.png")
-```
+<!-- ```{r,echo=FALSE, out.width="90%", fig.align='center'} -->
+<!-- include_graphics("img/page 39.png") -->
+<!-- ``` -->
 
-## Gini Index
+<!-- ## Gini Index -->
 
-Let $p(c | t)$ be the conditional probability that a document belongs to class $c$, given the fact that it contains the term $t$. Therefore, we have:
+<!-- Let $p(c | t)$ be the conditional probability that a document belongs to class $c$, given the fact that it contains the term $t$. Therefore, we have: -->
 
-$$\sum^k_{c=1}{p(c | t)=1}$$
+<!-- $$\sum^k_{c=1}{p(c | t)=1}$$ -->
 
-Then, the gini-index for the term $t$, denoted by $G(t)$ is defined as:
+<!-- Then, the gini-index for the term $t$, denoted by $G(t)$ is defined as: -->
 
-$$G(t) = \sum^k_{c=1}{p(c | t)^2}$$
+<!-- $$G(t) = \sum^k_{c=1}{p(c | t)^2}$$ -->
 
-## Gini Index
+<!-- ## Gini Index -->
 
-- The value of the gini-index lies in the range $(1/k, 1)$. 
+<!-- - The value of the gini-index lies in the range $(1/k, 1)$.  -->
 
-- Higher values of the gini-index indicate a greater discriminative power of the term t. 
+<!-- - Higher values of the gini-index indicate a greater discriminative power of the term t.  -->
 
-- If the global class distribution is skewed, the gini-index may not accurately reflect the discriminative power of the underlying attributes.
+<!-- - If the global class distribution is skewed, the gini-index may not accurately reflect the discriminative power of the underlying attributes. -->
 
-- Other methods
-  - Normalized gini-index
-  - Mutual Information
-  - ${\chi}^2$-Statistic
+<!-- - Other methods -->
+<!--   - Normalized gini-index -->
+<!--   - Mutual Information -->
+<!--   - ${\chi}^2$-Statistic -->
 
 # Classification Algorithms
 
@@ -394,11 +400,11 @@ include_graphics("img/page 53.png")
  
   - A training set of $m$ manually-labeled documents $(d_1,c_1),\cdots,(d_m,c_m)$
   
-  - a fixed set of classes $C = \{c_1, c_2,…, c_J\}$
+  - A fixed set of classes $C = \{c_1, c_2,…, c_J\}$
   
 - Output:
 
-  - a learned classifier $y:d \rightarrow c$
+  - A learned classifier $y:d \rightarrow c$
   
 ## Hand-coded rules
 
@@ -413,10 +419,17 @@ include_graphics("img/page 53.png")
 - Not recommended!
 
 ## Supervised Machine Learning
-- Logistic regression
+- Nearest centroid
 - K-nearest neighbors
 - Naïve Bayes
+- Decision tree
+- Random forest
 - Support vector machines
+
+
+More:
+
+- Logistic regression
 - Neural networks
 
 ## Rocchio Classifier (Nearest Centroid)
@@ -433,9 +446,13 @@ The predicted label of document d is the one with the smallest (Euclidean) dista
 
 $$\hat{c} = \arg \min_c ||\boldsymbol{\mu_c} - \mathbf{d}||$$
 
+```{r, echo=FALSE, out.width="70%", fig.align='center'}
+include_graphics("img/page 53a.png")
+```
+
 ## K-Nearest Neighbor 
 
-- Given a test document d,. the KNN algorithm finds the k nearest neighbors of d among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. 
+- Given a test document $d$, the KNN algorithm finds the $k$ nearest neighbors of $d$ among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. 
 
 - After sorting the score values, the algorithm assigns the candidate to the class with the highest score. 
 
@@ -461,23 +478,31 @@ include_graphics("img/page 62.png")
 
 - For a document $d$ and a class $c$
 
-$$P(c|d) = \frac{P(d|c)P(c)}{P(d)}$$
+$$P(c|d) = \frac{P(c)P(d|c)}{P(d)}$$
 
-## Multinomial Naïve Bayes Independence Assumptions
+## Multinomial Naïve Bayes Assumptions
+
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c) \cdot P(w_1, w_2, \ldots,w_n|c)$$
 
 - <b>Bag of Words assumption</b>: Assume position doesn’t matter
 
 - <b>Conditional Independence</b>: Assume the feature probabilities $P(w_i|c_j)$ are independent given the class $c$.
 
 $$P(w_1, \ldots, w_n|c) = P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c)$$
-\newpage 
 
-## Multinomial Naïve Bayes Classifier
+- Hence:
 
-$$C_{MAP} = \underset{c \in C}{\operatorname{argmax}}P(w_1, w_2, \ldots,w_n|c)P(c)$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c) \cdot P(c)$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c)\prod_{i \in positions}{P(w_i|c)}$$
 
-$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{w \in V}{P(w|c)}$$
-$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions}{P(w_i|c_i)}$$
+<!-- \newpage  -->
+
+<!-- ## Multinomial Naïve Bayes Classifier -->
+
+<!-- $$C_{MAP} = \underset{c \in C}{\operatorname{argmax}}P(w_1, w_2, \ldots,w_n|c)P(c)$$ -->
+
+<!-- $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{w \in V}{P(w|c)}$$ -->
+<!-- $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions}{P(w_i|c_i)}$$ -->
 \newpage
 
 ## Parameter estimation
@@ -486,10 +511,10 @@ $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c_j)\prod_{i \in positions
 
   - simply use the frequencies in the data
 
-$$\hat{P}(c_j) = \frac{doccount(C = c_j)}{N_{doc}}$$
-$$\hat{P}(w_i|c_j) = \frac{count(w_i, c_j)}{\sum_{w \in V}count(w, c_j)}$$
+$$\hat{P}(c) = \frac{ccount(C = c)}{N_{doc}}$$
+$$\hat{P}(w_i|c) = \frac{count(w_i, c)}{\sum_{w \in V}count(w, c)}$$
 
-- fraction of times word $w_i$ appears among all words in documents of topic $c_j$
+<!-- - fraction of times word $w_i$ appears among all words in documents of class $c$ -->
 
 \newpage
 
@@ -498,53 +523,61 @@ $$\hat{P}(w_i|c_j) = \frac{count(w_i, c_j)}{\sum_{w \in V}count(w, c_j)}$$
 What if we have seen no training documents with the word <b>coffee</b>  and classified in the topic <b>positive (thumbs-up)</b>?
 
 $$\hat{P}(\mathrm{''coffee''|positive}) = \frac{count(\mathrm{''coffee'', positive})}{\sum_{w \in V}{count(\mathrm{w,positive})}}$$
+
 Zero probabilities cannot be conditioned away, no matter the other evidence!
 
-$$C_{MAP} = \underset{c}{\operatorname{argmax}}\hat{P}(c)\prod_i{\hat{P}(w_i|c)}$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c)\prod_{i \in positions}{P(w_i|c)}$$
 \newpage
 
 ## Laplace (add-1) smoothing for Naïve Bayes
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \hat{P}(w_i|c) &= \frac{count(w_i,c)+1}{\sum_{w \in V}{(count(w,c)+1)}} \\ -->
+<!-- &= \frac{count(w_i,c)+1}{(\sum_{w \in V}{count(w,c) + |V|})} -->
+<!-- \end{align} -->
+<!-- $$ -->
 $$
-\begin{align}
-\hat{P}(w_i|c) &= \frac{count(w_i,c)+1}{\sum_{w \in V}{(count(w,c)+1)}} \\
-&= \frac{count(w_i,c)+1}{(\sum_{w \in V}{count(w,c) + |V|})}
-\end{align}
+\hat{P}(w_i|c) = \frac{count(w_i,c)+1}{\sum_{w \in V}{(count(w,c)+1)}}
 $$
+
 \newpage
 
-## Multinomial Naïve Bayes: Learning
-- From training corpus, extract <em>Vocabulary</em>
+<!-- ## Multinomial Naïve Bayes: Learning -->
+<!-- - From training corpus, extract <em>Vocabulary</em> -->
 
-<div style="float:left;width:50%">
-- Calculate $P(c_j)$ terms
-  - For each $c_j$ in $C$ do
-  
-  $docs_j\leftarrow$ all docs with class = $c_j$
-  
-  $$P(c_j) \leftarrow \frac{|docs_j|}{|total\ \#\ documents|}$$
-</div>
-  
-<div style="float:right;width:50%">
-- Calculate $P(w_k|c_j)$ terms</p>
-  - $Text_j \leftarrow$ single doc containing all $docs_j$
-  
-  - For each word $w_k$ in <em>Vocabulary</em>
-  
-    $n_k \leftarrow$ # of occurrences of $w_k$ in $Text_j$
-    
-  $$P(w_k|c_j) \leftarrow \frac{n_k + \alpha}{n + \alpha|Vocabulary|}$$
-</div>
+<!-- <div style="float:left;width:50%"> -->
+<!-- - Calculate $P(c_j)$ terms -->
+<!--   - For each $c_j$ in $C$ do -->
+
+<!--   $docs_j\leftarrow$ all docs with class = $c_j$ -->
+
+<!--   $$P(c_j) \leftarrow \frac{|docs_j|}{|total\ \#\ documents|}$$ -->
+<!-- </div> -->
+
+<!-- <div style="float:right;width:50%"> -->
+<!-- - Calculate $P(w_k|c_j)$ terms</p> -->
+<!--   - $Text_j \leftarrow$ single doc containing all $docs_j$ -->
+
+<!--   - For each word $w_k$ in <em>Vocabulary</em> -->
+
+<!--     $n_k \leftarrow$ # of occurrences of $w_k$ in $Text_j$ -->
+
+<!--   $$P(w_k|c_j) \leftarrow \frac{n_k + \alpha}{n + \alpha|Vocabulary|}$$ -->
+<!-- </div> -->
 
 \newpage
 
 ## Decision Tree 
 
-- A decision tree is a hierarchical decomposition of the (training) data space, in which a condition on the feature value is used in order to divide the data space hierarchically. 
+
+```{r, echo=FALSE, out.width="55%", fig.align='center'}
+include_graphics("img/decisionTree.png")
+```
+
+- A decision tree is a hierarchical decomposition of the (training) data space, where a condition on the feature value is used to divide the data space hierarchically. 
 
 - Top-down, by choosing a variable at each step that best splits the set of items. 
-- Different algorithms to measure the homogeneity of the target variable within the subsets.
-  - Gini impurity
-  - Information gain
+- Different algorithms to measure the homogeneity of the target variable within the subsets (e.g. Gini impurity, information gain)
 
 \newpage
 
@@ -574,7 +607,7 @@ include_graphics("img/page 74.png")
 - It is not necessary to use a linear function for the SVM classifier. 
 - With the kernel trick, SVM can construct a nonlinear decision surface in the original feature space by mapping the data instances non-linearly to a new space where the classes can be separated linearly with a hyperplane. 
 
-- In practice, linear SVM is used most often because of their simplicity and ease of interpretability.
+<!-- - In practice, linear SVM is used most often because of their simplicity and ease of interpretability. -->
 - SVM is quite robust to high dimensionality.
 
 ```{r, echo=FALSE, out.width="50%", fig.align='right'}
@@ -589,8 +622,9 @@ include_graphics("img/page 75.png")
 ## Data Splitting
 
 - Training set
-  - Validation set (dev set)
-    - A validation dataset is a dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
+
+- Validation set (dev set)
+  - A dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
     
 - Test set
 
@@ -625,25 +659,27 @@ include_graphics("img/page 81.png")
 
 ## Precision and recall
 
-- <b>Precision</b>: % of selected items that are correct <br> <b>Recall</b>: % of correct items that are selected
+- <b>Precision</b> (also Positive Predictive Value): % of selected items that are correct <br> <b>Recall</b>: % of correct items that are selected
 
 - Precision is a valid choice of evaluation metric when we want to be very sure of our prediction.
 
-- Recall is a valid choice of evaluation metric when we want to capture as many positives as possible.
+- Recall (also sensitivity) is a valid choice of evaluation metric when we want to capture as many positives as possible.
 
 \newpage
 
 ## A combined measure: F
 
-A combined measure that assesses the P/R tradeoff is F measure (weighted harmonic mean):
+A combined measure that assesses the precision/recall tradeoff is F measure (weighted harmonic mean):
 
-$$F = \frac{1}{\alpha\frac{1}{P}+(1-\alpha)\frac{1}{R}}=\frac{(\beta^2+1)PR}{\beta^2P + R}$$
+<!-- $$F = \frac{1}{\alpha\frac{1}{P}+(1-\alpha)\frac{1}{R}}=\frac{(\beta^2+1)PR}{\beta^2P + R}$$ -->
+$$F = \frac{(\beta^2+1)PR}{\beta^2P + R}$$
+where $\beta$ is a positive real factor and is chosen such that recall is considered $\beta$ times as important as precision. 
+<!-- The harmonic mean is a very conservative average; -->
 
-The harmonic mean is a very conservative average;
+Balanced F1 measure: 
+<!-- - $\beta = 1$ (that is, $\alpha = 1/2$): $F = 2PR/(P+R)$ -->
+- $\beta = 1$ : $F = 2PR/(P+R)$
 
-Balanced F1 measure
-  -   i.e., with $\beta = 1$ (that is, $\alpha = 1/2$): $F = 2PR/(P+R)$
-  
 # The Real World
 
 ## No training data? 
@@ -670,25 +706,27 @@ Balanced F1 measure
 
 - Use Naïve Bayes, KNN, Rocchio
   
-  - Naïve Bayes is a “high-bias” algorithm <span style="color:green; font-size:12px">(Ng and Jordan 2002 NIPS)</span>
+  <!-- - Naïve Bayes is a “high-bias” algorithm <span style="color:green; font-size:12px">(Ng and Jordan 2002 NIPS)</span> -->
 
 - Get more labeled data 
   
-- Find ways to label data for you
+- Find ways to label data
 
-- Try semi-supervised methods:
+- Try semi-supervised methods
+
+- Try transfer learning
   
-  - e.g. active learning, bootstrapping
+  <!-- - e.g. active learning, bootstrapping -->
 
 \newpage
 
 ## A reasonable amount of data?
 
-- Perfect for all the complex classifiers
+- Works with the more complex classifiers
   
   - SVM
   
-  - Regularized Logistic Regression
+  <!-- - Regularized Logistic Regression -->
 
   - Random forest
 
@@ -701,9 +739,10 @@ Balanced F1 measure
 - At a cost:
 
   - SVMs (train time) or KNN (test time) can be too slow
-  - Regularized logistic regression
-  - Naïve Bayes again!
-  - Deep learning
+
+  <!-- - Regularized logistic regression -->
+  <!-- - Naïve Bayes again! -->
+  <!-- - Deep learning -->
 
 \newpage
 
@@ -761,7 +800,7 @@ https://aclanthology.org/P01-1005.pdf
 
 - Vector space model & BOW
 
-- Feature Selection
+<!-- - Feature Selection -->
 
 - Text Classification
 
