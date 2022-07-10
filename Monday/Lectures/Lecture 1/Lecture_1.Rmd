@@ -3,6 +3,7 @@ title: "Introduction"
 author: "Ayoub Bagheri"
 subtitle: Introduction to Text Mining with R
 output:
+  ioslides_presentation: default
   pdf_document:
     toc: yes
     toc_depth: '5'
@@ -220,7 +221,7 @@ include_graphics("img/page5_person3.png")
 
 - What are the challenges they encounter in working with text?
 
-<div style="float: left; width:90%">
+<div style="float: left; width:100%">
 ```{r, echo=FALSE, fig.align='center', out.width="90%"}
 include_graphics("img/q1.jpg")
 ```
@@ -285,6 +286,8 @@ include_graphics("img/q1.jpg")
 <!-- <span style="color:green">(You can choose multiple answers)</span> -->
 
 <!-- Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321 -->
+
+# Text Mining to the Rescue!
 
 ## Text mining
 - “the discovery by computer of <span style="color:blue">new</span>, <span style="color:blue">previously unknown</span> information, by <span style="color:blue">automatically extracting</span> information from <span style="color:blue">different</span> written resources” Hearst (1999)
@@ -398,14 +401,12 @@ https://asreview.nl/
 include_graphics("img/page 23.png")
 ```
 
-## Text mining tasks {.smaller}
+## Pattern discovery tasks in text {.smaller}
 - Text classification
 - Text clustering
 - Sentiment analysis
 - Feature selection
 - Topic modelling
-- Word embedding
-- Deep learning models
 - Responsible text mining
 - Text summarization
 
@@ -523,28 +524,6 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 </div>
 
 
-## In R
-
-The primary R functions for dealing with regular expressions are:
-
-- `grep()`, `grepl()`: Search for matches of a regular expression/pattern in a character vector
-
-- `regexpr()`, `gregexpr()`: Search a character vector for regular expression matches and return the indices where the match begins; useful in conjunction with `regmatches()`
-
-- `sub()`, `gsub()`: Search a character vector for regular expression matches and replace that match with another string
-
-- The `stringr` package provides a series of functions implementing much of the regular expression functionality in R but with a more consistent and rationalized interface.
-
-
-## Understanding Regular Expressions
-  - Very powerful and quite cryptic
-
-  - Fun once you understand them
-  
-  - Regular expressions are a programming language with characters
-  
-  - It is kind of an "old school" language
-
 ## Regular expressions
 - A formal language for specifying text strings
 - How can we search for any of these?
@@ -598,7 +577,6 @@ The question mark ? marks optionality of the previous expression:
 include_graphics("img/RE5.png")
 
 ```
-
 
 The use of the period . to specify any character:
 
@@ -693,6 +671,27 @@ include_graphics("img/RE8.png")
 <!-- include_graphics("img/page 53.png") -->
 <!-- ``` -->
 
+## Understanding Regular Expressions
+  - Very powerful and quite cryptic
+
+  - Fun once you understand them
+  
+  - Regular expressions are a programming language with characters
+  
+  - It is kind of an "old school" language
+
+## In R
+
+The primary R functions for dealing with regular expressions are:
+
+- `grep()`, `grepl()`: Search for matches of a regular expression/pattern in a character vector
+
+- `regexpr()`, `gregexpr()`: Search a character vector for regular expression matches and return the indices where the match begins; useful in conjunction with `regmatches()`
+
+- `sub()`, `gsub()`: Search a character vector for regular expression matches and replace that match with another string
+
+- The `stringr` package provides a series of functions implementing much of the regular expression functionality in R but with a more consistent and rationalized interface.
+
 ## Example
 
 - Find all instances of the word “the” in a text.
@@ -750,14 +749,20 @@ print(regmatches(txt, r))
   
 ## Question
 
-Given the text "this Summer   School is utrecht summerschool", which RE finds all the summer school mentions?
+Given the text "this Summer   School is Utrecht summer school", which RE finds all the "summer school" mentions?
 
-- (^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])
+- (^|[^a-zA-Z])[sS]ummer *[sS]chool([^a-zA-Z])
 - (^|[^a-zA-Z])[sS]ummer\\s[sS]chool($|[^a-zA-Z])
 - (^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])
 - [^a-zA-Z][sS]ummer\\s[sS]chool($|[^a-zA-Z])
 
-Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321
+## Question
+
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="90%"}
+include_graphics("img/q1.jpg")
+```
+</div>
 
 
 ## Solution
@@ -776,12 +781,14 @@ print(regmatches(txt, r))
 
 ## Question
 
-Suppose we want to build an application to help a user buy a car from pdf (text) catalogues. The user looks for any car cheaper than $10,000.00. Which RE will help us to do this?
+Suppose we want to build an application to help a user buy a car from textual catalogues. The user looks for any car cheaper than $10,000.00.
 
 Assume we are using the following data:
 txt <- c("Price of Tesla S is $8599.99.", 
          "Audi Q4 is $7000.", 
          "BMW X5 costs $900") 
+
+Which RE will help us to do this?
 
 - (ˆ|\\W)\\$[0-9]{0,4}(\\.[0-9][0-9])*
 - (ˆ|\\W)\\$[0-9]{0,3}(\\.[0-9][0-9])+
@@ -790,6 +797,13 @@ txt <- c("Price of Tesla S is $8599.99.",
 
 <!-- Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321 -->
 
+## Question
+
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="90%"}
+include_graphics("img/q1.jpg")
+```
+</div>
 
 ## Solution
 
