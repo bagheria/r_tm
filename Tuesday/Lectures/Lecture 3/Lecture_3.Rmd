@@ -495,7 +495,7 @@ $$P(w_1, \ldots, w_n|c) = P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots 
 
 - Hence:
 
-$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c) \cdot P(c)$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c) \cdot P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c)  $$
 $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c)\prod_{i \in positions}{P(w_i|c)}$$
 
 <!-- \newpage  -->
