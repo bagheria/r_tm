@@ -1,5 +1,5 @@
 ---
-title: "Feature Engineering and Text Classification"
+title: "Text Representation and Classification"
 author: "Ayoub Bagheri & Qixiang Fang"
 output:
   ioslides_presentation:
