@@ -37,7 +37,7 @@ library(ggplot2)   # for visualization
 #library(xlsx)      
 #library(readxl)    
 library(openxlsx)  # for working with excel files
-library(qdap)      # provides parsing tools for preparing transcript data
+library(qdap)      # provides parsing tools for preparing transcript data; may need https://www.java.com/en/download/manual.jsp
 library(wordcloud) # to create pretty word clouds
 library(stringr)   # for working with regular expressions
 ```
@@ -335,7 +335,7 @@ grep("Comedy", imdb_500$review, value = TRUE)
 ---
 
 ```{r 17, include = TRUE}
-r <- regexpr('\\b[A-Z]+\\b', blog_gender_1000[1:20,]$blog)
+r <- regexpr('\\b[A-Z]+\\b', blog_gender_1000[1:20,]$blog) #\\b marks word boundary
 r
 regmatches(blog_gender_1000[1:20,]$blog, r)
 
@@ -360,8 +360,8 @@ str_extract(blog_gender_1000[1:20,]$blog, '\\b[A-Z]+\\b')
 r <- gregexpr('\\b[A-Z]+\\b', blog_gender_1000[1:10,]$blog)
 regmatches(blog_gender_1000[1:10,]$blog, r)
 
-str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
-
+# or
+#str_match_all(blog_gender_1000[1:10,]$blog, '\\b[A-Z]+\\b')
 ```
 
 ---
@@ -405,7 +405,7 @@ The difference is that sub only replaces the first occurrence of the pattern spe
 ---
 
 ```{r 21, include = TRUE}
-computer_531$aspects <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment)
+computer_531$aspects <- gsub("\\[.+?\\]", "", computer_531$aspect_sentiment) #the \\ is used to escape [ and ]
 head(computer_531)
 
 # computer_531 <- computer_531 %>% 
@@ -432,7 +432,7 @@ computer_531 <- computer_531 %>%
   mutate(sentiment_score = 0)
 
 for(i in 1:nrow(computer_531)){ 
-  score_list <- str_extract_all(computer_531[i,]$aspect_sentiment, "-?\\d+")
+  score_list <- str_extract_all(computer_531[i,]$aspect_sentiment, "-?\\d+") #? matches previous element (-) 0 or more times
     if(length(score_list[[1]]) != 0){
     computer_531[i,]$sentiment_score <- sum(as.numeric(as.character(unlist(score_list)[[1]])))
   }

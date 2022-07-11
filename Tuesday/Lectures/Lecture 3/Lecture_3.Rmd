@@ -60,7 +60,7 @@ include_graphics("img/page 24.png")
 
 ## Text classification?
 
-- Which problem is not a text classification task? (less likely to be)
+- Which problem is not (or less likely to be) a text classification task? 
 
   - Author's gender detection from text
   
@@ -68,7 +68,7 @@ include_graphics("img/page 24.png")
 
   - Grouping similar news articles
 
-  - Classifying reviews into positive and negative sentiment
+  - Classifying reviews into positive and negative sentiments
 
 <!-- <br> -->
 <!-- <br> -->
@@ -109,6 +109,53 @@ text  -> repre -> class -> pred
 
 <!--   - A vector is an ordered finite list of numbers. -->
 
+## Bag of Words (BOW)
+
+- Words (terms) and weights as the basis for vector representations of text
+
+  - Doc1: Text mining is to identify useful information.
+  
+  - Doc2: Useful information is mined from text.
+  
+  - Doc3: Apple is delicious.
+
+```{r, echo= FALSE, out.width="100%"}
+include_graphics("img/page 12.png")
+```
+
+
+## BOW weights: Binary
+
+- <b><span style="font-size:20px">Binary</span></b>
+
+  - with 1 indicating that a term occurred in the document, and 0 indicating that it did not
+
+## BOW weights: Raw Term frequency
+
+- Idea: a term is more important if it occurs more frequently in a document
+
+- use the raw frequency count of term $t$ in doc $d$
+
+<!-- - TF Formulas -->
+
+<!--   - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$ -->
+
+<!--   - Raw TF: $tf(t,d) = c(t,d)$ -->
+
+## BOW weights: TF-IDF
+- Idea: a term is more discriminative if it occurs a lot but only in fewer documents. 
+
+- TF-IDF (term frequency–inverse document frequency) weight: 
+
+$$w_{d,t} = TF_{d,t} \cdot IDF_t$$
+
+Let $n_{d,t}$ denote the number of times term $t$ appears in document $d$. The relative frequency of $t$ in $d$ is: 
+
+$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
+Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing term $t$.
+
+$$IDF_t = log(\frac{N}{N_t})$$
+
 ## Vector space model
 
 - A vector space is a collection of vectors
@@ -119,18 +166,16 @@ text  -> repre -> class -> pred
   
   - Each concept defines one dimension
 
-  - k concepts define a high-dimensional space
+  - A large number of concepts define a high-dimensional space
   
   - Element of vector corresponds to concept weight	
-
-
-## Vector space model
+  
+  - The process of converting text into numbers is called <b>Vectorization</b>
 
 - Distance between the vectors in this concept space
 
   - Relationship among documents
 
-- The process of converting text into numbers is called <b>Vectorization</b>
 
 ## Vector space model
 
@@ -160,35 +205,22 @@ $$d = (w_1, ..., w_n)$$
 include_graphics("img/page 8.png")
 ```
 
+
 ## Vector space model
 
-- Bag of Words
-
-- Topics (later)
-
-- Word Embeddings (later)
-
-## Bag of Words (BOW)
-
-- With Bag of Words (BOW), we refer to a Vector Space Model where:
+- Bag of Words, a Vector Space Model where:
   
   - Terms: words (more generally we may use n-grams, etc.)
   
   - Weights: number of occurrences of the terms in the document
 
-## BOW representation
+- Topics (later)
 
-- Term as the basis for vector space
+- Word Embeddings (later)
 
-  - Doc1: Text mining is to identify useful information.
-  
-  - Doc2: Useful information is mined from text.
-  
-  - Doc3: Apple is delicious.
 
-```{r, echo= FALSE, out.width="100%"}
-include_graphics("img/page 12.png")
-```
+
+
 
 <!-- ## Zipf’s law | A statistical property of language -->
 
@@ -223,37 +255,6 @@ include_graphics("img/page 12.png")
 <!-- E.g., Pneumonoultramicroscopicsilicovolcanoconiosis (45 letters, a lung disease) -->
 <!-- - The rest is most representative -->
 
-## BOW weights: Binary
-
-- <b><span style="font-size:20px">Binary</span></b>
-
-  - with 1 indicating that a term occurred in the document, and 0 indicating that it did not
-
-## BOW weights: Term frequency
-
-- Idea: a term is more important if it occurs more frequently in a document
-
-- Term frequency (TF): the frequency count of term $t$ in doc $d$
-
-<!-- - TF Formulas -->
-
-<!--   - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$ -->
-
-<!--   - Raw TF: $tf(t,d) = c(t,d)$ -->
-
-## BOW weights: TF-IDF
-- Idea: a term is more discriminative if it occurs a lot but only in fewer documents. 
-
-- TF-IDF (term frequency–inverse document frequency) weight: 
-
-$$w_{d,t} = TF_{d,t} \cdot IDF_t$$
-
-Let $n_{d,t}$ denote the number of times term $t$ appears in document $d$. The relative frequency of $t$ in $d$ is: 
-
-$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
-Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing term $t$.
-
-$$IDF_t = log(\frac{N}{N_t})$$
 
 
 <!-- ## Similarity metric -->
@@ -266,29 +267,29 @@ $$IDF_t = log(\frac{N}{N_t})$$
 
 <!--   - We care more about how these two vectors are overlapped -->
 
-## In R
+<!-- ## In R -->
 
-```{r}
-library(tm)
-data <- c('Text mining is one of the Utrecht summer school courses.', 
-          'There are other data science courses in Utrecht summer school')
+<!-- ```{r} -->
+<!-- library(tm) -->
+<!-- data <- c('Text mining is one of the Utrecht summer school courses.',  -->
+<!--           'There are other data science courses in Utrecht summer school') -->
 
-# convert data to vector space model
-corpus <- VCorpus(VectorSource(data))
+<!-- # convert data to vector space model -->
+<!-- corpus <- VCorpus(VectorSource(data)) -->
 
-# create a dtm object
-dtm <- DocumentTermMatrix(corpus, 
-                          list(removePunctuation = TRUE, 
-                               stopwords = TRUE, 
-                               stemming = TRUE, 
-                               removeNumbers = TRUE))
-```
+<!-- # create a dtm object -->
+<!-- dtm <- DocumentTermMatrix(corpus,  -->
+<!--                           list(removePunctuation = TRUE,  -->
+<!--                                stopwords = TRUE,  -->
+<!--                                stemming = TRUE,  -->
+<!--                                removeNumbers = TRUE)) -->
+<!-- ``` -->
 
 
-## In R
-```{r}
-inspect(dtm)
-```
+<!-- ## In R -->
+<!-- ```{r} -->
+<!-- inspect(dtm) -->
+<!-- ``` -->
 
 
 <!-- # Feature Selection -->
@@ -450,21 +451,23 @@ $$\hat{c} = \arg \min_c ||\boldsymbol{\mu_c} - \mathbf{d}||$$
 include_graphics("img/page 53a.png")
 ```
 
-## K-Nearest Neighbor 
-
-- Given a test document $d$, the KNN algorithm finds the $k$ nearest neighbors of $d$ among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. 
-
-- After sorting the score values, the algorithm assigns the candidate to the class with the highest score. 
-
-- The basic nearest neighbors classification uses uniform weights: that is, the value assigned to a query point is computed from a simple majority vote of the nearest neighbors. C
-
-- Can weight the neighbors such that nearer neighbors contribute more to the fit. 
 
 ## K-Nearest Neighbor
 
 ```{r, echo=FALSE, out.width="80%", fig.align='center'}
 include_graphics("img/page 60.png")
 ```
+
+## K-Nearest Neighbor 
+
+- Given a test document $d$, the KNN algorithm finds the $k$ nearest neighbors of $d$ among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. 
+
+- After sorting the score values, the algorithm assigns the candidate to the class with the highest score. 
+
+- The basic nearest neighbors classification uses uniform weights: that is, the value assigned to a query point is computed from a simple majority vote of the nearest neighbors. 
+
+- Can weight the neighbors such that nearer neighbors contribute more to the fit. 
+
 
 ## Naïve Bayes
 
@@ -486,13 +489,13 @@ $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c) \cdot P(w_1, w_2, \ldot
 
 - <b>Bag of Words assumption</b>: Assume position doesn’t matter
 
-- <b>Conditional Independence</b>: Assume the feature probabilities $P(w_i|c_j)$ are independent given the class $c$.
+- <b>Conditional Independence</b>: Assume the feature probabilities $P(w_i|c)$ are independent given the class $c$.
 
 $$P(w_1, \ldots, w_n|c) = P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c)$$
 
 - Hence:
 
-$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c) \cdot P(c)$$
+$$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c) \cdot P(w_1 | c) \cdot P(w_2|c) \cdot P(w_3|c) \cdot \ldots \cdot P(w_n|c)  $$
 $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c)\prod_{i \in positions}{P(w_i|c)}$$
 
 <!-- \newpage  -->
@@ -511,7 +514,7 @@ $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c)\prod_{i \in positions}{
 
   - simply use the frequencies in the data
 
-$$\hat{P}(c) = \frac{ccount(C = c)}{N_{doc}}$$
+$$\hat{P}(c) = \frac{count(C = c)}{N_{doc}}$$
 $$\hat{P}(w_i|c) = \frac{count(w_i, c)}{\sum_{w \in V}count(w, c)}$$
 
 <!-- - fraction of times word $w_i$ appears among all words in documents of class $c$ -->
@@ -623,19 +626,19 @@ include_graphics("img/page 75.png")
 
 - Training set
 
-- Validation set (dev set)
-  - A dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
+  - Validation set (dev set)
+    - A dataset of examples used to tune the hyperparameters (i.e. the architecture) of a classifier. It is sometimes also called the development set or the "dev set".
     
 - Test set
 
-## Cross Validation
+## Nested Cross Validation
 
 ```{r, echo=FALSE, out.width="75%"}
 include_graphics("img/page 31.png")
 ```
 
 <br>
-<p style="font-size:12px">https://scikit-learn.org/stable/modules/cross_validation.html</p>
+<p style="font-size:12px">adapted from https://scikit-learn.org/stable/modules/cross_validation.html</p>
 
 
 ## Confusion matrix
@@ -659,11 +662,19 @@ include_graphics("img/page 81.png")
 
 ## Precision and recall
 
-- <b>Precision</b> (also Positive Predictive Value): % of selected items that are correct <br> <b>Recall</b>: % of correct items that are selected
+- <b>Precision</b> (also Positive Predictive Value): % of selected/retrieved items that are correct/relevant <br> 
+
+- <b>Recall</b> (also sensitivity): % of correct/relevant items that are selected/retrieved.
+
+```{r, echo=FALSE, out.width="50%", fig.align='center'}
+include_graphics("img/precisionRecall.png")
+```
+
+<!-- <p style="font-size:5px">https://en.wikipedia.org/wiki/Precision_and_recall</p> -->
 
 - Precision is a valid choice of evaluation metric when we want to be very sure of our prediction.
 
-- Recall (also sensitivity) is a valid choice of evaluation metric when we want to capture as many positives as possible.
+- Recall  is a valid choice of evaluation metric when we want to capture as many positives as possible.
 
 \newpage
 
@@ -673,12 +684,12 @@ A combined measure that assesses the precision/recall tradeoff is F measure (wei
 
 <!-- $$F = \frac{1}{\alpha\frac{1}{P}+(1-\alpha)\frac{1}{R}}=\frac{(\beta^2+1)PR}{\beta^2P + R}$$ -->
 $$F = \frac{(\beta^2+1)PR}{\beta^2P + R}$$
-where $\beta$ is a positive real factor and is chosen such that recall is considered $\beta$ times as important as precision. 
+where $\beta$ is a positive real number and is chosen such that recall is considered $\beta$ times as important as precision. 
 <!-- The harmonic mean is a very conservative average; -->
 
-Balanced F1 measure: 
+Balanced F1 measure: $\beta = 1$, $F = 2PR/(P+R)$
 <!-- - $\beta = 1$ (that is, $\alpha = 1/2$): $F = 2PR/(P+R)$ -->
-- $\beta = 1$ : $F = 2PR/(P+R)$
+
 
 # The Real World
 
@@ -780,17 +791,17 @@ https://aclanthology.org/P01-1005.pdf
   
 - Hyperparameter optimization
 
-# Terminology
+<!-- # Terminology -->
 
-## Some terminology {.smaller}
-- <p style="font-size:16px"><u><b>Corpus</b></u>: is a large and structured set of texts</p>
-- <p style="font-size:16px"><u><b>Stop words</b></u>:  words which are filtered out before or after processing of natural language data (text)</p>
-- <p style="font-size:16px"><u><b>Unstructured text</b></u>: information that either does not have a pre-defined data model or is not organized in a pre-defined manner.</p>
-- <p style="font-size:16px"><u><b>Tokenizing</b></u>: process of breaking a stream of text up into words, phrases, symbols, or other meaningful elements called tokens (see also lexical analysis)</p>
-- <p style="font-size:16px"><u><b>Natural language processing</b></u>: field of computer science, artificial intelligence, and linguistics concerned with the interactions between computers and human (natural) languages</p>
-- <p style="font-size:16px"><u><b>Term document (or document term) matrix</b></u>:  is a mathematical matrix that describes the frequency of terms that occur in a collection of documents</p>
-- <p style="font-size:16px"><u><b>Supervised learning</b></u>: is the machine learning task of inferring a function from labeled training data</p>
-- <p style="font-size:16px"><u><b>Unsupervised learning</b></u>: find hidden structure in unlabeled data</p>
+<!-- ## Some terminology {.smaller} -->
+<!-- - <p style="font-size:16px"><u><b>Corpus</b></u>: is a large and structured set of texts</p> -->
+<!-- - <p style="font-size:16px"><u><b>Stop words</b></u>:  words which are filtered out before or after processing of natural language data (text)</p> -->
+<!-- - <p style="font-size:16px"><u><b>Unstructured text</b></u>: information that either does not have a pre-defined data model or is not organized in a pre-defined manner.</p> -->
+<!-- - <p style="font-size:16px"><u><b>Tokenizing</b></u>: process of breaking a stream of text up into words, phrases, symbols, or other meaningful elements called tokens (see also lexical analysis)</p> -->
+<!-- - <p style="font-size:16px"><u><b>Natural language processing</b></u>: field of computer science, artificial intelligence, and linguistics concerned with the interactions between computers and human (natural) languages</p> -->
+<!-- - <p style="font-size:16px"><u><b>Term document (or document term) matrix</b></u>:  is a mathematical matrix that describes the frequency of terms that occur in a collection of documents</p> -->
+<!-- - <p style="font-size:16px"><u><b>Supervised learning</b></u>: is the machine learning task of inferring a function from labeled training data</p> -->
+<!-- - <p style="font-size:16px"><u><b>Unsupervised learning</b></u>: find hidden structure in unlabeled data</p> -->
 
 \newpage
 
