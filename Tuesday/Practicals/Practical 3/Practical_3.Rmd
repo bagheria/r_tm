@@ -442,9 +442,20 @@ fit_svm_test
 
 ---
 
-```{r 19, include = TRUE}
-confusionMatrix(fit_svm_test)
+The baseline performance is: 
+```{r baseline, include = TRUE}
+table(dtm_train1$cat)
+cat("\n The baseline prediction accuracy: ")
+mean(na.omit(dtm_test1$cat) == "sport")
+```
 
+```{r 19, include = TRUE}
+confusionMatrix(fit_nb_test)
+
+```
+
+```{r 20, include = TRUE}
+confusionMatrix(fit_svm_test)
 ```
 
 ---

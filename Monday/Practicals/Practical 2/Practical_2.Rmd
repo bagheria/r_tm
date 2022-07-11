@@ -34,7 +34,7 @@ As always we start with the packages we are going to use. Be sure to run these l
 library (cld2)         # for language detection
 library (corpus)       # for text analysis with support for  internationa text
 library(dplyr)         # for data manipulation
-library(entity)        # for 
+#library(entity)        # for 
 library(gridExtra)     # for working with grids to obtain nice layouts
 library (hunspell)     # for high-performance stemming
 library (knitr)        # for manipulating the output of this markdown document
