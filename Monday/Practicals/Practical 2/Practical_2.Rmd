@@ -1,6 +1,6 @@
 ---
 title: "Practical 2: Processing Textual Data in R"
-author: "José de Kruif"
+author: "José de Kruif, edited: Mees van Stiphout"
 date: "Introduction to Text Mining with R"
 #date: "12/07/2021"
 mainfont: Arial
@@ -34,7 +34,7 @@ As always we start with the packages we are going to use. Be sure to run these l
 library (cld2)         # for language detection
 library (corpus)       # for text analysis with support for  internationa text
 library(dplyr)         # for data manipulation
-library(entity)        # for 
+library(entity)        # for ???
 library(gridExtra)     # for working with grids to obtain nice layouts
 library (hunspell)     # for high-performance stemming
 library (knitr)        # for manipulating the output of this markdown document
@@ -67,7 +67,7 @@ Before starting the exercises, you need to set your working directory to your Pr
 
 
 ```{r message = FALSE, warning = FALSE, include = TRUE}
-# setwd("drivename:/folder1/folder2/r_tm/monday/Practicals/")
+# setwd("r_tm/Monday/Practicals/Practical 2/Data")
 
 ```
 
@@ -82,8 +82,8 @@ You are going to use CSV sets that has been saved in advance. The files are name
 1. **Use the `read.csv function to fetch the Diana.csv file and do the same for the Michael.csv file.**
 
 ```{r 1, message = FALSE, warning = FALSE, include = TRUE}
-Diana <- read.csv("Diana.csv", stringsAsFactors = FALSE)
-Michael <- read.csv("Michael.csv",stringsAsFactors = FALSE)
+Diana <- read.csv("Data/Diana.csv", stringsAsFactors = FALSE)
+Michael <- read.csv("Data/Michael.csv",stringsAsFactors = FALSE)
 ```
 
 
@@ -156,8 +156,8 @@ print( Example2)
 **7. Remove punctuation**
 
 ```{r 9, message = FALSE, warning = FALSE, include = TRUE}
- Example2<-tm::removePunctuation(Example2)
-print( Example2)
+Example2<-tm::removePunctuation(Example2)
+print(Example2)
 ```
 
 You might not be happy with the result. The list of tokens still contains noise. Try to get rid of more distorted characters. 
@@ -275,7 +275,7 @@ stopwords("en")
 Toocommon <- unlist(stopwords("en"))
 
 #Add some words of your own that you want to remove from the texts:  
-Mystopwords <- c("diana", "car")
+Mystopwords <- c("diana", "car", "michael", "jackson", "jacksons")
 
 #Combine the two lists of stopwords
 Stopwords <- list(Toocommon, list(Mystopwords))
@@ -294,7 +294,7 @@ Michaeltext <- removeWords(Michaeltext, Stopwords)
 ```{r 24, message = FALSE, warning = FALSE, include = TRUE}
 Diana$clean_content <- Dianatext
 Michael$clean_content <- Michaeltext
-View(Diana)
+# View(Diana)
 ```
 
 # Visualize Results
@@ -310,7 +310,7 @@ wordcloud(Diana$clean_content, scale = c(7,0.13), min.freq = 40, colors = pal)
 
 **23. Inspect the word cloud of the original text field and the cloud for the new cleansed field for the data frame Michael **
 ```{r 26,  warning = FALSE, include = TRUE}
-wordcloud(Diana$content, scale = c(7,.13), min.freq = 50, colors = pal)
+wordcloud(Michael$content, scale = c(7,.13), min.freq = 50, colors = pal)
 wordcloud(Michael$clean_content, scale = c(7,.13), min.freq = 50, colors = pal)
 ```
 
@@ -333,15 +333,19 @@ My_Theme = theme(
   axis.text.y = element_text(size = 10))
   
 Diana20cont <- ggplot(data=Dianatop20, mapping = aes(x= reorder(WORD, FREQ), FREQ)) +
-    geom_bar(stat="identity", fill = "red") + My_Theme + coord_flip() 
+    geom_bar(stat="identity", fill = "red") + My_Theme + coord_flip()
+Diana20cont
 
 Diana20clean <- ggplot(data=Dianatop20clean, mapping = aes(x= reorder(WORD, FREQ), FREQ)) +
     geom_bar(stat="identity", fill = "red") + My_Theme + coord_flip() 
+Diana20clean
 
 Michael20cont <- ggplot(data=Michaeltop20, mapping = aes(x= reorder(WORD, FREQ), FREQ)) +
     geom_bar(stat="identity", fill = "blue") + My_Theme + coord_flip() 
+Michael20cont
 
 Michael20clean <- ggplot(data=Michaeltop20clean, mapping = aes(x= reorder(WORD, FREQ), FREQ)) + geom_bar(stat="identity", fill = "blue") + My_Theme + coord_flip() 
+Michael20clean
 
 ```
 
@@ -357,7 +361,7 @@ grid.arrange(Diana20cont, Diana20clean, Michael20cont, Michael20clean, nrow = 2,
 **25. Several packages for language detection are available. We will use Google's Compact Language Detector package "cld2". The dataframe containing GR reviews in different languages is available. First: Store the file Clddemo2.csv in the variable "Langtexts". NB! This csv file uses ";" as a separator for the columns. Format: read.csv("filename", sep = ";"). Store the code for the detected language in the column langcont in the dataframe .**
 
 ```{r 30, message = FALSE, warning = FALSE, include = TRUE}
-Langtexts <- read.csv("Clddemo2.csv", sep = ";")
+Langtexts <- read.csv("Data/Clddemo2.csv", sep = ";")
 Langtexts$langcont <- detect_language(Langtexts$Text)
 View(Langtexts)
 ```
@@ -399,7 +403,7 @@ DianastatsPOS$key <- factor(DianastatsPOS$key, levels = rev(DianastatsPOS$key))
 
 **30.Voluntary for enthousiasts: This plot has some results**
 ```{r 35, message = FALSE, warning = FALSE, include = TRUE}
-grafDianapos <-ggplot(DianastatsPOS, aes(key, freq_pct)) +geom_bar(stat = "identity", aes(fill = key), position = "dodge") + My_Theme + coord_flip() 
+grafDianapos <-ggplot(DianastatsPOS, aes(key, freq_pct)) +geom_bar(stat = "identity", aes(fill = key), position = "dodge") + My_Theme + coord_flip() + theme(legend.position="none")
 grafDianapos
 ```
 
@@ -412,7 +416,7 @@ Diananounstat <- subset(DianaPOS, upos %in% c("NOUN"))
 Dinounnrs <- count(Diananounstat$lemma)
 Distatsnoun <- filter(Dinounnrs, freq > 40)
 
-grafDinoun <-ggplot(Distatsnoun, aes(x, freq)) + geom_bar(stat = "identity", aes(fill = x), position = "dodge") + My_Theme + coord_flip() 
+grafDinoun <-ggplot(Distatsnoun, aes(x, freq)) + geom_bar(stat = "identity", aes(fill = x), position = "dodge") + My_Theme + coord_flip() + theme(legend.position="none")
 grafDinoun
 ```
 
@@ -425,7 +429,7 @@ Dinadjnrs <- count(Diananadjstat$lemma)
 Distatsadj <- filter(Dinadjnrs, freq > 25)
 
 grafDiadj<-ggplot(Distatsadj, aes(x, freq))
-grafDiadj + geom_bar(stat = "identity", aes(fill = x), position = "dodge") + My_Theme + coord_flip() 
+grafDiadj + geom_bar(stat = "identity", aes(fill = x), position = "dodge") + My_Theme + coord_flip() + theme(legend.position="none")
 ```
 
 
@@ -439,7 +443,7 @@ MichaelstatsPOS <- txt_freq(MichaelPOS$upos)
 MichaelstatsPOS$key <- factor(MichaelstatsPOS$key, levels = rev(MichaelstatsPOS$key))
 
 grafMichaelpos <-ggplot(MichaelstatsPOS, aes(key, freq_pct))
-grafMichaelpos +geom_bar(stat = "identity", aes(fill = key), position = "dodge")  + My_Theme + coord_flip() 
+grafMichaelpos +geom_bar(stat = "identity", aes(fill = key), position = "dodge")  + My_Theme + coord_flip() + theme(legend.position="none")
 ```
 
 **34. Voluntary for enthousiasts:Tag the adjectives used in the Michael Jackson articles**
@@ -449,7 +453,7 @@ Micadjnrs <- count(Michaeladjstat$lemma)
 Micstatsadj <- filter(Micadjnrs, freq > 20)
 
 grafMicadj<-ggplot(Micstatsadj, aes(x, freq))
-grafMicadj + geom_bar(stat = "identity", aes(fill = x), position = "dodge") + My_Theme + coord_flip() 
+grafMicadj + geom_bar(stat = "identity", aes(fill = x), position = "dodge") + My_Theme + coord_flip() + theme(legend.position="none")
 ```
 
 
