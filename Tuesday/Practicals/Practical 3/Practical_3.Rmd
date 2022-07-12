@@ -461,6 +461,45 @@ In this practical, we learned about:
 
 ---
 
+Here we have some additional guide on:
+
+- how to change your stopwords list for another language
+
+- how to modify the stopwords list
+
+- how to extract n-grams for the dtm
+
+
+```{r additional, include = TRUE}
+toy_data_train <- c('Cats like to chase mice.', 
+                    'Dogs like to eat big bones.')
+
+# convert data to vector space model
+toy_corpus_train <- VCorpus(VectorSource(toy_data_train))
+
+# create a dtm object
+toy_dtm_train <- DocumentTermMatrix(toy_corpus_train, 
+                                    list(removePunctuation = TRUE, 
+                                         stopwords = c(stopwords("english"), "like"), 
+                                         stemming = TRUE, 
+                                         removeNumbers = TRUE))
+
+data.frame(as.matrix(toy_dtm_train))
+
+library(RWeka)
+tokenize_n_grams <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 3))
+# create an n-gram based dtm object
+toy_tdtm_train <- DocumentTermMatrix(toy_corpus_train, 
+                                     list(tokenize=tokenize_n_grams,
+                                          removePunctuation = TRUE, 
+                                          stopwords = c(stopwords("english"), "like"), 
+                                          stemming = TRUE, 
+                                          removeNumbers = TRUE))
+data.frame(as.matrix(toy_tdtm_train))
+```
+
+---
+
 End of Practical
 
 ---
