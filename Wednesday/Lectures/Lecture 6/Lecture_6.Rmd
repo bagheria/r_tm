@@ -2,11 +2,11 @@
 title: "Topic Modeling"
 author: "Ayoub Bagheri"
 output:
-  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
     widescreen: no
+  beamer_presentation: default
 ---
 
 ```{r, include=FALSE}
@@ -436,6 +436,13 @@ include_graphics("img/page 4.png")
 
 # Topic Modeling
 
+## Topic modeling
+```{r,out.width="90%"}
+include_graphics("img/topicmodel1.png")
+```
+
+<font size="2"> https://thinkinfi.com/</font> 
+
 ## Topic models
 <div style="float:left;width:60%">
 - Three concepts: words, topics, and documents
@@ -452,7 +459,6 @@ include_graphics("img/page 4.png")
 ```{r,out.width="100%"}
 include_graphics("img/page 41.png")
 ```
-
 </div>
 
 ## Topic models | Reality: Documents observed, infer  topics
@@ -460,9 +466,19 @@ include_graphics("img/page 41.png")
 include_graphics("img/page 42.png")
 ```
 
+## Topic models
+```{r,out.width="90%"}
+include_graphics("img/topicmodel2.png")
+```
+
 ## LDA graphical model
 ```{r, out.width="100%"}
 include_graphics("img/page 46.png")
+```
+
+## LDA
+```{r,out.width="90%"}
+include_graphics("img/topicmodel3.png")
 ```
 
 ## Probabilistic modeling
@@ -472,10 +488,65 @@ include_graphics("img/page 46.png")
 
 3. Situate new data into the estimated model: How does this query or new document fit into the estimated topic structure?
 
+## Example
+Suppose you have the following set of sentences:
+
+- I like to eat broccoli and bananas.
+- I ate a banana and spinach smoothie for breakfast.
+- Chinchillas and kittens are cute.
+- My sister adopted a kitten yesterday.
+- Look at this cute hamster munching on a piece of broccoli.
+
+What is latent Dirichlet allocation? It’s a way of automatically discovering topics that these sentences contain.
+
+## Example
+Given these sentences and asked for 2 topics, LDA might produce something like:
+- Sentences 1 and 2: 100% Topic A
+- Sentences 3 and 4: 100% Topic B
+- Sentence 5: 60% Topic A, 40% Topic B
+- Topic A: 30% broccoli, 15% bananas, 10% breakfast, 10% munching, … (at which point, you could interpret topic A to be about food)
+- Topic B: 20% chinchillas, 20% kittens, 20% cute, 15% hamster, … (at which point, you could interpret topic B to be about cute animals)
+
+How does LDA perform this discovery?
+
+## LDA training
+- Go through each document, and randomly assign each word in the document to one of the K topics.
+- Notice that this random assignment already gives you both topic representations of all the documents and word distributions of all the topics (albeit not very good ones).
+- So to improve on them, for each document d…
+- Go through each word w in d…
+
+## LDA training
+- And for each topic t, compute two things: 
+
+  - p(topic t | document d) = the proportion of words in document d that are currently assigned to topic t, and
+  
+  - p(word w | topic t) = the proportion of assignments to topic t over all documents that come from this word w. 
+
+- Reassign w a new topic, where we choose topic t with probability p(topic t | document d) * p(word w | topic t) 
+
+- In other words, in this step, we’re assuming that all topic assignments except for the current word in question are correct, and then updating the assignment of the current word using our model of how documents are generated.
+
+## LDA training
+- After repeating the previous step a large number of times, you’ll eventually reach a roughly steady state where your assignments are pretty good. 
+
+- Use these assignments to estimate the topic mixtures of each document (by counting the proportion of words assigned to each topic within that document) and the words associated to each topic (by counting the proportion of words assigned to each topic overall).
+
 ## LDA: Identifying structure in text
 ```{r, out.width="100%"}
 include_graphics("img/lda.png")
 ```
+
+
+## In R
+```{r, eval=FALSE, echo=TRUE}
+library(topicmodels)
+
+LDA(data, 
+    k = 5, 
+    method= "Gibbs", 
+    control = list(seed = 321))
+```
+
 
 <!-- ##  -->
 <!-- ```{r,out.width="100%"} -->
