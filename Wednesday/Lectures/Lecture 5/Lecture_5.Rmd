@@ -16,6 +16,42 @@ library(magick)
 library(magrittr)
 ```
 
+## Before we start
+k-fold cross validation in R
+
+Method 1:
+```{r, eval = FALSE}
+library(e1071)
+
+#specify the cross-validation method
+tune.control <- tune.control(random             = F,
+                             nrepeat            = 1,
+                             sampling           = c("cross"),
+                             sampling.aggregate = mean, 
+                             cross              = 5, 
+                             best.model         = T,
+                             performances       = T)
+
+# fit a model and use k-fold CV to evaluate performance
+model <- naiveBayes(outcome ~ ., data, tune.control)
+```
+
+## Before we start
+k-fold cross validation in R
+
+Method 2:
+```{r, eval = FALSE}
+library(caret)
+
+# specify the cross-validation method
+ctrl <- trainControl(method = "cv", 
+                     number = 5)
+
+# fit a model and use k-fold CV to evaluate performance
+model <- train(y ~ x1 + x2, data = df, method = "lm", trControl = ctrl)
+```
+
+
 ## Lecture Plan
 
 1. Features in text? And how to do text feature selection?
@@ -52,6 +88,11 @@ library(magrittr)
   - Find the best subset of features for a particular classification method
   - Sequential forward selection or genetic search to speed up the search
 
+```{r,echo=FALSE, out.width="90%", fig.align='center'}
+include_graphics("img/wrapper.jpg")
+```
+
+## Feature selection methods
 - Filter methods
   - Evaluate the features <u>independently</u> from the classifier and other features
   - Feasible for very large feature se
@@ -82,6 +123,24 @@ library(magrittr)
 <!-- include_graphics("img/page 37.png") -->
 <!-- ``` -->
 
+# Filter Methods
+
+## Filter merhods
+- Document frequency
+- Information gain
+- Chi-squared
+- F-score
+- Relief
+- Rough Sets consistency
+- Binary consistency
+- Inconsistent Examples consistency
+- Inconsistent Examples Pairs consistency
+- Determination Coefficient
+- Mutual information
+- Gain ratio
+- Symmetrical uncertain
+- Gini index
+
 ## Document frequency
 
 - Rare words: non-influential for global prediction, reduce vocabulary size
@@ -89,6 +148,25 @@ library(magrittr)
 ```{r,echo=FALSE, out.width="90%", fig.align='center'}
 include_graphics("img/page 38.png")
 ```
+
+## Gini index
+
+Let $p(c | t)$ be the conditional probability that a document belongs to class $c$, given the fact that it contains the term $t$. Therefore, we have:
+
+$$\sum^k_{c=1}{p(c | t)=1}$$
+
+Then, the gini index for the term $t$, denoted by $G(t)$ is defined as:
+
+$$G(t) = \sum^k_{c=1}{p(c | t)^2}$$
+
+## Gini index
+
+- The value of the gini index lies in the range $(1/k, 1)$. 
+
+- Higher values of the gini index indicate a greater discriminative power of the term t. 
+
+- If the global class distribution is skewed, the gini index may not accurately reflect the discriminative power of the underlying attributes.
+
 
 ## Information gain
 
@@ -98,33 +176,58 @@ include_graphics("img/page 38.png")
 include_graphics("img/page 39.png")
 ```
 
-## Gini Index
+## Information gain
 
-Let $p(c | t)$ be the conditional probability that a document belongs to class $c$, given the fact that it contains the term $t$. Therefore, we have:
+- The higher the information gain the greater discriminative power of the term t
 
-$$\sum^k_{c=1}{p(c | t)=1}$$
+```{r,echo=FALSE, out.width="90%", fig.align='center'}
+include_graphics("img/infogain.png")
+```
 
-Then, the gini-index for the term $t$, denoted by $G(t)$ is defined as:
+## In R
 
-$$G(t) = \sum^k_{c=1}{p(c | t)^2}$$
+```{r, warning=FALSE,   message=FALSE}
+library(caret)
+library(tm)
+library(FSinR)
 
-## Gini Index
+data <- c('Cats like to chase mice.', 
+          'Dogs like to eat big bones.')
 
-- The value of the gini-index lies in the range $(1/k, 1)$. 
+# convert data to vector space model
+corpus <- VCorpus(VectorSource(data))
+# create a dtm object
+dtm <- DocumentTermMatrix(corpus, 
+                          list(removePunctuation = TRUE, 
+                               stopwords = TRUE, 
+                               stemming = TRUE, 
+                               removeNumbers = TRUE))
 
-- Higher values of the gini-index indicate a greater discriminative power of the term t. 
+# add the dependent variable
+train_data <- as.matrix(dtm)
+train_data <- cbind(train_data, c(0, 1))
+colnames(train_data)[ncol(train_data)] <- 'y'
+train_data   <- as.data.frame(train_data)
+train_data$y <- as.factor(train_data$y)
+```
 
-- If the global class distribution is skewed, the gini-index may not accurately reflect the discriminative power of the underlying attributes.
+## In R
 
-- Other methods
-  - Normalized gini-index
-  - Mutual Information
-  - ${\chi}^2$-Statistic
+```{r,warning=FALSE}
+# Feature Selection
+evaluator      <- filterEvaluator('giniIndex')
+directSearcher <- directSearchAlgorithm('selectKBest', list(k=3))
+
+# results
+results <- directFeatureSelection(train_data, 'y', directSearcher, evaluator)
+results$bestFeatures
+results$featuresSelected
+```
 
 # Text Clustering
 
 ## Unsupervised learning
-```{r, out.width="100%"}
+```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 3.png")
 ```
 
@@ -150,12 +253,11 @@ include_graphics("img/page 5.png")
 
 Which one is not a text clustering task?
 
-- Grouping Trump's tweets and finding the main topics
-- Finding similar patterns (demands) in customer reviews
+- Finding similar patterns in customer reviews
+- Grouping political tweets and finding their hidden topics
+- Detection of heart failure (yes or no) using discharge letters
 - Grouping scientific articles
-- Detection of heart failure (0 or 1) using discharge summaries
 
-Please go to <a href="www.menti.com">www.menti.com</a> and use the code 9594 3321
 
 ## Clustering
   
@@ -169,39 +271,39 @@ Please go to <a href="www.menti.com">www.menti.com</a> and use the code 9594 332
 
 - Need similarity/distance as guidance to form clusters
 
-## Applications of text clustering
-<div style="float:left; width:50%">
-- Organize document collections
-  
-  - Automatically identify hierarchical/topical relation among documents
-</div>
-<div style="float:right; width:60%">
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 7.png")
-```
-</div>
+<!-- ## Applications of text clustering -->
+<!-- <div style="float:left; width:50%"> -->
+<!-- - Organize document collections -->
 
-## Applications of text clustering
-<div style="float:left; width:50%">
-- Grouping search results
-  
-  - Organize documents by topics
-  
-  - Facilitate user browsing
-</div>
-<div style="float:right; width:50%">
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 8.png")
-```
-</div>
+<!--   - Automatically identify hierarchical/topical relation among documents -->
+<!-- </div> -->
+<!-- <div style="float:right; width:60%"> -->
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 7.png") -->
+<!-- ``` -->
+<!-- </div> -->
 
-## Applications of text clustering
-- Topic modeling
-  - Grouping words into topics
-  
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 9.png")
-```
+<!-- ## Applications of text clustering -->
+<!-- <div style="float:left; width:50%"> -->
+<!-- - Grouping search results -->
+
+<!--   - Organize documents by topics -->
+
+<!--   - Facilitate user browsing -->
+<!-- </div> -->
+<!-- <div style="float:right; width:50%"> -->
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 8.png") -->
+<!-- ``` -->
+<!-- </div> -->
+
+<!-- ## Applications of text clustering -->
+<!-- - Topic modeling -->
+<!--   - Grouping words into topics -->
+
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 9.png") -->
+<!-- ``` -->
 
 <!-- # Distance metric -->
 
@@ -269,6 +371,7 @@ include_graphics("img/page 9.png")
 # Clustering algorithms
 
 ## Categories
+- Hard versus soft clustering
 
 - Partitional clustering
 
@@ -376,7 +479,7 @@ $$\vec \mu(c)=\frac{1}{|c|}\sum_{\vec a \in c}{\vec x}$$
 - Select $K$ random docs $\{s_1, s_2,… s_K\}$ as seeds.
 - Until clustering converges (or other stopping criterion):
   
-  - For each doc $d_i$: <br>
+  - For each document $d_i$: <br>
    
     - Assign $d_i$ to the cluster $c_j$ such that $dist(x_i, s_j)$ is minimal.
   
@@ -386,11 +489,11 @@ $$\vec \mu(c)=\frac{1}{|c|}\sum_{\vec a \in c}{\vec x}$$
     - $s_j = \mu(c_j)$
     
 ## K-Means example (K=2)
-```{r, out.width="100%", cache=TRUE}
+```{r, echo=FALSE, out.width="100%", cache=TRUE}
 list.files(path='img/', pattern = 'page 26', full.names = TRUE) %>% 
         image_read() %>% # reads each path file
         image_join() %>% # joins image
-        image_animate(fps=.25) %>% # animates, can opt for number of loops
+        image_animate(fps=0.25) %>% # animates, can opt for number of loops
         image_write("img/kmeans.gif") # write to current dir
 
 include_graphics("img/kmeans.gif")
@@ -451,7 +554,7 @@ include_graphics("img/kmeans.gif")
 - Clustering obtained by cutting the dendrogram at a desired level: each <b>connected</b> component forms a cluster.
 </div>
 <div style="float:right;width:50%">
-```{r, out.width="100%"}
+```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 33.png")
 ```
 </div>
@@ -464,7 +567,7 @@ include_graphics("img/page 33.png")
     - Start with individual objects as separated clusters
     - Repeatedly merge closest pair of clusters
 
-```{r, out.width="100%"}
+```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/page 34.png")
 ```
 
@@ -477,12 +580,12 @@ include_graphics("img/page 34.png")
     
     - Repeatedly splitting the remaining clusters into two
 
-```{r, out.width="60%", fig.align='right'}
+```{r, echo=FALSE, out.width="60%", fig.align='right'}
 include_graphics("img/page 35.png")
 ```
 
 ## Hierarchical Agglomerative Clustering (HAC)
-- Starts with each doc in a separate cluster
+- Starts with each document in a separate cluster
   
   - then repeatedly joins the <em><u>closest pair</u></em> of clusters, until there is only one cluster.
 
