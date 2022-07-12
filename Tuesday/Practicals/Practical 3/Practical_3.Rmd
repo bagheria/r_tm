@@ -54,62 +54,59 @@ library(e1071)
 ---
 
 ```{r 1, include = TRUE}
-data <- c('Cats like to chase mice.', 
-          'Dogs like to eat big bones.')
+toy_data_train <- c('Cats like to chase mice.', 
+                    'Dogs like to eat big bones.')
 
 # convert data to vector space model
-corpus <- VCorpus(VectorSource(data))
+toy_corpus_train <- VCorpus(VectorSource(toy_data_train))
 
 # create a dtm object
-dtm <- DocumentTermMatrix(corpus, 
-                          list(removePunctuation = TRUE, 
-                               stopwords = TRUE, 
-                               stemming = TRUE, 
-                               removeNumbers = TRUE))
-
+toy_dtm_train <- DocumentTermMatrix(toy_corpus_train, 
+                                    list(removePunctuation = TRUE, 
+                                         stopwords = TRUE, 
+                                         stemming = TRUE, 
+                                         removeNumbers = TRUE))
 ```
 
 ---
 
-2. **Inspect the dtm object.**
+2. **Inspect the toy_dtm_train object.**
 
 ---
 
 
 ```{r 2, include = TRUE}
-inspect(dtm)
-#inspect(dtm[1:rownumber, 1:colnumber])
+inspect(toy_dtm_train)
+#inspect(toy_dtm_train[1:rownumber, 1:colnumber])
 
 ```
 
 ---
 
-3. **Convert the dtm object to a matrix and add a 'y' column as the outcome variable which is 0 for the first row and 1 for the second row. Then, convert the dtm object to a dataframe.**
+3. **Convert the toy_dtm_train object to a matrix and add a 'y' column as the outcome variable which is 0 for the first row and 1 for the second row. Then, convert the toy_dtm_train object to a dataframe.**
 
 ---
 
 ```{r 3, include = TRUE}
-train <- as.matrix(dtm)
-train <- cbind(train, c(0, 1))
+toy_data_train <- cbind(as.matrix(toy_dtm_train), c(0, 1))
 
-colnames(train)[ncol(train)] <- 'y'
-train <- as.data.frame(train)
-train$y <- as.factor(train$y)
-train
+colnames(toy_data_train)[ncol(toy_data_train)] <- 'y'
+toy_data_train <- as.data.frame(toy_data_train)
+toy_data_train$y <- as.factor(toy_data_train$y)
+toy_data_train
 
 ```
 
 
 ---
 
-4. **From the 'caret' package, use the train function with method = 'bayesglm' and fit a model on the dtm object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
+4. **From the 'caret' package, use the train function with method = 'bayesglm' and fit a model on the toy_dtm_train object. For 'bayesglm', you may need to install Package ‘arm’ which is a library for data analysis using regression and multilevel/hierarchical models.**
 
 ---
 
 ```{r 4, include = TRUE, warning = FALSE}
-fit <- train(y ~ ., data = train, method = 'bayesglm')
-summary(fit)
-
+fit_toy <- train(y ~ ., data = toy_data_train, method = 'bayesglm')
+summary(fit_toy)
 ```
 
 ---
@@ -119,7 +116,7 @@ summary(fit)
 ---
 
 ```{r 5, include = TRUE, warning = FALSE}
-predict(fit)
+predict(fit_toy)
 
 ```
 
@@ -132,22 +129,22 @@ Here, you see that the model perfectly predicts the category for our training da
 ---
 
 ```{r 6, include = TRUE}
-test_sentence <- c('Rats eat cheese.')
+toy_test_sentence <- c('Rats eat cheese.')
 
 # convert to vector space model
-corpus <- VCorpus(VectorSource(test_sentence))
+toy_corpus_test <- VCorpus(VectorSource(toy_test_sentence))
 
 # convert to a dtm
-dtm <- DocumentTermMatrix(corpus, 
-                          control = list(dictionary = Terms(dtm), # remember that we need to use the terminology from the training data
-                                         removePunctuation = TRUE, 
-                                         stopwords = TRUE, 
-                                         stemming = TRUE, 
-                                         removeNumbers = TRUE))
-test_data <- as.matrix(dtm)
+toy_dtm_test <- DocumentTermMatrix(toy_corpus_test, 
+                                   control = list(dictionary = Terms(toy_dtm_train), # remember that we need to use the terminology from the training data         
+                                                  removePunctuation = TRUE, 
+                                                  stopwords = TRUE, 
+                                                  stemming = TRUE, 
+                                                  removeNumbers = TRUE))
+toy_test_data <- as.matrix(toy_dtm_test)
 
 # predict category for the test data
-predict(fit, newdata = test_data)
+predict(fit_toy, newdata = toy_test_data)
 
 ```
 
@@ -158,47 +155,41 @@ predict(fit, newdata = test_data)
 ---
 
 ```{r 7, include = TRUE, warning = FALSE}
-# convert data to vector space model
-corpus <- VCorpus(VectorSource(data))
-
 # create a dtm object
-dtm_tfidf <- DocumentTermMatrix(corpus, 
-                                list(weighting = weightTfIdf,
-                                     removePunctuation = TRUE, 
-                                     stopwords = TRUE, 
-                                     stemming = TRUE, 
-                                     removeNumbers = TRUE))
+tou_dtm_train_tfidf <- DocumentTermMatrix(toy_corpus_train, 
+                                          list(weighting = weightTfIdf,
+                                               removePunctuation = TRUE, 
+                                               stopwords = TRUE, 
+                                               stemming = TRUE, 
+                                               removeNumbers = TRUE))
 
 # create the y variable
-train <- as.matrix(dtm_tfidf)
-train <- cbind(train, c(0, 1))
-colnames(train)[ncol(train)] <- 'y'
-train <- as.data.frame(train)
-train$y <- as.factor(train$y)
-train
+toy_train_data_tfidf <-cbind(as.matrix(tou_dtm_train_tfidf), c(0, 1))
+colnames(toy_train_data_tfidf)[ncol(toy_train_data_tfidf)] <- 'y'
+toy_train_data_tfidf <- as.data.frame(toy_train_data_tfidf)
+toy_train_data_tfidf$y <- as.factor(toy_train_data_tfidf$y)
+toy_train_data_tfidf
 
 # fit the naive Bayes model with the tfidf representation
-fit_by_tfidf <- train(y ~ ., data = train, method = 'bayesglm')
-summary(fit_by_tfidf)
+toy_fit_tfidf <- train(y ~ ., data = toy_train_data_tfidf, method = 'bayesglm')
+summary(toy_fit_tfidf)
 
 # prediction on training data
-predict(fit_by_tfidf)
+predict(toy_fit_tfidf)
 
 # prediction on test data
-# convert to vector space model
-corpus <- VCorpus(VectorSource(test_sentence))
 # convert to a dtm
-dtm <- DocumentTermMatrix(corpus, 
-                          control = list(dictionary = Terms(dtm_tfidf), # remember that we need to use the vocabulary from the training data
-                                         weighting = weightTfIdf,
-                                         removePunctuation = TRUE, 
-                                         stopwords = TRUE, 
-                                         stemming = TRUE, 
-                                         removeNumbers = TRUE))
-test_data <- as.matrix(dtm)
+tou_dtm_test_tfidf <- DocumentTermMatrix(toy_corpus_test, 
+                                        control = list(dictionary = Terms(tou_dtm_train_tfidf), # remember that we need to use the vocabulary from the training data
+                                                       weighting = weightTfIdf,
+                                                       removePunctuation = TRUE, 
+                                                       stopwords = TRUE, 
+                                                       stemming = TRUE, 
+                                                       removeNumbers = TRUE))
+toy_test_data_tfidf <- as.matrix(tou_dtm_test_tfidf)
 
 # predict category for the test data
-predict(fit, newdata = test_data)
+predict(toy_fit_tfidf, newdata = toy_test_data_tfidf)
 
 
 ```
@@ -253,10 +244,10 @@ table(df_final$Category)
 ---
 
 ```{r 10, include = TRUE, warning = FALSE}
-corpus <- Corpus(VectorSource(df_final$Content))
+corpus_BBC <- Corpus(VectorSource(df_final$Content))
 
 # standardize to lowercase
-corpus <- tm_map(corpus, content_transformer(tolower)) 
+corpus_BBC <- tm_map(corpus_BBC, content_transformer(tolower)) 
 # returns error invalid multibyte string 1512
 # Two possible solutions: 
 # 1) Omission of the whole observation
@@ -266,21 +257,20 @@ corpus <- tm_map(corpus, content_transformer(tolower))
 # then rerun from line 255.
 
 # remove tm stopwords
-corpus <- tm_map(corpus, removeWords, stopwords())
+corpus_BBC <- tm_map(corpus_BBC, removeWords, stopwords())
 # standardize whitespaces
-corpus <- tm_map(corpus, stripWhitespace)
+corpus_BBC <- tm_map(corpus_BBC, stripWhitespace)
 # remove punctuation
-corpus <- tm_map(corpus, removePunctuation)
+corpus_BBC <- tm_map(corpus_BBC, removePunctuation)
 # remove numbers
-corpus <- tm_map(corpus, removeNumbers)
+corpus_BBC <- tm_map(corpus_BBC, removeNumbers)
 
-dtm <- DocumentTermMatrix(corpus)
+dtm_BBC <- DocumentTermMatrix(corpus_BBC)
 
 # words appearing more than 10x
-features <- findFreqTerms(dtm, 10)
+features_BBC <- findFreqTerms(dtm_BBC, 10)
 
-head(features)
-
+head(features_BBC)
 ```
 
 ---
@@ -295,11 +285,11 @@ set.seed(123)
 
 train_idx <- createDataPartition(df_final$Category, p=0.80, list=FALSE)
 # set for the original raw data 
-train1 <- df_final[train_idx,]
-test1 <- df_final[-train_idx,]
+train_BBC_raw <- df_final[train_idx,]
+test_BBC_raw <- df_final[-train_idx,]
 # set for the cleaned-up data
-train2 <- corpus[train_idx]
-test2 <- corpus[-train_idx]
+train_BBC_clean <- corpus_BBC[train_idx]
+test_BBC_clean <- corpus_BBC[-train_idx]
 
 ```
 
@@ -310,45 +300,46 @@ test2 <- corpus[-train_idx]
 ---
 
 ```{r 12, include = TRUE, warning = FALSE}
-dtm_train <- DocumentTermMatrix(train2, list(dictionary=features))
-dtm_test  <- DocumentTermMatrix(test2, list(dictionary=features))
+dtm_BBC_train <- DocumentTermMatrix(train_BBC_clean, list(dictionary=features_BBC))
+dtm_BBC_test  <- DocumentTermMatrix(test_BBC_clean, list(dictionary=features_BBC))
 
-dtm_train <- as.data.frame(as.matrix(dtm_train))
-dtm_test <- as.data.frame(as.matrix(dtm_test))
-str(dtm_test)
-
-```
-
----
-
-13. **Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.**
-
----
-
-```{r 13, include = TRUE, warning = FALSE}
-freq <- colSums(dtm_train)
-
-head(freq, 10)
-tail(freq,10)
-
-```
-
-```{r}
-plot(sort(freq, decreasing = T),
-     col  = "blue",
-     main = "Word TF frequencies", 
-     xlab = "TF-based rank", 
-     ylab = "TF")
+dtm_BBC_train <- as.data.frame(as.matrix(dtm_BBC_train))
+dtm_BBC_test <- as.data.frame(as.matrix(dtm_BBC_test))
+str(dtm_BBC_test)
 
 ```
 
 ---
 
-14. **Show 20 most frequent terms and their frequencies in a bar plot.**
+<!-- 13. **Use the code below to find out how frequently terms appear by summing the content of all terms, and then plot the tdidf frequencies.** -->
+
+<!-- --- -->
+
+<!-- ```{r 13, include = TRUE, warning = FALSE} -->
+<!-- freq <- colSums(dtm_BBC_train) -->
+
+<!-- head(freq, 10) -->
+<!-- tail(freq,10) -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot(sort(freq, decreasing = T), -->
+<!--      col  = "blue", -->
+<!--      main = "Word TF frequencies",  -->
+<!--      xlab = "TF-based rank",  -->
+<!--      ylab = "TF") -->
+
+<!-- ``` -->
+
+---
+
+13. **Show 20 most frequent terms and their frequencies in a bar plot.**
 
 ---
 
 ```{r 14, include = TRUE}
+freq         <- colSums(dtm_BBC_train)
 high_freq    <- tail(sort(freq), n = 20)
 hfp_df       <- as.data.frame(sort(high_freq))
 hfp_df$names <- rownames(hfp_df) 
@@ -359,26 +350,25 @@ ggplot(hfp_df, aes(reorder(names, high_freq), high_freq)) +
   xlab("Terms") + 
   ylab("Frequency") +
   ggtitle("Term frequencies")
-
 ```
 
 ---
 
-15. **Use the cbind function to add the categories to the dtm_train data and name the column y.**
+14. **Use the cbind function to add the categories to the dtm_train data and name the column y.**
 
 ---
 
 ```{r 15, include = TRUE}
-dtm_train1 <- cbind(cat=factor(train1$Category), dtm_train)
-dtm_test1 <- cbind(cat=factor(test1$Category), dtm_test)
-dtm_train1<-as.data.frame(dtm_train1)
-dtm_test1<-as.data.frame(dtm_test1)
+dtm_BBC_train <- cbind(cat=factor(train_BBC_raw$Category), dtm_BBC_train)
+dtm_BBC_test <- cbind(cat=factor(test_BBC_raw$Category), dtm_BBC_test)
+dtm_BBC_train<-as.data.frame(dtm_BBC_train)
+dtm_BBC_test<-as.data.frame(dtm_BBC_test)
 
 ```
 
 ---
 
-16. **Fit a naive Bayes model on the training data set and name it fit_nb. Check the summary of the fitted model and predict the categories for the training data.**
+15. **Fit a naive Bayes model on the training data set and name it fit_BBC_nb. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
@@ -386,76 +376,74 @@ dtm_test1<-as.data.frame(dtm_test1)
 ```{r 16, include = TRUE, warning = FALSE}
 # gc()
 # Naive Bayes with Laplace smoothing
-fit_nb <- naiveBayes(cat~., data=dtm_train1, laplace = 1)
-summary(fit_nb)
+fit_BBC_nb <- naiveBayes(cat~., data=dtm_BBC_train, laplace = 1)
+summary(fit_BBC_nb)
 
-pred_nb_train <- predict(fit_nb, na.omit(dtm_train1))
-fit_nb_table <- table(na.omit(dtm_train1$cat), pred_nb_train, dnn=c("Actual", "Predicted"))
-fit_nb_table
+pred_BBC_nb_train <- predict(fit_BBC_nb, na.omit(dtm_BBC_train))
+fit_BBC_nb_table <- table(na.omit(dtm_BBC_train$cat), pred_BBC_nb_train, dnn=c("Actual", "Predicted"))
+fit_BBC_nb_table
 ```
 
 The predict function allows you to specify whether you want the most probable class or if you want to get the probability for every class. Nothing changes with the exception being the type parameter is set to “raw”.
 
 ---
 
-17. **Fit a SVM model with a linear kernel on the training data set and name it fit_svm. Check the summary of the fitted model and predict the categories for the training data.**
+16. **Fit a SVM model with a linear kernel on the training data set and name it fit_BBC_svm. Check the summary of the fitted model and predict the categories for the training data.**
 
 ---
 
 ```{r 17, include = TRUE, warning = FALSE}
-fit_svm <- svm(cat~., data=dtm_train1)
-summary(fit_svm)
+fit_BBC_svm <- svm(cat~., data=dtm_BBC_train)
+summary(fit_BBC_svm)
 
-pred_svm_train <- predict(fit_svm, na.omit(dtm_train1))
-fit_svm_table <- table(na.omit(dtm_train1$cat), pred_svm_train, dnn=c("Actual", "Predicted"))
-fit_svm_table
+pred_BBC_svm_train <- predict(fit_BBC_svm, na.omit(dtm_BBC_train))
+fit_BBC_svm_table <- table(na.omit(dtm_BBC_train$cat), pred_BBC_svm_train, dnn=c("Actual", "Predicted"))
+fit_BBC_svm_table
 
 ```
 
 
 ---
 
-18. **Now prepare the test data for the models, then check the prediction performances.**
+17. **Now prepare the test data for the models, then check the prediction performances.**
 
 ---
 
 ```{r 18, include = TRUE}
 # prediction on test data
-pred_nb_test <- predict(fit_nb, na.omit(dtm_test1))
-fit_nb_test <- table(na.omit(dtm_test1$cat), pred_nb_test, dnn=c("Actual", "Predicted"))
-fit_nb_test
-
+pred_BBC_nb_test <- predict(fit_BBC_nb, na.omit(dtm_BBC_test))
+fit_BBC_nb_test <- table(na.omit(dtm_BBC_test$cat), pred_BBC_nb_test, dnn=c("Actual", "Predicted"))
+fit_BBC_nb_test
 ```
 
 
 ```{r svm_test, include = TRUE, warning = FALSE}
 # prediction on test data
-pred_svm_test <- predict(fit_svm, na.omit(dtm_test1))
-fit_svm_test <- table(na.omit(dtm_test1$cat), pred_svm_test, dnn=c("Actual", "Predicted"))
-fit_svm_test
-
+pred_BBC_svm_test <- predict(fit_BBC_svm, na.omit(dtm_BBC_test))
+fit_BBC_svm_test <- table(na.omit(dtm_BBC_test$cat), pred_BBC_svm_test, dnn=c("Actual", "Predicted"))
+fit_BBC_svm_test
 ```
 
 ---
 
-19. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
+18. **Calculate Accuracy, Sensitivity, Specificity, Pos Pred Value, and Neg Pred Value for the test set using each of the two models.**
 
 ---
 
-The baseline performance is: 
+The baseline performance (accuracy) is: 
 ```{r baseline, include = TRUE}
-table(dtm_train1$cat)
+table(dtm_BBC_train$cat)
 cat("\n The baseline prediction accuracy: ")
-mean(na.omit(dtm_test1$cat) == "sport")
+mean(na.omit(dtm_BBC_test$cat) == "sport")
 ```
 
 ```{r 19, include = TRUE}
-confusionMatrix(fit_nb_test)
+confusionMatrix(fit_BBC_nb_test)
 
 ```
 
 ```{r 20, include = TRUE}
-confusionMatrix(fit_svm_test)
+confusionMatrix(fit_BBC_svm_test)
 ```
 
 ---

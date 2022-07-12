@@ -63,7 +63,7 @@ taylor_swift_lyrics <- read.csv("data/taylor_swift_lyrics.csv")
 
 
 ```{r 2, message = FALSE, warning = FALSE, include = TRUE}
-docs <- Corpus(VectorSource(taylor_swift_lyrics$Lyrics))
+docs <- VCorpus(VectorSource(taylor_swift_lyrics$Lyrics))
 
 dtm <- DocumentTermMatrix(docs,
            control = list(tolower = TRUE,
@@ -72,6 +72,7 @@ dtm <- DocumentTermMatrix(docs,
                           stopwords = TRUE
                          ))
 
+inspect(dtm)
 ```
 
 ---
@@ -83,7 +84,6 @@ dtm <- DocumentTermMatrix(docs,
 ```{r 3, message = FALSE, warning = FALSE, include = TRUE}
 # inspect(dtm)
 dtm <- as.data.frame(as.matrix(dtm))
-
 ```
 
 

@@ -2,6 +2,7 @@
 title: "Text Representation and Classification"
 author: "Ayoub Bagheri & Qixiang Fang"
 output:
+  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
