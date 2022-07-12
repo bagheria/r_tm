@@ -2,11 +2,11 @@
 title: "Feature Selection and Text Clustering"
 author: "Ayoub Bagheri"
 output:
-  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
     widescreen: no
+  beamer_presentation: default
 ---
 ```{r, include=FALSE}
 library(knitr)
@@ -52,7 +52,7 @@ model <- train(y ~ x1 + x2, data = df, method = "lm", trControl = ctrl)
 ```
 
 
-## Lecture Plan
+## Lecture plan
 
 1. Features in text? And how to do text feature selection?
 
@@ -258,6 +258,13 @@ Which one is not a text clustering task?
 - Detection of heart failure (yes or no) using discharge letters
 - Grouping scientific articles
 
+## Question
+
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="90%"}
+include_graphics("img/q1.jpg")
+```
+</div>
 
 ## Clustering
   
