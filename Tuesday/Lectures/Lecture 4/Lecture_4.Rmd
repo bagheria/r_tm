@@ -2,6 +2,7 @@
 title: "Sentiment Analysis and <br> Multi-class Classification"
 author: "Ayoub Bagheri"
 output:
+  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
@@ -92,7 +93,7 @@ include_graphics("img/page 9.png")
 
 - <em>Politics</em>: who is going to win the election?
 
-- <em>Twitter</em>: what is trend? 
+- <em>Twitter</em>: what is the trend today? 
 
 - <em>Movie</em>:  is this review positive or negative (IMDB, Netflix)?
 
@@ -183,10 +184,11 @@ include_graphics("img/page 17.png")
 
 - How to interpret features for sentiment detection?
 
-  - Bag of words (IR)
+  - Bag-of-words
   - Annotated lexicons (WordNet, SentiWordNet)
   - Syntactic patterns
   - Paragraph structure
+  - Word embedding
 
 ## Challenges
 - Harder than topical classification, with which bag of words features perform well
@@ -208,11 +210,10 @@ include_graphics("img/page 17.png")
   - <span style="color:red">Not completely unsupervised!</span>
 
 - **Supervised learning methods**: to classify reviews into positive and negative. 
-  - Machine learning
-    - Naïve Bayes, Maximum Entropy, Support Vector Machine
-
-  - Recent research
-    - Deep learning
+  - Naïve Bayes
+  - Maximum Entropy
+  - Support Vector Machine
+  - Deep learning
 
 # Lexicon-based Methods
 
@@ -295,48 +296,48 @@ include_graphics("img/page 17.png")
 <!-- include_graphics("img/page 27.png") -->
 <!-- ``` -->
 
-## Analyzing the polarity of each word in IMDB
-<center><p style="font-size:16px;color:green">Potts, Christopher. 2011. On the negativity of negation.  SALT  20, 636-659.</p></center>
+<!-- ## Analyzing the polarity of each word in IMDB -->
+<!-- <center><p style="font-size:16px;color:green">Potts, Christopher. 2011. On the negativity of negation.  SALT  20, 636-659.</p></center> -->
 
-<div style="float:left; width:60%">
-- How likely is each word to appear in each sentiment class?
-- Count(“bad”) in 1-star, 2-star, 3-star, etc.
-- But can’t use raw counts: 
-- Instead, <b>likelihood</b>: $P(w|c) = \frac{f(w,c)}{\sum_{w \in c}{f(w,c)}}$ 
-- Make them comparable between words
-  - <b>Scaled likelihood</b>: $\frac{P(w|c)}{P(w)}$
-</div>
+<!-- <div style="float:left; width:60%"> -->
+<!-- - How likely is each word to appear in each sentiment class? -->
+<!-- - Count(“bad”) in 1-star, 2-star, 3-star, etc. -->
+<!-- - But can’t use raw counts:  -->
+<!-- - Instead, <b>likelihood</b>: $P(w|c) = \frac{f(w,c)}{\sum_{w \in c}{f(w,c)}}$  -->
+<!-- - Make them comparable between words -->
+<!--   - <b>Scaled likelihood</b>: $\frac{P(w|c)}{P(w)}$ -->
+<!-- </div> -->
 
-<div style="float:right; width:40%">
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 28.png")
-```
+<!-- <div style="float:right; width:40%"> -->
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 28.png") -->
+<!-- ``` -->
 
-## Analyzing the polarity of each word in IMDB
-<center><p style="font-size:16px;color:green">Potts, Christopher. 2011. On the negativity of negation.  SALT  20, 636-659.</p></center>
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 29.png")
-```
+<!-- ## Analyzing the polarity of each word in IMDB -->
+<!-- <center><p style="font-size:16px;color:green">Potts, Christopher. 2011. On the negativity of negation.  SALT  20, 636-659.</p></center> -->
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 29.png") -->
+<!-- ``` -->
 
-## Other sentiment feature: Logical negation
-<center><p style="font-size:16px;color:green">Potts, Christopher. 2011. On the negativity of negation.  SALT  20, 636-659.</p></center>
-- Is logical negation (<em>no, not</em>) associated with negative sentiment?
+<!-- ## Other sentiment feature: Logical negation -->
+<!-- <center><p style="font-size:16px;color:green">Potts, Christopher. 2011. On the negativity of negation.  SALT  20, 636-659.</p></center> -->
+<!-- - Is logical negation (<em>no, not</em>) associated with negative sentiment? -->
 
-- Potts experiment:
-  - Count negation (<em>not, n’t, no, never</em>) in online reviews
-  - Regress against the review rating
+<!-- - Potts experiment: -->
+<!--   - Count negation (<em>not, n’t, no, never</em>) in online reviews -->
+<!--   - Regress against the review rating -->
 
-## Potts 2011 Results: <br> More negation in negative sentiment
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 31.png")
-```
+<!-- ## Potts 2011 Results: <br> More negation in negative sentiment -->
+<!-- ```{r, echo=FALSE, out.width="100%"} -->
+<!-- include_graphics("img/page 31.png") -->
+<!-- ``` -->
 
-## Semi-supervised learning of lexicons
-- Use a small amount of information
-  - A few labeled examples
-  - A few hand-built patterns
+<!-- ## Semi-supervised learning of lexicons -->
+<!-- - Use a small amount of information -->
+<!--   - A few labeled examples -->
+<!--   - A few hand-built patterns -->
 
-- To bootstrap a lexicon
+<!-- - To bootstrap a lexicon -->
 
 <!-- ## Hatzivassiloglou and McKeown intuition for identifying word polarity -->
 <!-- <center><p style="font-size:16px;color:lightblue">Vasileios Hatzivassiloglou and Kathleen R. McKeown. 1997. Predicting the Semantic Orientation of Adjectives. ACL, 174–181</p></center> -->
@@ -414,10 +415,10 @@ include_graphics("img/page 40.png")
 <!-- \newpage -->
 
 ## Pointwise Mutual Information
-- <b>Pointwise mutual information</b>:
-  - How much more do events x and y co-occur than if they were independent?
+<!-- - <b>Pointwise mutual information</b>: -->
+<!--   - How much more do events x and y co-occur than if they were independent? -->
 
-$$PMI(X,Y)=log_2{\frac{P(x,y)}{P(x)P(y)}}$$
+<!-- $$PMI(X,Y)=log_2{\frac{P(x,y)}{P(x)P(y)}}$$ -->
 
 - <b>PMI between two words</b>:
   - How much more do two words co-occur than if they were independent?
@@ -426,9 +427,9 @@ $$PMI(word_1,woprd_2)=log_2{\frac{P(word_1,word_2)}{P(word_1)P(word_2)}}$$
 \newpage
 
 ## How to estimate PMI
-- Query search engine  (Altavista)
-  - P(word) estimated by \ \ \ \     ``hits(word)/N``
-  - P(word1,word2) by \ \ \ \ ``hits(word1 NEAR word2)/N^2``
+<!-- - Query search engine  (Altavista) -->
+- P(word) estimated by \ \ \ \     ``hits(word)/N``
+- P(word1,word2) by \ \ \ \ ``hits(word1 NEAR word2)/N^2``
   
 $$PMI(word_1,woprd_2)=log_2{\frac{hits(word_1 \: \mathrm{NEAR} \: word_2)}{hits(word_1)hits(word_2)}}$$
 
@@ -439,14 +440,17 @@ $$PMI(word_1,woprd_2)=log_2{\frac{hits(word_1 \: \mathrm{NEAR} \: word_2)}{hits(
 $$
 \begin{align}
 \mathrm{Polarity}(phrase) = \mathrm{PMI}(pharse, \mathrm{''excellent''}) - \mathrm{PMI}(pharse, \mathrm{''poor''}) \\
-\\
-= log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''})}{hits(phrase)hits(\mathrm{''excellent''})}} - log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''})}{hits(phrase)hits(\mathrm{''poor''})}} \\
-\\
-= log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''})}{hits(phrase)hits(\mathrm{''excellent''})}} {\frac{hits(phrase)hits(\mathrm{''poor''})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''})}} \\
-\\
-= log_2{(\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''}) hits(\mathrm{''poor''})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''}) hits(\mathrm{''excellent''})})}
 \end{align}
 $$
+
+<!-- \\ -->
+<!-- = log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''})}{hits(phrase)hits(\mathrm{''excellent''})}} - log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''})}{hits(phrase)hits(\mathrm{''poor''})}} \\ -->
+<!-- \\ -->
+<!-- = log_2{\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''})}{hits(phrase)hits(\mathrm{''excellent''})}} {\frac{hits(phrase)hits(\mathrm{''poor''})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''})}} \\ -->
+<!-- \\ -->
+<!-- = log_2{(\frac{hits(phrase \: \mathrm{NEAR} \: \mathrm{''excellent''}) hits(\mathrm{''poor''})}{hits(phrase \: \mathrm{NEAR} \: \mathrm{''poor''}) hits(\mathrm{''excellent''})})} -->
+<!-- \end{align} -->
+
 
 \newpage
 
@@ -503,7 +507,7 @@ data.frame(Phrase = phrase,
 
 Many packages and lexicons:
 
-```{r}
+```{r, warning=FALSE}
 library(wordnet)
 # download the wordnet dictionary from 
 # https://wordnet.princeton.edu/download/current-version
@@ -515,7 +519,7 @@ synonyms("fill","VERB")
 
 ## In R
 
-```{r}
+```{r, warning=FALSE}
 library(tidytext)
 afinn_sentiments <- get_sentiments("afinn")
 afinn_sentiments
@@ -523,21 +527,21 @@ afinn_sentiments
 ```
 
 ## In R
-```{r}
+```{r, warning=FALSE}
 nrc_sentiments <- get_sentiments("nrc")
 nrc_sentiments
 
 ```
 
 ## In R
-```{r}
+```{r, warning=FALSE}
 loughran_sentiments <- get_sentiments("loughran")
 loughran_sentiments
 
 ```
 
 ## In R
-```{r}
+```{r, warning=FALSE}
 bing_sentiments <- get_sentiments("bing")
 bing_sentiments
 
@@ -558,7 +562,7 @@ bing_sentiments
 # Supervised Methods
 
 ## Document sentiment classification
-- <span style="color:red">Classify a whole opinion document</span> (e.g., a review) based on the overall sentiment of the opinion holder <span style="font-size:16px"></span>
+- <span style="color:red">Classify a document</span> (e.g., a review) based on the overall sentiment of the opinion holder <span style="font-size:16px"></span>
   - <span style="font-size:18px"><span style="color:blue">Classes</span>: Positive, negative (possibly neutral)</span>
 - <span style="color:blue">An example review</span>: 
   -  <span style="font-size:18px;font-style:italic">“I bought an iPhone a few days ago. It is such a nice phone, although a little large. The touch screen is cool. The voice quality is great too. I simply love it!”</span>
@@ -677,6 +681,71 @@ include_graphics("img/page 62.png")
   
 - Negation is important
 
+# Multiclass and Multilabel Classification
+
+## Classification
+
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 78.png")
+```
+
+## Multi-class classification
+- Sentiment: positive, negative, neutral
+
+- Emotion: angry, sad, joyful, fearful, ashamed, proud, elated
+
+- Disease: healthy, cold, flu
+
+- Weather: sunny, cloudy, rain, snow
+
+## 
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 73.png")
+```
+
+## One-vs-all (one-vs-rest)
+```{r, echo=FALSE, out.width="100%"}
+include_graphics("img/page 74.png")
+```
+
+<!-- ## One-vs-all -->
+<!-- - Train a logistic regression classifier $h_\theta^{(i)}(x)$ for each class $i$ to predict the probability that $y=i$ -->
+
+<!-- - Given a new input $x$, pick the class $i$ that  -->
+<!-- maximizes -->
+
+<!-- $$\max_i{h_\theta^{(i)}(x)}$$ -->
+
+<!-- \newpage -->
+
+<!-- ## -->
+<!-- <div style="float:left;width:50%"> -->
+<!-- <center><b>Generative Approach</b></center> -->
+<!-- <br><br> -->
+<!-- Ex: <span style="color:green">Naïve Bayes</span> -->
+
+<!-- Estimate $P(Y)$ and $P(X|Y)$ -->
+
+<!-- <br> <br> <br> -->
+<!-- Prediction -->
+
+<!-- $$\hat{y} = \underset{y}{\operatorname{argmax}}P(Y = y)P(X = x|Y = y)$$ -->
+<!-- </div> -->
+<!-- <div style="float:right;width:50%"> -->
+<!-- <center><b>Discriminative Approach</b></center> -->
+<!-- <br><br> -->
+<!-- Ex: <span style="color:green">Logistic regression</span> -->
+
+<!-- Estimate $P(Y|X)$ directly <br> -->
+<!-- (Or a discriminant function: e.g., SVM) -->
+<!-- <br> <br> <br> <br> -->
+<!-- Prediction -->
+
+<!-- $$\hat{y} = P(Y = y|X = x)$$ -->
+<!-- </div> -->
+
+<!-- \newpage -->
+
 # Other Challenges in SA
 
 ## Explicit and implicit aspects | (Hu and Liu, 2004)
@@ -720,7 +789,7 @@ include_graphics("img/implicit2.png")
   
   - <span style="color:red">I did not buy BMW because of the high price</span>.
   
-  - <span style="color:red">I am so happy that my iPhone is nothing like my old ugly Droid</span>.
+  - <span style="color:red">I am so happy that my iPhone is nothing like my old ugly phone</span>.
 
 <!-- ## Some interesting sentences (contd) -->
 <!-- - These two sentences are from paint reviews. -->
@@ -760,71 +829,6 @@ include_graphics("img/implicit2.png")
 - Sarcastic sentences are common in political blogs, comments and discussions. 
   
   - They make political opinions difficult to handle
-
-# Multiclass and Multilabel Classification
-
-## Classification
-
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 78.png")
-```
-
-## Multi-class classification
-- Sentiment: Positive, Negative, Neutral
-
-- Emotion: angry, sad, joyful, fearful, ashamed, proud, elated
-
-- Disease: Healthy, Cold, Flu
-
-- Weather: Sunny, Cloudy, Rain, Snow
-
-## 
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 73.png")
-```
-
-## One-vs-all (one-vs-rest)
-```{r, echo=FALSE, out.width="100%"}
-include_graphics("img/page 74.png")
-```
-
-## One-vs-all
-- Train a logistic regression classifier $h_\theta^{(i)}(x)$ for each class $i$ to predict the probability that $y=i$
-
-- Given a new input $x$, pick the class $i$ that 
-maximizes
-
-$$\max_i{h_\theta^{(i)}(x)}$$
-
-\newpage
-
-<!-- ## -->
-<!-- <div style="float:left;width:50%"> -->
-<!-- <center><b>Generative Approach</b></center> -->
-<!-- <br><br> -->
-<!-- Ex: <span style="color:green">Naïve Bayes</span> -->
-
-<!-- Estimate $P(Y)$ and $P(X|Y)$ -->
-
-<!-- <br> <br> <br> -->
-<!-- Prediction -->
-
-<!-- $$\hat{y} = \underset{y}{\operatorname{argmax}}P(Y = y)P(X = x|Y = y)$$ -->
-<!-- </div> -->
-<!-- <div style="float:right;width:50%"> -->
-<!-- <center><b>Discriminative Approach</b></center> -->
-<!-- <br><br> -->
-<!-- Ex: <span style="color:green">Logistic regression</span> -->
-
-<!-- Estimate $P(Y|X)$ directly <br> -->
-<!-- (Or a discriminant function: e.g., SVM) -->
-<!-- <br> <br> <br> <br> -->
-<!-- Prediction -->
-
-<!-- $$\hat{y} = P(Y = y|X = x)$$ -->
-<!-- </div> -->
-
-<!-- \newpage -->
 
 
 # Summary
