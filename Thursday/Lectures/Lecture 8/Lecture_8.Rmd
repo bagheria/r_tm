@@ -32,8 +32,15 @@ include_graphics("img/page 3.png")
 ```
 
 ## Deep learning vs neural networks
+- Deep learning is only “deep” neural networks, such that with multiple (>2) layers.
 
 ## Deep learning architechtures
+
+- Feed-forward neural networks
+- Convolutional neural networks
+- Recurrent neural networks
+- Self-organizing maps
+- Autoencoders
 
 ## Feed-forward neural networks
 - A typical multi-layer network consists of an input, hidden and output layer, each fully connected to the next, with activation feeding forward.
@@ -103,8 +110,6 @@ include_graphics("img/page 5_3.png")
 ```{r, echo=FALSE, out.width="100%", fig.align='center'}
 include_graphics("img/page 16.png")
 ```
-
-
 
 ## Hidden unit representations
 
@@ -258,24 +263,24 @@ include_graphics("img/page 23.png")
 <!-- include_graphics("img/page 24.png") -->
 <!-- ```   -->
 
-## Loss functions and output
+<!-- ## Loss functions and output -->
 
-```{r, echo=FALSE, out.width="90%", fig.align='center'}
-include_graphics("img/page 25.png")
-```  
+<!-- ```{r, echo=FALSE, out.width="90%", fig.align='center'} -->
+<!-- include_graphics("img/page 25.png") -->
+<!-- ```   -->
 
-## Determining the best <br> number of hidden units
+<!-- ## Determining the best <br> number of hidden units -->
 
-- Too few hidden units prevents the network from adequately fitting the data.
-- Too many hidden units can result in over-fitting.
+<!-- - Too few hidden units prevents the network from adequately fitting the data. -->
+<!-- - Too many hidden units can result in over-fitting. -->
 
-```{r, echo=FALSE, out.width="80%", fig.align='center'}
-include_graphics("img/page 26.png")
-```  
+<!-- ```{r, echo=FALSE, out.width="80%", fig.align='center'} -->
+<!-- include_graphics("img/page 26.png") -->
+<!-- ```   -->
 
-- Use internal cross-validation to empirically determine an optimal number of hidden units.
+<!-- - Use internal cross-validation to empirically determine an optimal number of hidden units. -->
 
-- Hyperparameter tuning
+<!-- - Hyperparameter tuning -->
 
 # Recurrent Neural Networks
 
@@ -310,23 +315,22 @@ include_graphics("img/page 30.png")
 include_graphics("img/page 31.png")
 ```  
 
-# LSTM
 
-## Vanishing gradient problem
+<!-- ## Vanishing gradient problem -->
 
-Suppose we had the following scenario:
+<!-- Suppose we had the following scenario: -->
 
-Day 1: Lift Weights
+<!-- Day 1: Lift Weights -->
 
-Day 2: Swimming
+<!-- Day 2: Swimming -->
 
-Day 3: At this point, our model must decide whether we should take a rest day or yoga. Unfortunately, it only has access to the previous day. In other words, it knows we swam yesterday but it doesn’t know whether had taken a break the day before. Therefore, it can end up predicting yoga.
+<!-- Day 3: At this point, our model must decide whether we should take a rest day or yoga. Unfortunately, it only has access to the previous day. In other words, it knows we swam yesterday but it doesn’t know whether had taken a break the day before. Therefore, it can end up predicting yoga. -->
 
-- Backpropagated errors multiply at each layer, resulting in exponential decay (if derivative is small) or growth (if derivative is large).
-- Makes it very difficult train deep networks, or simple recurrent networks over many time steps.
-- LSTMs were invented, to get around this problem.
+<!-- - Backpropagated errors multiply at each layer, resulting in exponential decay (if derivative is small) or growth (if derivative is large). -->
+<!-- - Makes it very difficult train deep networks, or simple recurrent networks over many time steps. -->
+<!-- - LSTMs were invented, to get around this problem. -->
 
-<font size="2"> https://towardsdatascience.com/ </font>
+<!-- <font size="2"> https://towardsdatascience.com/ </font> -->
 
 <!-- ## Long distance dependencies -->
 
@@ -337,7 +341,7 @@ Day 3: At this point, our model must decide whether we should take a rest day or
 <!-- include_graphics("img/page 34.png") -->
 <!-- ```   -->
 
-## Long Short Term Memory
+## Long Short Term Memory (LSTM)
 
 - LSTM networks, add additional gating units in each memory cell.
     - Forget gate
@@ -351,25 +355,22 @@ Day 3: At this point, our model must decide whether we should take a rest day or
 include_graphics("img/page 36.png")
 ```  
 
+<!-- ## Bi-directional LSTM (Bi-LSTM) -->
+
+<!-- - Separate LSTMs process sequence forward and backward and hidden layers at each time step are concatenated to form the cell output. -->
+
+<!-- ```{r, echo=FALSE, out.width="80%", fig.align='center'} -->
+<!-- include_graphics("img/page 50.png") -->
+<!-- ```   -->
 
 
 
-## Bi-directional LSTM (Bi-LSTM)
+<!-- ## Advanced models -->
 
-- Separate LSTMs process sequence forward and backward and hidden layers at each time step are concatenated to form the cell output.
-
-```{r, echo=FALSE, out.width="80%", fig.align='center'}
-include_graphics("img/page 50.png")
-```  
-
-
-
-## Advanced models
-
-- For many applications, it helps to add “attention” to RNNs.
-- Allows network to learn to attend to different parts of the input at different time steps, shifting its attention to focus on different aspects during its processing.
-- Used in image captioning to focus on different parts of an image when generating different parts of the output sentence.
-- In MT, allows focusing attention on different parts of the source sentence when generating different parts of the translation.
+<!-- - For many applications, it helps to add “attention” to RNNs. -->
+<!-- - Allows network to learn to attend to different parts of the input at different time steps, shifting its attention to focus on different aspects during its processing. -->
+<!-- - Used in image captioning to focus on different parts of an image when generating different parts of the output sentence. -->
+<!-- - In MT, allows focusing attention on different parts of the source sentence when generating different parts of the translation. -->
 
 <!-- ## Attention mechanism -->
 
@@ -426,6 +427,50 @@ include_graphics("img/page 50.png")
 <!-- $$h_t = f(h_{t-1}, c_t, e_t)$$ -->
 
 <!-- Compute <span style="color:orange;font-weight:bold">next</span> hidden state -->
+
+## In R
+```{r 10, message = FALSE, warning = FALSE, eval = FALSE}
+# Use Keras Functional API 
+input <- layer_input(shape = list(maxlen), name = "input")
+
+model <- input %>%
+  layer_embedding(input_dim = max_words, output_dim = dim_size, input_length = maxlen,
+                  weights = list(word_embeds), trainable = FALSE) %>%
+  layer_lstm(units = 80, return_sequences = TRUE)
+
+output <- model                 %>%
+  layer_global_max_pooling_1d() %>%
+  layer_dense(units = 1, activation = "sigmoid")
+
+model <- keras_model(input, output)
+
+summary(model)
+```
+
+## In R
+```{r, echo=FALSE, out.width="80%", fig.align='center'}
+include_graphics("img/summary.jpg")
+```  
+
+## In R
+```{r 11, message = FALSE, warning = FALSE, eval = FALSE}
+# instead of accuracy we can use "AUC" metrics from "tensorflow.keras"
+model %>% compile(
+  optimizer = "adam", 
+  loss = "binary_crossentropy",
+  metrics = tensorflow::tf$keras$metrics$AUC() # metrics = c('accuracy')
+)
+```
+
+## In R
+```{r 12, message = FALSE, warning = FALSE, eval = FALSE}
+history <- model %>% keras::fit(
+  x_train, y_train,
+  epochs = 10,
+  batch_size = 32,
+  validation_split = 0.2
+)
+```
 
 # Summary
 
