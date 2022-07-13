@@ -26,12 +26,11 @@ In this practical, we will apply a topic modeling approach on news articles to c
 
 ```{r load_packages, message = FALSE, warning = FALSE}
 library(tm)
+library(tidyverse)
 library(tidytext)
-library(dplyr)
 library(proxy)
 library(topicmodels)
-library(ggplot2)
-library(tidyr)
+library(caret)
 ```
 
 ---
@@ -299,6 +298,30 @@ lda_documents[lda_documents$document %in% c(1, 1000, 2000, 2225),] %>%
   theme_minimal()
 
 
+```
+
+---
+
+11. **Check the predicted topics against the provided labels (column: Category) in the original data frame.**
+
+---
+
+
+```{r message = FALSE, warning = FALSE, include = TRUE}
+results <- 
+lda_documents %>% 
+  mutate(document = as.numeric(document)) %>% 
+  group_by(document) %>%  
+  filter(gamma == max(gamma)) %>% 
+  arrange(document) %>% 
+  ungroup() %>% 
+  left_join(rowid_to_column(select(df_final, Category), "document")) %>% 
+  mutate(topic = if_else(topic == 1, "entertainment",
+                         if_else(topic == 2, "business",
+                                 if_else(topic == 3, "politics",
+                                         if_else(topic == 4, "sport", "tech")))))
+
+confusionMatrix(factor(results$topic), factor(results$Category))
 ```
 
 
