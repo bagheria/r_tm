@@ -114,17 +114,37 @@ dist_matrix <- dist(dtm_cut, method = "cosine")
 ---
 
 ```{r 4, message = FALSE, warning = FALSE, include = TRUE}
+set.seed(321)
 text_kmeans_clust3 <- kmeans(dtm_cut, centers = 3)
-summary(text_kmeans_clust3)
+str(text_kmeans_clust3)
+
+# print the results
+# text_kmeans_clust3
+
+# show the centers
 broom::tidy(text_kmeans_clust3)
 
+
 ```
+
+The output of kmeans is a list with several bits of information. The most important being:
+
+- cluster: A vector of integers (from 1:k) indicating the cluster to which each point is allocated.
+- centers: A matrix of cluster centers.
+- totss: The total sum of squares.
+- withinss: Vector of within-cluster sum of squares, one component per cluster.
+- tot.withinss: Total within-cluster sum of squares, i.e. sum(withinss).
+- betweenss: The between-cluster sum of squares, i.e. $totss-tot.withinss$.
+- size: The number of points in each cluster.
 
 ---
 
 5. **Apply a PCA with 2 components on the distance matrix, and then plot the output of kmeans clustering on using the PCA outputs.**
 
+Principal Component Analysis, or PCA, is a dimensionality-reduction method that is often used to reduce the dimensionality of large data sets, by transforming a large set of variables into a smaller one that still contains most of the information in the large set. Principal Component Analysis (PCA) is a useful technique for exploratory data analysis, allowing you to better visualize the variation present in a dataset with many variables.
+
 ```{r 5, message = FALSE, warning = FALSE, include = TRUE}
+set.seed(321)
 # Running the PCA
 points <- cmdscale(dist_matrix, k = 2) 
 
@@ -146,6 +166,7 @@ plot(points,
 ---
 
 ```{r 6, message = FALSE, warning = FALSE, include = TRUE}
+set.seed(321)
 text_kmeans_clust4 <- kmeans(dtm_cut, centers = 4)
 tidy(text_kmeans_clust4)
 kmeans_clusters <- text_kmeans_clust4$cluster
@@ -157,6 +178,7 @@ plot(points,
      xaxt = 'n', yaxt = 'n',
      xlab = '', ylab = '')
 
+set.seed(321)
 text_kmeans_clust5 <- kmeans(dtm_cut, centers = 5)
 tidy(text_kmeans_clust5)
 kmeans_clusters <- text_kmeans_clust5$cluster
@@ -168,6 +190,7 @@ plot(points,
      xaxt = 'n', yaxt = 'n',
      xlab = '', ylab = '')
 
+set.seed(321)
 text_kmeans_clust6 <- kmeans(dtm_cut, centers = 6)
 tidy(text_kmeans_clust6)
 kmeans_clusters <- text_kmeans_clust6$cluster
@@ -187,14 +210,15 @@ plot(points,
 ---
 
 ```{r 7, message = FALSE, warning = FALSE, include = TRUE}
+set.seed(321)
 hierarcom_clustering <- hclust(dist_matrix, method = "complete")
 plot(hierarcom_clustering, cex = 0.9, hang = -1)
 rect.hclust(hierarcom_clustering, k = 5)
 
+set.seed(321)
 hierarWard_clustering <- hclust(dist_matrix, method = "ward.D2")
 plot(hierarWard_clustering, cex = 0.9, hang = -1)
 rect.hclust(hierarWard_clustering, k = 5)
-
 ```
 
 ---
@@ -204,6 +228,7 @@ rect.hclust(hierarWard_clustering, k = 5)
 ---
 
 ```{r 8, message = FALSE, warning = FALSE, include = TRUE}
+set.seed(321)
 hierar_clusters_com <- cutree(hierarcom_clustering, k = 5)
 plot(points,
      main = 'Hierarchical clustering complete linkage',
@@ -213,6 +238,7 @@ plot(points,
      xaxt = 'n', yaxt = 'n',
      xlab = '', ylab = '')
 
+set.seed(321)
 hierar_clusters_ward <- cutree(hierarWard_clustering, k = 5)
 plot(points,
      main = 'Hierarchical clustering complete Ward',
@@ -231,6 +257,7 @@ plot(points,
 ---
 
 ```{r 9, message = FALSE, warning = FALSE, include = TRUE}
+set.seed(321)
 dbscan_clustering <- hdbscan(dist_matrix, minPts = 10)
 dbscan_clusters <- dbscan_clustering$cluster
 plot(points,
@@ -240,7 +267,6 @@ plot(points,
      mar = c(0, 0, 0, 0),
      xaxt = 'n', yaxt = 'n',
      xlab = '', ylab = '')
-
 ```
 
 ---
