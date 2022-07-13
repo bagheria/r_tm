@@ -20,7 +20,9 @@ output:
 
 In this practical, we will show an example of loading pre-trained word vectors, fine-tuning them for our purpose of sentiment classification for movie reviews. First, we need to install the TensorFlow and Keras packages for R.
 
-The TensorFlow package provides code completion and inline help for the [TensorFlow API](https://www.tensorflow.org/api_docs/python/tf/all_symbols) when running within the RStudio IDE. The TensorFlow API is composed of a set of Python modules that enable constructing and executing TensorFlow graphs.
+The TensorFlow package provides code completion and inline help for the [TensorFlow API](https://tensorflow.rstudio.com/) when running within the RStudio IDE. The TensorFlow API is composed of a set of Python modules that enable constructing and executing TensorFlow graphs.
+
+For a complete installation guide for TensorFlow, see https://tensorflow.rstudio.com/installation/.
 
 To get started, we need to use the devtools package from CRAN. If you do not have it, install it first:
 
@@ -36,17 +38,12 @@ Then, install the tensorflow R package from GitHub as follows:
 
 ```{r}
 # devtools::install_github("rstudio/tensorflow")
-
 ```
 
 Then, use the install_tensorflow() function to install TensorFlow:
 
 ```{r}
-# tensorflow::install_tensorflow(package_url = "https://files.pythonhosted.org/packages/66/8e/19d47c7b9e2629c37fb3b2febb09a45d4ee7055e6bcb7ff790d8604d822c/tensorflow-2.9.1-cp310-cp310-win_amd64.whl")
-# tensorflow::install_tensorflow(version = "2.9.1", method = "conda", envname = "r-reticulate") # in case line 45 didn't work
-
-library(tensorflow) 
-
+# tensorflow::install_tensorflow()
 ```
 
 The provided url just installs the latest tensorflow version, you can also run this line without providing any argument to the install_tensorflow function.
@@ -54,6 +51,7 @@ The provided url just installs the latest tensorflow version, you can also run t
 Finally, you can confirm that the installation succeeded with:
 
 ```{r}
+library(tensorflow) 
 tmr <- tf$constant("Text Mining with R!")
 print(tmr)
 
@@ -65,9 +63,6 @@ This will provide you with a default installation of TensorFlow suitable for get
 To install the Keras package you first run either of the following lines:
 ```{r}
 # install.packages("keras")
-```
-
-```{r}
 # devtools::install_github("rstudio/keras")
 ```
 
@@ -99,9 +94,9 @@ library(text2vec)
 
 ```{r 1, message = FALSE, warning = FALSE, include = TRUE}
 # Download Glove vectors if necessary and save them in your data folder
-# if (!file.exists('glove.6B.zip')) {
-#   download.file('https://nlp.stanford.edu/data/glove.6B.zip',destfile = 'data/glove.6B.zip')
-#   unzip('glove.6B.zip')
+# if (!file.exists('data/glove.6B.zip')) {
+#   download.file('https://nlp.stanford.edu/data/glove.6B.zip', destfile = 'data/glove.6B.zip')
+#   unzip("data/glove.6B.zip", exdir = "data")
 # }
 ```
 
@@ -116,7 +111,7 @@ library(text2vec)
 vectors <- data.table::fread('data/glove.6B.300d.txt', data.table = F,  encoding = 'UTF-8')
 colnames(vectors) <- c('word',paste('dim',1:300,sep = '_'))
 # vectors to dataframe
-as_tibble(vectors)
+head(as_tibble(vectors))
 
 ```
 
@@ -129,7 +124,7 @@ as_tibble(vectors)
 ```{r 3, message = FALSE, warning = FALSE, include = TRUE}
 # load an example dataset from text2vec
 data("movie_review")
-as_tibble(movie_review)
+head(as_tibble(movie_review))
 
 ```
 

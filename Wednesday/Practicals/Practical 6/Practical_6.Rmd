@@ -70,7 +70,7 @@ df_final[1512,][2] <- gsub("\xa315.8m", "", df_final[1512,][2])
 
 
 ```{r 2, message = FALSE, warning = FALSE, include = TRUE}
-docs <- Corpus(VectorSource(df_final$Content))
+docs <- VCorpus(VectorSource(df_final$Content))
 
 dtm <- DocumentTermMatrix(docs,
            control = list(tolower = TRUE,
