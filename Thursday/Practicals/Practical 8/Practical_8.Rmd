@@ -217,21 +217,15 @@ input <- layer_input(shape = list(maxlen), name = "input")
 
 model <- input %>%
   layer_embedding(input_dim = max_words, output_dim = dim_size, input_length = maxlen,
-                  # put weights into list and do not allow training
                   weights = list(word_embeds), trainable = FALSE) %>%
-  layer_spatial_dropout_1d(rate = 0.2) %>%
-  bidirectional(
-    layer_gru(units = 80, return_sequences = TRUE)
-  )
-max_pool <- model %>% layer_global_max_pooling_1d()
-ave_pool <- model %>% layer_global_average_pooling_1d()
+  layer_lstm(units = 80, return_sequences = TRUE)
 
-output <- layer_concatenate(list(ave_pool, max_pool)) %>%
+output <- model                 %>%
+  layer_global_max_pooling_1d() %>%
   layer_dense(units = 1, activation = "sigmoid")
 
 model <- keras_model(input, output)
 
-#model summary
 summary(model)
 ```
 
@@ -244,7 +238,7 @@ summary(model)
 ```{r 11, message = FALSE, warning = FALSE, include = TRUE}
 # instead of accuracy we can use "AUC" metrics from "tensorflow.keras"
 model %>% compile(
-  optimizer = "adam", # optimizer = optimizer_rmsprop(),
+  optimizer = "adam", 
   loss = "binary_crossentropy",
   metrics = tensorflow::tf$keras$metrics$AUC() # metrics = c('accuracy')
 )
