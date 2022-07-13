@@ -44,14 +44,16 @@ king - man + woman = queen
 Paris - France + Germany = Berlin
 
 
-The first part of the practical leverages the data provided in the harrypotter package. This package supplies the first seven novels in the Harry Potter series. You can load the harrypotter package with the following:
+The first part of the practical leverages the data provided in the harrypotter package. This package supplies the first seven novels in the Harry Potter series. You need to install the package using this line of code: `devtools::install_github("bradleyboehmke/harrypotter")`. This requires having the devtools package as well, which you can install following https://www.r-project.org/nosvn/pandoc/devtools.html. The aim of [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) is to make your life easier by providing R functions that simplify many common tasks.
 
+Note that there is another harrypotter package on CRAN. This is the package you get if you install with the regular `install.packages()` function, but we don't want this.
+
+You can then load the harrypotter package with the following:
 ```{r}
 #devtools::install_github("bradleyboehmke/harrypotter")
-library(harrypotter) # Not to be confused with the CRAN palettes package
+library(harrypotter)
 ```
 
-The aim of [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) is to make your life easier by providing R functions that simplify many common tasks.
 
 ---
 
@@ -226,13 +228,16 @@ head(sort(cos_sim_test[,1], decreasing = T), 10)
 
 10. **Here we want to repeat the same analysis as for Harry Potter novel series with texts from Wikipedia. Start with the code below and train the word vectors using the wiki object.**
 
+Note that you will likely get (somewhat) different results than the ones on this practical.
+This is because the training of glove relies on some random processes (specifically, stochastic gradient descent). If you want to obtain completely reproducible results across different runs, you have to specify the number of threads to be 1 and set a random seed (see the comments in the code chunk below). See https://github.com/dselivanov/text2vec/issues/251 for more explanation.
+
 ---
 
 ```{r}
-text8_file <- "data/text8/text8"
+text8_file <- "data/text8"
 if (!file.exists(text8_file)) {
   download.file("http://mattmahoney.net/dc/text8.zip", "data/text8.zip")
-  unzip("data/text8.zip", files = "text8", exdir = "data/texts_raw/")
+  unzip("data/text8.zip", files = "text8", exdir = "data")
 }
 wiki <- readLines(text8_file, n = 1, warn = FALSE)
 
@@ -248,8 +253,11 @@ vectorizer <- vocab_vectorizer(vocab)
 
 tcm <- create_tcm(it, vectorizer, skip_grams_window = 5L)
 
-glove <- GlobalVectors$new(rank = 50, x_max = 10)
+#for reproducible results, do:
+#RcppParallel::setThreadOptions(1)
+#set.seed(123)
 
+glove <- GlobalVectors$new(rank = 50, x_max = 10)
 wv_main <- glove$fit_transform(tcm, n_iter = 20, convergence_tol = 0.001)
 wv_context <- glove$components
 word_vectors <- wv_main + t(wv_context)
@@ -264,6 +272,9 @@ king - man + woman = queen
 
 Paris - France + Germany = Berlin
 
+
+Again, note that you will likely get (somewhat) different results than the ones on this practical.
+
 ---
 
 ```{r 11, message = FALSE, warning = FALSE, include = TRUE}
@@ -271,7 +282,9 @@ queen <- word_vectors["king", , drop = FALSE] -
   word_vectors["man", , drop = FALSE] +
   word_vectors["woman", , drop = FALSE]
 queen_cos_sim <- sim2(x = word_vectors, y = queen, method = "cosine", norm = "l2")
-head(sort(queen_cos_sim[,1], decreasing = TRUE), 21) #the word queen has the 21st highest loading
+head(sort(queen_cos_sim[,1], decreasing = TRUE), 50) 
+#check the ranking of the word queen among all the words using:
+#match('queen', names(sort(queen_cos_sim[,1], decreasing = TRUE)))
 
 berlin <- word_vectors["paris", , drop = FALSE] -
   word_vectors["france", , drop = FALSE] +
@@ -279,6 +292,7 @@ berlin <- word_vectors["paris", , drop = FALSE] -
 berlin_cos_sim <- sim2(x = word_vectors, y = berlin, method = "cosine", norm = "l2")
 head(sort(berlin_cos_sim[,1], decreasing = TRUE), 5)
 ```
+
 ---
 
 ---
