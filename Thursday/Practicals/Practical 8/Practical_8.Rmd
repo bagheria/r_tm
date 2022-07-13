@@ -111,7 +111,7 @@ library(text2vec)
 vectors <- data.table::fread('data/glove.6B.300d.txt', data.table = F,  encoding = 'UTF-8')
 colnames(vectors) <- c('word',paste('dim',1:300,sep = '_'))
 # vectors to dataframe
-as_tibble(vectors)
+head(as_tibble(vectors))
 
 ```
 
@@ -124,7 +124,7 @@ as_tibble(vectors)
 ```{r 3, message = FALSE, warning = FALSE, include = TRUE}
 # load an example dataset from text2vec
 data("movie_review")
-as_tibble(movie_review)
+head(as_tibble(movie_review))
 
 ```
 
