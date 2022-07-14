@@ -325,7 +325,7 @@ Here you will find the materials for Thursday:
 # Archive
 On the last day of the course, all the materials will be available in a compact file for download:
 
-[Download the Materials]()
+[Download the Materials](Intro to TM with R_Materials.zip)
 
 <!-- Special thanks to [Zhenwei Yang](https://www.linkedin.com/in/zhenweiyang/?originalSubdomain=nl), my master student who is now a PhD candidate, for helping me out with the materials. -->
 
