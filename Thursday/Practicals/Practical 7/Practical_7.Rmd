@@ -32,7 +32,7 @@ library(tidytext)
 
 ---
 
-# Word embeddings
+# Word embedding
 
 ---
 
@@ -154,9 +154,15 @@ dim(hp_tcm) # inspect dimensions of the TCM
 
 6. **Use the GlobalVectors to fit the word vectors on our data set. Choose the embedding size (rank) equal to 50, and the maximum number of co-occurrences to use in the weighting function equal to 10. Train word vectors in 50 iterations if you have the (memory / cpu) resources. Also check the other input arguments of the fit_transform function [here](https://www.rdocumentation.org/packages/text2vec/versions/0.5.1/topics/GlobalVectors).**
 
+Note that you will likely get (somewhat) different results than the ones on this practical.
+This is because the training of glove relies on some random processes (specifically, stochastic gradient descent). If you want to obtain completely reproducible results across different runs, you have to specify the number of threads to be 1 and set a random seed (see the comments in the relevant code chunk below). See https://github.com/dselivanov/text2vec/issues/251 for more explanation.
+
 ---
 
 ```{r 6, message = FALSE, warning = FALSE, include = TRUE}
+#for reproducible results, do:
+#RcppParallel::setThreadOptions(1)
+#set.seed(123)
 glove <- GlobalVectors$new(rank = 50, x_max = 10) # create the model
 hp_wv_main <- glove$fit_transform(hp_tcm, n_iter = 20, convergence_tol = 0.001) # fit the model to the TCM
 
@@ -188,20 +194,20 @@ dim(hp_word_vectors)
 ---
 
 ```{r 8, message = FALSE, warning = FALSE, include = TRUE}
-harry <- hp_word_vectors["harry", , drop = F] # extract the row for "harry"
+harry <- hp_word_vectors["harry", , drop = FALSE] # extract the row for "harry"
 
 cos_sim_rom <- sim2(x = hp_word_vectors, y = harry, method = "cosine", norm = "l2") # pairwise similarity matrix computation
-head(sort(cos_sim_rom[,1], decreasing = T), 10) # see top 10 most similar words
+head(sort(cos_sim_rom[,1], decreasing = TRUE), 10) # see top 10 most similar words
 
-death <- hp_word_vectors["death", , drop = F]
+death <- hp_word_vectors["death", , drop = FALSE]
 
 cos_sim_rom <- sim2(x = hp_word_vectors, y = death, method = "cosine", norm = "l2")
-head(sort(cos_sim_rom[,1], decreasing = T), 10)
+head(sort(cos_sim_rom[,1], decreasing = TRUE), 10)
 
-love <- hp_word_vectors["love", , drop = F]
+love <- hp_word_vectors["love", , drop = FALSE]
 
 cos_sim_rom <- sim2(x = hp_word_vectors, y = love, method = "cosine", norm = "l2")
-head(sort(cos_sim_rom[,1], decreasing = T), 10)
+head(sort(cos_sim_rom[,1], decreasing = TRUE), 10)
 
 ```
 
@@ -212,12 +218,12 @@ head(sort(cos_sim_rom[,1], decreasing = T), 10)
 ---
 
 ```{r 9, message = FALSE, warning = FALSE, include = TRUE}
-test <- hp_word_vectors["harry", , drop = F] -
-  hp_word_vectors["death", , drop = F] +
-  hp_word_vectors["love", , drop = F]
+test <- hp_word_vectors["harry", , drop = FALSE] -
+  hp_word_vectors["death", , drop = FALSE] +
+  hp_word_vectors["love", , drop = FALSE]
 
 cos_sim_test <- sim2(x = hp_word_vectors, y = test, method = "cosine", norm = "l2")
-head(sort(cos_sim_test[,1], decreasing = T), 10)
+head(sort(cos_sim_test[,1], decreasing = TRUE), 10)
 ```
 
 ---
@@ -228,8 +234,7 @@ head(sort(cos_sim_test[,1], decreasing = T), 10)
 
 10. **Here we want to repeat the same analysis as for Harry Potter novel series with texts from Wikipedia. Start with the code below and train the word vectors using the wiki object.**
 
-Note that you will likely get (somewhat) different results than the ones on this practical.
-This is because the training of glove relies on some random processes (specifically, stochastic gradient descent). If you want to obtain completely reproducible results across different runs, you have to specify the number of threads to be 1 and set a random seed (see the comments in the code chunk below). See https://github.com/dselivanov/text2vec/issues/251 for more explanation.
+
 
 ---
 
