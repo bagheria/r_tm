@@ -32,10 +32,10 @@ Course director: [Ayoub Bagheri](https://ayoubbagheri.nl/)
 Instructors:
 
 * [Ayoub Bagheri](https://ayoubbagheri.nl/)\
-- [Qixiang Fang](https://www.uu.nl/medewerkers/QFang)\
+- [Pablo Mosteiro](https://www.uu.nl/medewerkers/PJMosteiroRomero)\
+* [Luka van der Plas](https://www.linkedin.com/in/mees-van-stiphout-688b84138/?originalSubdomain=nl)\
 - [Daniel Anadria](https://www.researchgate.net/profile/Daniel-Anadria-2)
-* [Mees van Stiphout](https://www.linkedin.com/in/mees-van-stiphout-688b84138/?originalSubdomain=nl)\
-+ [Pablo Mosteiro Romero](https://www.uu.nl/medewerkers/PJMosteiroRomero)\
+- [Laurence Frank](https://www.uu.nl/medewerkers/QFang)\
 
 Study load: 1.5 ECTS
 
@@ -49,7 +49,7 @@ Location: [Koningsberger Building, lecture hall Pangea](https://www.uu.nl/en/vic
 
 ### Outline
 
-Nowadays, from social sciences to humanities and healthcare, a major portion of data is inside text. However, text is considered as a kind of unstructured information, which is difficult to process automatically. Therefore, text mining can be applied to create a more structured representation of a text, making its content more accessible to researchers. Therefore, this course offers an elaborate introduction into text mining with R. The course has a strongly practical hands-on focus, and students will gain experience in using text mining on real data from for example social sciences and healthcare domains and interpreting the results. Through lectures and practicals, the students will learn the necessary skills to design, implement, and understand their own text mining pipeline. The topics in this course include regular expressions, text preprocessing, text classification and clustering, and word embedding approaches for text data.
+From the social sciences to the humanities and healthcare, much of today's data is contained in text. However, text is considered to be a type of unstructured information that is difficult to process automatically. Therefore, text mining can be applied to create a more structured representation of a text, making its content more accessible to researchers. Therefore, this course provides a comprehensive introduction to text mining with R. The course has a strong practical focus, and students will gain experience in applying text mining to real data from, for example, social science and healthcare domains, and in interpreting the results. Through lectures and labs, students will learn the skills necessary to design, implement, and understand their own text mining pipeline. Topics covered in this course include regular expressions, text preprocessing, text classification and clustering, and word embedding approaches for text data.
 
 The course deals with the following topics:
 
@@ -59,7 +59,7 @@ The course deals with the following topics:
 * Define a text mining pipeline given a practical data science problem;
 * Implement generic text mining tools such as regular expression, text clustering, text classification, sentiment analysis, and word embedding.
 
-The course starts at a very basic level and builds up gradually. At the end of the course, participants will master text mining skills with R. 
+The course starts at a very basic level and builds up gradually. By the end of the course, participants will have mastered text mining skills with R. 
 
 ### Requirements
 Participants should have a basic knowledge of scripting in R.
@@ -91,9 +91,9 @@ Participants will receive a certificate at the end of the course.
 |  10:45     | 11:45    | Practical |
 |  11:45     | 12:30    | Discussion|
 |            |**[Lunch](https://www.uu.nl/en/educatorium)** |           |
-|  13:45     | 15:15    | Lecture   |
+|  14:00     | 15:30    | Lecture   |
 |            |**Break** |           |
-|  15:30     | 16:30    | Practical |
+|  15:45     | 16:30    | Practical |
 |  16:30     | 17:00    | Discussion|
 
 
@@ -325,7 +325,7 @@ Here you will find the materials for Thursday:
 # Archive
 On the last day of the course, all the materials will be available in a compact file for download:
 
-[Download the Materials](Intro to TM with R_Materials.zip)
+[Download the Materials]()
 
 <!-- Special thanks to [Zhenwei Yang](https://www.linkedin.com/in/zhenweiyang/?originalSubdomain=nl), my master student who is now a PhD candidate, for helping me out with the materials. -->
 
