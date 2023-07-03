@@ -20,6 +20,13 @@ library(knitr)
 library(kableExtra)
 ```
 
+## ChatGPT
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="100%"}
+include_graphics("img/tm_chatgpt.png")
+```
+</div>
+
 ## 
 <div style="float: left; width:100%">
 ```{r, echo=FALSE, fig.align='center', out.width="100%"}
@@ -28,18 +35,17 @@ include_graphics("img/ex1.jpg")
 </div>
 
 
-## 
-<div style="float: left; width:100%">
-```{r, echo=FALSE, fig.align='center', out.width="100%"}
-include_graphics("img/ex2.jpg")
-```
-</div>
-
-
 ##
 <div style="float: left; width:100%">
 ```{r, echo=FALSE, fig.align='center', out.width="100%"}
 include_graphics("img/ex3.jpg")
+```
+</div>
+
+## 
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="100%"}
+include_graphics("img/ex2.jpg")
 ```
 </div>
 
@@ -65,31 +71,31 @@ https://ayoubbagheri.nl/r_tm/
 
 <div style="float:left; width:50%">
 ```{r, echo=FALSE, fig.align='center', out.width="30%"}
-include_graphics("img/Qixiang_Fang.png")
+include_graphics("img/Luka.jpg")
 ```
   <div class="centered">
-  **Qixiang**
+  **Luka**
   </div>
   
   <br/>
 ```{r, echo=FALSE, fig.align='center', out.width="30%"}
-include_graphics("img/Mees van Stiphout.jpg")
+include_graphics("img/Laurence.jpg")
 ```
   <div class="centered">
-  **Mees**
+  **Laurence**
   </div>
 </div>
 
 
 <div style="float:right; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="30%"}
+```{r, echo=FALSE, fig.align='center', out.width="39%"}
 include_graphics("img/Daniel_Anadria.jpg")
 ```
   <div class="centered">
   **Daniel**
   </div>
   <br/>
-```{r, echo=FALSE, fig.align='center', out.width="30%"}
+```{r, echo=FALSE, fig.align='center', out.width="39%"}
 include_graphics("img/Pablo Mosteiro Romero.jpg")
 ```
   <div class="centered">
@@ -100,7 +106,7 @@ include_graphics("img/Pablo Mosteiro Romero.jpg")
 
 ## Program {.smaller}
 ```{r, echo = FALSE}
-time <- c("9:00 - 10:30", "", "10:45 – 11:45", "11:45 – 12:30", "", "13:45 – 15:15", "", "15:30 – 16:30", "16:30 – 17:00")
+time <- c("9:00 - 10:30", "", "10:45 – 11:45", "11:45 – 12:30", "", "14:00 – 15:30", "", "15:45 – 16:30", "16:30 – 17:00")
 monday <- c("Lecture 1", "Break", "Practical 1", "Discussion 1", "Lunch", "Lecture 2", "Break", "Practical 2", "Discussion 2")
 tuesday <- c("Lecture 3", "Break", "Practical 3", "Discussion 3", "Lunch", "Lecture 4", "Break", "Practical 4", "Discussion 4")
 wednesday <- c("Lecture 5", "Break", "Practical 5", "Discussion 5", "Lunch", "Lecture 6", "Break", "Practical 6", "Discussion 6")
@@ -128,7 +134,7 @@ program %>%
 
 # What is Text Mining?
 
-## Text mining in an example 
+## Example 
 
 <div style="float: left; width: 20%;">
 ```{r, echo=FALSE}
@@ -217,15 +223,15 @@ include_graphics("img/page5_person3.png")
 ```
 </div>
 
-## Challenges?
+<!-- ## Challenges? -->
 
-- What are the challenges they encounter in working with text?
+<!-- - What are the challenges they encounter in working with text? -->
 
-<div style="float: left; width:100%">
-```{r, echo=FALSE, fig.align='center', out.width="90%"}
-include_graphics("img/q1.jpg")
-```
-</div>
+<!-- <div style="float: left; width:100%"> -->
+<!-- ```{r, echo=FALSE, fig.align='center', out.width="90%"} -->
+<!-- include_graphics("img/q1.jpg") -->
+<!-- ``` -->
+<!-- </div> -->
 
 <!-- # Challenges with Text Data -->
 
@@ -287,9 +293,8 @@ include_graphics("img/q1.jpg")
 
 <!-- Go to [www.menti.com](https://www.menti.com/) and use the code 9594 3321 -->
 
-# Text Mining to the Rescue!
+## Text Mining to the Rescue!
 
-## Text mining
 - “the discovery by computer of <span style="color:blue">new</span>, <span style="color:blue">previously unknown</span> information, by <span style="color:blue">automatically extracting</span> information from <span style="color:blue">different</span> written resources” Hearst (1999)
 
 - Text mining is about looking for <span style="color:red">patterns in text</span>, in a similar way that <span style="color:red">data mining</span> can be loosely described as looking for patterns in data.
@@ -303,12 +308,12 @@ include_graphics("img/q1.jpg")
 <!-- ``` -->
 
 
-## Language is hard!
+##
 
 - We won't solve linguistics ...
 - In spite of the problems, text mining can be quite effective!
 
-# Examples & Applications
+# Applications
 
 ## Text mining applications
 ```{r, echo=FALSE, out.width="90%", fig.align='center'}
