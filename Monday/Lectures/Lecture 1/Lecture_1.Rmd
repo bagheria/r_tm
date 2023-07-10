@@ -4,14 +4,14 @@ author: "Ayoub Bagheri"
 subtitle: Introduction to Text Mining with R
 output:
   ioslides_presentation: default
-  pdf_document:
-    toc: yes
-    toc_depth: '5'
   html_document:
     number_sections: no
     toc: yes
     toc_depth: 5
     toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
   beamer_presentation: default
 ---
 
@@ -118,7 +118,7 @@ program %>%
   kbl() %>% 
   kable_paper("hover", html_font = "Arial", full_width = T) %>% 
   row_spec(c(1,6), bold = T, color = "#E60B60") %>% 
-  row_spec(c(2,7), color = "grey", font_size = 12) %>% 
+  row_spec(c(2,7), color = "gray", font_size = 12) %>% 
   row_spec(c(3,8), color = "blue") %>% 
   row_spec(c(4,9), color = "green")
 ```
@@ -496,6 +496,7 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 </div>
 
 # Regular Expressions
+Regular Expression one of the first and important tm techniques we must learn about!
 
 ## Regular expressions
 
@@ -541,12 +542,15 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
   
   - Netherlands
 
-## Some simple regex searches
+## How to write regular expressions
+There are some rules on how to write REs...
+
+## 1. Some simple regex searches
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/RE1.png")
 ```
 
-## Disjunction
+## 2. Disjunction
 The use of the brackets [] to specify a disjunction of characters:
 
 ```{r, echo=FALSE, out.width="100%"}
@@ -560,7 +564,7 @@ include_graphics("img/RE12.png")
 ```
 
 
-## Brackets and dash
+## 3. Brackets and dash
 The use of the brackets [] plus the dash - to specify a range:
 
 ```{r, echo=FALSE, out.width="100%"}
@@ -568,14 +572,14 @@ include_graphics("img/RE3.png")
 ```
 
 
-## Negation
+## 4. Negation
 The caret ^ for negation or just to mean ^:
 
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/RE4.png")
 ```
 
-## Question and period marks
+## 5. Question and period marks
 The question mark ? marks optionality of the previous expression:
 
 ```{r, echo=FALSE, out.width="100%"}
@@ -596,13 +600,13 @@ include_graphics("img/RE6.png")
 <!-- include_graphics("img/page 52.png") -->
 <!-- ``` -->
 
-## Anchors
+## 6. Anchors
 
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/RE7.png")
 ```
 
-## Common sets
+## 7. Common sets
 
 Aliases for common sets of characters:
 
@@ -612,7 +616,7 @@ include_graphics("img/RE9.png")
 
 The backslash for escaping!
 
-## Operators for counting
+## 8. Operators for counting
 
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/RE10.png")
@@ -625,7 +629,7 @@ include_graphics("img/RE10.png")
   - The operator *? is a Kleene star that matches as little text as possible. 
   - The operator +? is a Kleene plus that matches as little text as possible.
 
-## Other
+## 9. Other
 
 Some characters that need to be backslashed:
 
