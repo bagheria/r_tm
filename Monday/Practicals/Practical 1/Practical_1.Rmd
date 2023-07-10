@@ -433,8 +433,8 @@ computer_531 <- computer_531 %>%
 
 for(i in 1:nrow(computer_531)){ 
   score_list <- str_extract_all(computer_531[i,]$aspect_sentiment, "-?\\d+") #? matches previous element (-) 0 or more times
-    if(length(score_list[[1]]) != 0){
-    computer_531[i,]$sentiment_score <- sum(as.numeric(as.character(unlist(score_list)[[1]])))
+    if(length(score_list[[1]]) != 0){ # we changed 1 to lengths(score_list) to have the last number found by re, because we have 17 and 19 in the score list
+    computer_531[i,]$sentiment_score <- sum(as.numeric(as.character(unlist(score_list)[[lengths(score_list)]])))
   }
 }
 ```

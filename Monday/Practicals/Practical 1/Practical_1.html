@@ -475,8 +475,8 @@ rm(list = ls()[grep(&quot;data&quot;, ls())])
 rm(list = ls()[grep(&quot;^fre&quot;, ls())])
 gc() # &quot;garbage collector&quot; to free up memory of removed variables
 ##           used (Mb) gc trigger  (Mb) max used  (Mb)
-## Ncells 1783038 95.3    3670948 196.1  3670948 196.1
-## Vcells 3295389 25.2   16423799 125.4 16423739 125.4
+## Ncells 1783038 95.3    3670955 196.1  3670955 196.1
+## Vcells 3295401 25.2   16423800 125.4 16423767 125.4
 
 # or
 # rm(blog_gender_data, computer_data, frequent_terms_pos, frequent_terms_neg, imdb_data)
@@ -688,8 +688,8 @@ head(computer_531)</code></pre>
 
 for(i in 1:nrow(computer_531)){ 
   score_list &lt;- str_extract_all(computer_531[i,]$aspect_sentiment, &quot;-?\\d+&quot;) #? matches previous element (-) 0 or more times
-    if(length(score_list[[1]]) != 0){
-    computer_531[i,]$sentiment_score &lt;- sum(as.numeric(as.character(unlist(score_list)[[1]])))
+    if(length(score_list[[1]]) != 0){ # we changed 1 to lengths(score_list) to have the last number found by re, because we have 17 and 19 in the score list
+    computer_531[i,]$sentiment_score &lt;- sum(as.numeric(as.character(unlist(score_list)[[lengths(score_list)]])))
   }
 }</code></pre>
 <pre class="r"><code>computer_531 &lt;- computer_531 %&gt;%
