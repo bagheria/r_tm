@@ -496,14 +496,17 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 </div>
 
 # Regular Expressions
-Regular Expression one of the first and important tm techniques we must learn about!
+
 
 ## Regular expressions
 
 <br>
 <br>
-<div style="margin: auto 3em; text-align: justify; width: 80%">
-<font size="+2">**Really clever "wild card" expressions for matching and parsing strings.**</font>
+
+Regular Expression one of the first and important tm techniques we must learn about!
+
+Really clever "wild card" expressions for matching and parsing strings.
+
 
 <br>
 <br>
