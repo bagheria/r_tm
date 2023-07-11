@@ -440,7 +440,7 @@ $$\boldsymbol{\mu_c} = \frac{1}{|D_c|}\sum_{\mathbf{d} \in D_c}{\mathbf{d}}$$
 
 Where $D_c$ is the set of documents in the corpus that belongs to class $c$ and $d$ is the vector representation of document $d$.
 
-## Rocchio Classifier (Nearest Centroid)
+## Rocchio classifier (Nearest Centroid)
 
 The predicted label of document d is the one with the smallest (Euclidean) distance between the document and the centroid.
 
@@ -620,7 +620,7 @@ include_graphics("img/page 75.png")
 
 # Evaluation
 
-## Data Splitting
+## Data splitting
 
 - Training set
 
