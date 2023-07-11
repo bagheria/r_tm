@@ -167,10 +167,12 @@ include_graphics("img/page 8.png")
   - Terms: words (more generally we may use n-grams, etc.)
   
   - Weights: number of occurrences of the terms in the document
+  
+  - Document-Term Matrix (DTM), Term-Document Matrix (TDM)
 
 - Topics (later)
 
-- Word Embeddings (later)
+- Word embeddings (later)
 
 
 ## Bag of Words (BOW)
