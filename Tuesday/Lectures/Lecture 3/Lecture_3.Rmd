@@ -1,12 +1,12 @@
 ---
 title: "Text Representation and Classification"
-author: "Ayoub Bagheri & Qixiang Fang"
+author: "Ayoub Bagheri"
 output:
-  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
     widescreen: no
+  beamer_presentation: default
 ---
 ```{r, include=FALSE}
 library(knitr)
@@ -110,53 +110,6 @@ text  -> repre -> class -> pred
 
 <!--   - A vector is an ordered finite list of numbers. -->
 
-## Bag of Words (BOW)
-
-- Words (terms) and weights as the basis for vector representations of text
-
-  - Doc1: Text mining is to identify useful information.
-  
-  - Doc2: Useful information is mined from text.
-  
-  - Doc3: Apple is delicious.
-
-```{r, echo= FALSE, out.width="100%"}
-include_graphics("img/page 12.png")
-```
-
-
-## BOW weights: Binary
-
-- <b><span style="font-size:20px">Binary</span></b>
-
-  - with 1 indicating that a term occurred in the document, and 0 indicating that it did not
-
-## BOW weights: Raw Term frequency
-
-- Idea: a term is more important if it occurs more frequently in a document
-
-- use the raw frequency count of term $t$ in doc $d$
-
-<!-- - TF Formulas -->
-
-<!--   - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$ -->
-
-<!--   - Raw TF: $tf(t,d) = c(t,d)$ -->
-
-## BOW weights: TF-IDF
-- Idea: a term is more discriminative if it occurs a lot but only in fewer documents. 
-
-- TF-IDF (term frequency–inverse document frequency) weight: 
-
-$$w_{d,t} = TF_{d,t} \cdot IDF_t$$
-
-Let $n_{d,t}$ denote the number of times term $t$ appears in document $d$. The relative frequency of $t$ in $d$ is: 
-
-$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
-Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing term $t$.
-
-$$IDF_t = log(\frac{N}{N_t})$$
-
 ## Vector space model
 
 - A vector space is a collection of vectors
@@ -220,7 +173,52 @@ include_graphics("img/page 8.png")
 - Word Embeddings (later)
 
 
+## Bag of Words (BOW)
 
+- Words (terms) and weights as the basis for vector representations of text
+
+  - Doc1: Text mining is to identify useful information.
+  
+  - Doc2: Useful information is mined from text.
+  
+  - Doc3: Apple is delicious.
+
+```{r, echo= FALSE, out.width="100%"}
+include_graphics("img/page 12.png")
+```
+
+
+## BOW weights: Binary
+
+- <b><span style="font-size:20px">Binary</span></b>
+
+  - with 1 indicating that a term occurred in the document, and 0 indicating that it did not
+
+## BOW weights: Raw term frequency
+
+- Idea: a term is more important if it occurs more frequently in a document
+
+- use the raw frequency count of term $t$ in doc $d$
+
+<!-- - TF Formulas -->
+
+<!--   - Let $t(c,d)$ be the frequency count of term $t$ in doc $d$ -->
+
+<!--   - Raw TF: $tf(t,d) = c(t,d)$ -->
+
+## BOW weights: TF-IDF
+- Idea: a term is more discriminative if it occurs a lot but only in fewer documents. 
+
+- TF-IDF (term frequency–inverse document frequency) weight: 
+
+$$w_{d,t} = TF_{d,t} \cdot IDF_t$$
+
+Let $n_{d,t}$ denote the number of times term $t$ appears in document $d$. The relative frequency of $t$ in $d$ is: 
+
+$$TF_{d,t} = \frac{n_{d,t}}{\sum_i{n_{d,i}}}$$
+Let $N$ denote the number of documents annd $N_t$ denote the number of documents containing term $t$.
+
+$$IDF_t = log(\frac{N}{N_t})$$
 
 
 <!-- ## Zipf’s law | A statistical property of language -->
@@ -396,7 +394,9 @@ include_graphics("img/page 8.png")
 include_graphics("img/page 53.png")
 ```
 
-## Text Classification: definition
+## Text classification: Definition
+
+- Supervised learning
 
 - Input:
  
@@ -420,21 +420,17 @@ include_graphics("img/page 53.png")
 
 - Not recommended!
 
-## Supervised Machine Learning
+## Supervised machine learning
 - Nearest centroid
 - K-nearest neighbors
 - Naïve Bayes
 - Decision tree
 - Random forest
 - Support vector machines
-
-
-More:
-
 - Logistic regression
-- Neural networks
+- Neural networks (deep learning)
 
-## Rocchio Classifier (Nearest Centroid)
+## Rocchio classifier (Nearest Centroid)
 
 Each class is represented by its centroid, with test samples classified to the class with the nearest centroid. Using a training set of documents, the Rocchio algorithm builds a prototype vector, centroid, for each class. This prototype is an average vector over the training documents’ vectors that belong to a certain class. 
 
@@ -453,13 +449,13 @@ include_graphics("img/page 53a.png")
 ```
 
 
-## K-Nearest Neighbor
+## K-Nearest Neighbor (KNN)
 
 ```{r, echo=FALSE, out.width="80%", fig.align='center'}
 include_graphics("img/page 60.png")
 ```
 
-## K-Nearest Neighbor 
+## KNN
 
 - Given a test document $d$, the KNN algorithm finds the $k$ nearest neighbors of $d$ among all the documents in the training set, and scores the category candidates based on the class of the k neighbors. 
 
@@ -476,7 +472,7 @@ include_graphics("img/page 60.png")
 include_graphics("img/page 62.png")
 ```
 
-## Bayes’ Rule 
+## Bayes rule 
 
 - Applied to documents and classes
 
@@ -484,7 +480,7 @@ include_graphics("img/page 62.png")
 
 $$P(c|d) = \frac{P(c)P(d|c)}{P(d)}$$
 
-## Multinomial Naïve Bayes Assumptions
+## Multinomial naïve Bayes assumptions
 
 $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c) \cdot P(w_1, w_2, \ldots,w_n|c)$$
 
@@ -533,7 +529,7 @@ Zero probabilities cannot be conditioned away, no matter the other evidence!
 $$C_{NB} = \underset{c \in C}{\operatorname{argmax}}P(c)\prod_{i \in positions}{P(w_i|c)}$$
 \newpage
 
-## Laplace (add-1) smoothing for Naïve Bayes
+## Laplace (add-1) smoothing for naïve Bayes
 <!-- $$ -->
 <!-- \begin{align} -->
 <!-- \hat{P}(w_i|c) &= \frac{count(w_i,c)+1}{\sum_{w \in V}{(count(w,c)+1)}} \\ -->
@@ -571,8 +567,7 @@ $$
 
 \newpage
 
-## Decision Tree 
-
+## Decision tree 
 
 ```{r, echo=FALSE, out.width="55%", fig.align='center'}
 include_graphics("img/decisionTree.png")
@@ -585,7 +580,7 @@ include_graphics("img/decisionTree.png")
 
 \newpage
 
-## Random Forest
+## Random forest
 
 - Random forests are an ensemble learning method for classification, regression and other tasks that operates by constructing a multitude of decision trees at training time.
 - Fit multiple trees to bootstrapped samples of the data AND at each node select best predictor from only a random subset of predictors. Combine all trees to yield a consensus prediction
@@ -595,7 +590,7 @@ include_graphics("img/decisionTree.png")
 include_graphics("img/rf.png")
 ```
 
-## Support Vector Machine
+## Support Vector Machine (SVM)
 
 - The main principle of SVM is to determine separators in the search space which can best separate the different classes.
 - SVM tries to make a decision boundary in such a way that the separation between the two classes is as wide as possible.
@@ -606,7 +601,7 @@ include_graphics("img/page 74.png")
 
 \newpage
 
-## Support Vector Machine
+## SVM
 
 - It is not necessary to use a linear function for the SVM classifier. 
 - With the kernel trick, SVM can construct a nonlinear decision surface in the original feature space by mapping the data instances non-linearly to a new space where the classes can be separated linearly with a hyperplane. 
@@ -632,7 +627,7 @@ include_graphics("img/page 75.png")
     
 - Test set
 
-## Nested Cross Validation
+## K-fold cross validation
 
 ```{r, echo=FALSE, out.width="75%"}
 include_graphics("img/page 31.png")
@@ -696,7 +691,7 @@ Balanced F1 measure: $\beta = 1$, $F = 2PR/(P+R)$
 
 ## No training data? 
 
-- Manually written rules
+1. Manually written rules
 
   - <p style="color:green">If (x or y) and not (w or z) then categorize as class1</p>
 
@@ -708,9 +703,9 @@ Balanced F1 measure: $\beta = 1$, $F = 2PR/(P+R)$
 
   - Time-consuming
 
-- Active learning
+2. Active learning
 
-- Unsupervised methods
+3. Unsupervised methods (tomorrow)
 
 \newpage
 
@@ -741,6 +736,8 @@ Balanced F1 measure: $\beta = 1$, $F = 2PR/(P+R)$
   <!-- - Regularized Logistic Regression -->
 
   - Random forest
+  
+  - Neural network
 
 \newpage
 
@@ -750,7 +747,8 @@ Balanced F1 measure: $\beta = 1$, $F = 2PR/(P+R)$
 
 - At a cost:
 
-  - SVMs (train time) or KNN (test time) can be too slow
+  - SVM 
+  - NN, deep learning (train time)
 
   <!-- - Regularized logistic regression -->
   <!-- - Naïve Bayes again! -->
@@ -814,7 +812,7 @@ https://aclanthology.org/P01-1005.pdf
 
 <!-- - Feature Selection -->
 
-- Text Classification
+- Text classification --> supervised learning --> labeled data
 
 - Evaluation
 
