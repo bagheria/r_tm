@@ -1,5 +1,5 @@
 ---
-title: "[Data Science: Introduction to Text Mining with R](https://ayoubbagheri.nl/r_tm/)"
+title: "Data Science: Text Mining with R"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -8,7 +8,7 @@ output:
 ---
 
 # Intro {.sidebar}
-This dashboard covers the course materials for the course [S41: Data Science: Introduction to Text Mining with R](https://utrechtsummerschool.nl/courses/social-sciences/data-science-introduction-to-text-mining-with-r).
+This dashboard covers the course materials for the course [S41: Data Science: Text Mining with R](https://utrechtsummerschool.nl/courses/social-sciences/data-science-introduction-to-text-mining-with-r).
 
 
 ---
@@ -17,29 +17,29 @@ This dashboard covers the course materials for the course [S41: Data Science: In
 <!-- ![](logo1.png){width=100%} -->
 <!-- </center> -->
 
----
-<!-- ADD COURSE INFO -->
-<!-- Instructor: FILL    -->
-<!-- Study load: FILL    -->
-<!-- Assessment: FILL    -->
+<!-- --- -->
+<!-- <!-- ADD COURSE INFO -->
+<!-- <!-- Instructor: FILL    -->
+<!-- <!-- Study load: FILL    -->
+<!-- <!-- Assessment: FILL    -->
 
 
----
+<!-- --- -->
 
-\
-Course director: [Ayoub Bagheri](https://ayoubbagheri.nl/)
+Course director: [Ayoub Bagheri](https://www.uu.nl/staff/ABagheri)
 
 Instructors:
 
-* [Ayoub Bagheri](https://ayoubbagheri.nl/)\
-- [Pablo Mosteiro](https://www.uu.nl/medewerkers/PJMosteiroRomero)\
-* [Luka van der Plas](https://www.linkedin.com/in/mees-van-stiphout-688b84138/?originalSubdomain=nl)\
-- [Daniel Anadria](https://www.researchgate.net/profile/Daniel-Anadria-2)
-- [Laurence Frank](https://www.uu.nl/medewerkers/QFang)\
+- [Qixiang Fang](https://www.uu.nl/staff/QFang)
+* [Luka van der Plas](https://www.uu.nl/medewerkers/LPvanderPlas)\
+* [Hugh Mee Wong](https://www.uu.nl/medewerkers/HMWong)\
+* [Ayoub Bagheri](https://www.uu.nl/staff/ABagheri)\
+<!-- - [Pablo Mosteiro](https://www.uu.nl/medewerkers/PJMosteiroRomero)\ -->
+<!-- - [Laurence Frank](https://www.uu.nl/medewerkers/QFang)\ -->
 
 Study load: 1.5 ECTS
 
-Location: [Koningsberger Building, lecture hall Pangea](https://www.uu.nl/en/victor-j-koningsberger-building)
+Location: [Koningsberger Building, Room 224](https://www.uu.nl/en/victor-j-koningsberger-building)
 
 ---
 
