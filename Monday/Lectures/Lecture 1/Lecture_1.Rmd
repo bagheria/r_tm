@@ -792,14 +792,14 @@ print(regmatches(txt, r))
 
   - <span style="color:darkgreen">Increasing recall</span> (minimizing false negatives).
   
-## Question
+<!-- ## Question -->
 
-Given the text "this Summer   School is Utrecht summer school", which RE finds all the "summer school" mentions?
+<!-- Given the text "this Summer   School is Utrecht summer school", which RE finds all the "summer school" mentions? -->
 
-- (^|[^a-zA-Z])[sS]ummer *[sS]chool([^a-zA-Z])
-- (^|[^a-zA-Z])[sS]ummer\\s[sS]chool($|[^a-zA-Z])
-- (^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])
-- [^a-zA-Z][sS]ummer\\s[sS]chool($|[^a-zA-Z])
+<!-- - (^|[^a-zA-Z])[sS]ummer *[sS]chool([^a-zA-Z]) -->
+<!-- - (^|[^a-zA-Z])[sS]ummer\\s[sS]chool($|[^a-zA-Z]) -->
+<!-- - (^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z]) -->
+<!-- - [^a-zA-Z][sS]ummer\\s[sS]chool($|[^a-zA-Z]) -->
 
 ## Question
 
@@ -810,16 +810,16 @@ include_graphics("img/q1.jpg")
 </div>
 
 
-## Solution
+<!-- ## Solution -->
 
-```{r}
-txt <- "this Summer   School is utrecht summerschool"
-r <- gregexpr("(^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])", txt)
-#r <- gregexpr("(^|[^a-zA-Z])[sS]ummer\\s*[sS]chool($|[^a-zA-Z])", txt)
+<!-- ```{r} -->
+<!-- txt <- "this Summer   School is utrecht summerschool" -->
+<!-- r <- gregexpr("(^|[^a-zA-Z])[sS]ummer *[sS]chool($|[^a-zA-Z])", txt) -->
+<!-- #r <- gregexpr("(^|[^a-zA-Z])[sS]ummer\\s*[sS]chool($|[^a-zA-Z])", txt) -->
 
-print(regmatches(txt, r))
+<!-- print(regmatches(txt, r)) -->
 
-```
+<!-- ``` -->
 
  <!-- four \ for backslash: \\\\ -->
 
