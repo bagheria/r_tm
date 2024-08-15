@@ -1,7 +1,7 @@
 ---
 title: "Introduction"
 author: "Ayoub Bagheri"
-subtitle: Introduction to Text Mining with R
+subtitle: Text Mining with R
 output:
   ioslides_presentation: default
   html_document:
@@ -20,17 +20,27 @@ library(knitr)
 library(kableExtra)
 ```
 
-## ChatGPT
+## ChatGPT4o
+<br>
 <div style="float: left; width:100%">
 ```{r, echo=FALSE, fig.align='center', out.width="100%"}
-include_graphics("img/tm_chatgpt.png")
+include_graphics("img/ex01.png")
 ```
 </div>
+
+
+## Ask Delphi: Allen Institute for AI
+<div style="float: left; width:100%">
+```{r, echo=FALSE, fig.align='center', out.width="100%"}
+include_graphics("img/ex02.png")
+```
+</div>
+
 
 ## 
 <div style="float: left; width:100%">
 ```{r, echo=FALSE, fig.align='center', out.width="100%"}
-include_graphics("img/ex1.jpg")
+include_graphics("img/ex2.jpg")
 ```
 </div>
 
@@ -42,10 +52,10 @@ include_graphics("img/ex3.jpg")
 ```
 </div>
 
-## 
+## <font size="6">Opinions on Plants and Animals through Time</font>  <font size="3">Van Dalfsen et al. 2024</font> 
 <div style="float: left; width:100%">
 ```{r, echo=FALSE, fig.align='center', out.width="100%"}
-include_graphics("img/ex2.jpg")
+include_graphics("img/ex4.png")
 ```
 </div>
 
@@ -71,35 +81,36 @@ https://ayoubbagheri.nl/r_tm/
 
 <div style="float:left; width:50%">
 ```{r, echo=FALSE, fig.align='center', out.width="30%"}
-include_graphics("img/Luka.jpg")
+include_graphics("img/qixiang.jpg")
 ```
   <div class="centered">
-  **Luka**
+  **Qixiang**
   </div>
   
   <br/>
 ```{r, echo=FALSE, fig.align='center', out.width="30%"}
-include_graphics("img/Laurence.jpg")
+include_graphics("img/luka1.jpg")
 ```
   <div class="centered">
-  **Laurence**
+  **Luka**
   </div>
 </div>
 
-
 <div style="float:right; width:50%">
-```{r, echo=FALSE, fig.align='center', out.width="39%"}
-include_graphics("img/Daniel_Anadria.jpg")
-```
-  <div class="centered">
-  **Daniel**
-  </div>
   <br/>
-```{r, echo=FALSE, fig.align='center', out.width="39%"}
-include_graphics("img/Pablo Mosteiro Romero.jpg")
+```{r, echo=FALSE, fig.align='center', out.width="30%"}
+include_graphics("img/Hugh Mee.jpg")
 ```
   <div class="centered">
-  **Pablo**
+  **Hugh Mee**
+  </div>
+
+  <br/>
+```{r, echo=FALSE, fig.align='center', out.width="30%"}
+include_graphics("img/ayoub.jpg")
+```
+  <div class="centered">
+  **Ayoub**
   </div>
 </div>
 
@@ -488,12 +499,12 @@ source: https://nlp.stanford.edu/~wcmac/papers/20140716-UNLU.pdf
 <!-- <br> -->
 <!-- Go to <a href="www.menti.com">www.menti.com</a> and use the code 86 08 86 5 -->
 
-## 10-minute break
+<!-- ## 10-minute break -->
 
-<div align="center">
-<br>
-<img src="img/Coffee.png" width=200>
-</div>
+<!-- <div align="center"> -->
+<!-- <br> -->
+<!-- <img src="img/Coffee.png" width=200> -->
+<!-- </div> -->
 
 # Regular Expressions
 
@@ -552,6 +563,17 @@ There are some rules on how to write REs...
 ```{r, echo=FALSE, out.width="100%"}
 include_graphics("img/RE1.png")
 ```
+
+## Example in R
+
+- Define the text string
+  - text <- "How much wood would a woodchuck chuck if a woodchucks could chuck wood?"
+
+- Check if "woodchuck" is in the text
+  - found <- grepl("woodchuck", text)
+
+- Print the result
+  - print(found)
 
 ## 2. Disjunction
 The use of the brackets [] to specify a disjunction of characters:
@@ -736,6 +758,17 @@ print(regmatches(txt, r))
 
 ```
 
+## Errors
+
+- The process we just went through was based on
+
+  - Matching strings that we should not have matched (**the**re, Ne**the**rlands)
+  
+   <br>
+  
+  - Not matching things that we should have matched (The)
+  
+   <br>
 
 ## Errors
 
