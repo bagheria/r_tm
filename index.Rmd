@@ -71,7 +71,7 @@ Participants are requested to bring their own laptop for the lab meetings.
 Participants will receive a certificate at the end of the course.
 
 ### Additional references
-1- Jurafsky, D., Martin, J.H. (2021). Speech and language processing, third edition. Find online chapters [here](https://web.stanford.edu/~jurafsky/slp3/)
+1- Jurafsky, D., Martin, J.H. (2024). Speech and language processing, third edition. Find online chapters [here](https://web.stanford.edu/~jurafsky/slp3/)
 
 
 2- Eisenstein, J. (2018). Natural Language Processing. Find online chapters [here](https://github.com/jacobeisenstein/gt-nlp-class/blob/master/notes/eisenstein-nlp-notes.pdf)
