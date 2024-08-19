@@ -2,11 +2,11 @@
 title: "Sentiment Analysis and <br> Multi-class Classification"
 author: "Ayoub Bagheri"
 output:
-  beamer_presentation: default
   ioslides_presentation:
     logo: logo.png
     smaller: yes
     widescreen: no
+  beamer_presentation: default
 ---
 ```{r, include=FALSE}
 library(knitr)
@@ -746,6 +746,17 @@ include_graphics("img/page 74.png")
 
 <!-- \newpage -->
 
+# Summary
+
+## Summary
+- Sentiment analysis
+ - Lexicon-based methods
+ - Learning-based methods
+- Multiclass classification
+- Multi-label classification
+
+# Practical 4
+
 # Other Challenges in SA
 
 ## Explicit and implicit aspects | (Hu and Liu, 2004)
@@ -831,13 +842,3 @@ include_graphics("img/implicit2.png")
   - They make political opinions difficult to handle
 
 
-# Summary
-
-## Summary
-- Sentiment analysis
- - Lexicon-based methods
- - Learning-based methods
-- Multiclass classification
-- Multi-label classification
-
-# Practical 4
