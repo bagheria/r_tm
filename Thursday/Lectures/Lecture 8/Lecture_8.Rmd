@@ -41,6 +41,7 @@ include_graphics("img/page 3.png")
 - Recurrent neural networks
 - Self-organizing maps
 - Autoencoders
+- Transformers: Large Language Models (LLMs)
 
 ## Feed-forward neural networks
 - A typical multi-layer network consists of an input, hidden and output layer, each fully connected to the next, with activation feeding forward.
@@ -472,6 +473,78 @@ history <- model %>% keras::fit(
 )
 ```
 
+# Transformers
+
+## Transformers
+```{r, echo=FALSE, out.width="100%", fig.align='center'}
+include_graphics("img/t0.jpg")
+```
+
+## Contextual Word Embeddings
+```{r, echo=FALSE, out.width="100%", fig.align='center'}
+include_graphics("img/cwe.png")
+```
+
+## Transformers
+```{r, echo=FALSE, out.width="100%", fig.align='center'}
+include_graphics("img/t1.jpg")
+```
+
+## Transformers
+
+- A transformer adopts an encoder-decoder architecture.
+
+- Transformers were developed to solve the problem of sequence transduction, or neural machine translation. That means any task that transforms an input sequence to an output sequence. 
+
+- More details on the architecture and implementation:
+
+  - https://arxiv.org/abs/1810.04805
+
+  - http://nlp.seas.harvard.edu/2018/04/03/attention.html
+
+  - https://jalammar.github.io/illustrated-transformer/
+
+## Transformer foundation models: <br> BERT, GPT, BART
+
+```{r, echo=FALSE, out.width="100%", fig.align='center'}
+include_graphics("img/t2.jpg")
+```
+
+## BERT: Bidirectional Encoder Representations from Tranformers
+<div align="center">
+<img src="img/bert1.png" width=750>
+</div>
+
+## BERT: Bidirectional Encoder Representations from Tranformers
+<div align="center">
+<img src="img/bert2.png" width=750>
+</div>
+
+## Transformers
+
+- ChatGPT: https://chat.openai.com/
+
+- Write with Transformer: https://transformer.huggingface.co/
+
+- Talk to Transformer: https://app.inferkit.com/demo
+
+- Transformer model for language understanding: https://www.tensorflow.org/text/tutorials/transformer
+
+- Pre-trained models: https://huggingface.co/transformers/pretrained_models.html
+
+
+## ChatGPT (5-min exercise)
+
+- Go to https://chat.openai.com/ and login
+
+- How many parameters has chatgpt-3 model been trained on?
+
+- How many parameters has chatgpt-4 model been trained on?
+
+- What is the next generation NLP?
+
+- Suppose we want to build an application to help a user buy a car from textual catalogues. The user looks for any car cheaper than $10,000.00. Assume we are using the following data: txt <- c(“Price of Tesla S is $8599.99.”, “Audi Q4 is $7000.”, “BMW X5 costs $900”). Could you give me a regular expression to do this in R?
+
 # Summary
 
 ## Summary
@@ -479,5 +552,6 @@ history <- model %>% keras::fit(
 - Deep learning
 - Feed-forward neural networks
 - Recurrent neural networks
+- State-of-the-art LLMs
 
 # Practical 8
